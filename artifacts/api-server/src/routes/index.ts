@@ -6,17 +6,17 @@ import payrollPeriodsRouter from "./payroll-periods";
 import payslipsRouter from "./payslips";
 import dashboardRouter from "./dashboard";
 import authRouter from "./auth";
-import { requireAuth } from "../middleware/require-auth";
+import { requireAuth, requireWriteRole } from "../middleware/require-auth";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use(authRouter);
 
-router.use("/departments", requireAuth, departmentsRouter);
-router.use("/employees", requireAuth, employeesRouter);
-router.use("/payroll-periods", requireAuth, payrollPeriodsRouter);
-router.use("/payslips", requireAuth, payslipsRouter);
+router.use("/departments", requireAuth, requireWriteRole, departmentsRouter);
+router.use("/employees", requireAuth, requireWriteRole, employeesRouter);
+router.use("/payroll-periods", requireAuth, requireWriteRole, payrollPeriodsRouter);
+router.use("/payslips", requireAuth, requireWriteRole, payslipsRouter);
 router.use("/dashboard", requireAuth, dashboardRouter);
 
 export default router;
