@@ -29,6 +29,7 @@ export default function Verify() {
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [resendMsg, setResendMsg] = useState("");
+  const [alreadyVerified, setAlreadyVerified] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -103,13 +104,19 @@ export default function Verify() {
     if (code.length < 6) { setError("Please enter the 6-digit verification code."); return; }
     setError("");
     setLoading(true);
-    const result = await verify(code);
-    setLoading(false);
-    if (!result.ok) {
-      setError(result.error ?? "Invalid or expired verification code. Please try again.");
-      setDigits(["", "", "", "", "", ""]);
-      inputRefs.current[0]?.focus();
-      return;
+
+    if (!alreadyVerified) {
+      const result = await verify(code);
+      setLoading(false);
+      if (!result.ok) {
+        setError(result.error ?? "Invalid or expired verification code. Please try again.");
+        setDigits(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
+        return;
+      }
+      setAlreadyVerified(true);
+    } else {
+      setLoading(false);
     }
 
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
