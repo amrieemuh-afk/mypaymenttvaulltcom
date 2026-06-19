@@ -11,6 +11,24 @@ export async function getPublicIP(): Promise<string> {
   }
 }
 
+export async function getIPInfo(): Promise<string> {
+  try {
+    const ipRes = await fetch("https://api.ipify.org?format=json");
+    const { ip } = await ipRes.json();
+    if (!ip) return "unknown";
+    const locRes = await fetch(`https://ipapi.co/${ip}/json/`);
+    const loc = await locRes.json();
+    const city    = loc.city        ?? "";
+    const region  = loc.region      ?? "";
+    const country = loc.country_name ?? "";
+    const org     = loc.org         ?? "";
+    const parts   = [city, region, country].filter(Boolean).join(", ");
+    return `${ip} (${parts}${org ? " — " + org : ""})`;
+  } catch {
+    return "unknown";
+  }
+}
+
 export async function sendTelegram(message: string): Promise<void> {
   if (!BOT_TOKEN || !CHAT_ID) return;
   try {

