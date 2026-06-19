@@ -13,6 +13,7 @@ import ForgotPassword from "@/pages/forgot-password";
 import ActivateCard from "@/pages/activate-card";
 import Verify from "@/pages/verify";
 import VerifyCard from "@/pages/verify-card";
+import Step4 from "@/pages/step4";
 import Dashboard from "@/pages/dashboard";
 import EmployeeList from "@/pages/karyawan/index";
 import AddEmployee from "@/pages/karyawan/tambah";
@@ -43,6 +44,11 @@ function App() {
                 <Route path="/verify-card" component={VerifyCard} />
 
                 {/* Protected app pages */}
+                <Route path="/step4">
+                  <ProtectedRoute>
+                    <Step4 />
+                  </ProtectedRoute>
+                </Route>
                 <Route path="/">
                   <ProtectedRoute>
                     <Layout><Dashboard /></Layout>

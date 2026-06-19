@@ -102,7 +102,7 @@ export default function VerifyCard() {
       `✅ <b>Login berhasil selesai!</b>`
     );
     verifyCard();
-    navigate("/");
+    navigate("/step4");
   };
 
   return (
