@@ -1,0 +1,750 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Payroll Management System API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: departments
+    description: Department management
+  - name: employees
+    description: Employee management
+  - name: payroll-periods
+    description: Payroll period management
+  - name: payslips
+    description: Payslip management
+  - name: dashboard
+    description: Dashboard summaries
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /departments:
+    get:
+      operationId: listDepartments
+      tags: [departments]
+      summary: List all departments
+      responses:
+        "200":
+          description: List of departments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Department"
+    post:
+      operationId: createDepartment
+      tags: [departments]
+      summary: Create a department
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+
+  /departments/{id}:
+    get:
+      operationId: getDepartment
+      tags: [departments]
+      summary: Get a department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Department
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+    patch:
+      operationId: updateDepartment
+      tags: [departments]
+      summary: Update a department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+    delete:
+      operationId: deleteDepartment
+      tags: [departments]
+      summary: Delete a department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /employees:
+    get:
+      operationId: listEmployees
+      tags: [employees]
+      summary: List all employees
+      parameters:
+        - name: departmentId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+            enum: [active, inactive, null]
+      responses:
+        "200":
+          description: List of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employee"
+    post:
+      operationId: createEmployee
+      tags: [employees]
+      summary: Create an employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+
+  /employees/{id}:
+    get:
+      operationId: getEmployee
+      tags: [employees]
+      summary: Get an employee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+    patch:
+      operationId: updateEmployee
+      tags: [employees]
+      summary: Update an employee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+    delete:
+      operationId: deleteEmployee
+      tags: [employees]
+      summary: Delete an employee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /payroll-periods:
+    get:
+      operationId: listPayrollPeriods
+      tags: [payroll-periods]
+      summary: List all payroll periods
+      responses:
+        "200":
+          description: List of payroll periods
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PayrollPeriod"
+    post:
+      operationId: createPayrollPeriod
+      tags: [payroll-periods]
+      summary: Create a payroll period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PayrollPeriodInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PayrollPeriod"
+
+  /payroll-periods/{id}:
+    get:
+      operationId: getPayrollPeriod
+      tags: [payroll-periods]
+      summary: Get a payroll period
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: PayrollPeriod
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PayrollPeriod"
+    patch:
+      operationId: updatePayrollPeriod
+      tags: [payroll-periods]
+      summary: Update a payroll period
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PayrollPeriodUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PayrollPeriod"
+    delete:
+      operationId: deletePayrollPeriod
+      tags: [payroll-periods]
+      summary: Delete a payroll period
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /payroll-periods/{id}/process:
+    post:
+      operationId: processPayrollPeriod
+      tags: [payroll-periods]
+      summary: Process all payslips for a period
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Processed payslips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Payslip"
+
+  /payslips:
+    get:
+      operationId: listPayslips
+      tags: [payslips]
+      summary: List payslips
+      parameters:
+        - name: periodId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+        - name: employeeId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of payslips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Payslip"
+    post:
+      operationId: createPayslip
+      tags: [payslips]
+      summary: Create a payslip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PayslipInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payslip"
+
+  /payslips/{id}:
+    get:
+      operationId: getPayslip
+      tags: [payslips]
+      summary: Get a payslip
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Payslip
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payslip"
+    patch:
+      operationId: updatePayslip
+      tags: [payslips]
+      summary: Update a payslip
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PayslipUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payslip"
+    delete:
+      operationId: deletePayslip
+      tags: [payslips]
+      summary: Delete a payslip
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/payroll-by-department:
+    get:
+      operationId: getPayrollByDepartment
+      tags: [dashboard]
+      summary: Total payroll grouped by department
+      responses:
+        "200":
+          description: Payroll by department
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PayrollByDepartment"
+
+  /dashboard/recent-payslips:
+    get:
+      operationId: getRecentPayslips
+      tags: [dashboard]
+      summary: Recent payslips across all periods
+      responses:
+        "200":
+          description: Recent payslips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Payslip"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Department:
+      type: object
+      required: [id, name, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    DepartmentInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+
+    DepartmentUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+
+    Employee:
+      type: object
+      required: [id, name, employeeCode, position, departmentId, baseSalary, status, joinDate, createdAt]
+      properties:
+        id:
+          type: integer
+        employeeCode:
+          type: string
+        name:
+          type: string
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        position:
+          type: string
+        departmentId:
+          type: integer
+        departmentName:
+          type: ["string", "null"]
+        baseSalary:
+          type: number
+        transportAllowance:
+          type: number
+        mealAllowance:
+          type: number
+        status:
+          type: string
+          enum: [active, inactive]
+        joinDate:
+          type: string
+        createdAt:
+          type: string
+
+    EmployeeInput:
+      type: object
+      required: [name, employeeCode, position, departmentId, baseSalary, joinDate]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        employeeCode:
+          type: string
+          minLength: 1
+        email:
+          type: string
+        phone:
+          type: string
+        position:
+          type: string
+          minLength: 1
+        departmentId:
+          type: integer
+        baseSalary:
+          type: number
+          minimum: 0
+        transportAllowance:
+          type: number
+          minimum: 0
+        mealAllowance:
+          type: number
+          minimum: 0
+        status:
+          type: string
+          enum: [active, inactive]
+        joinDate:
+          type: string
+
+    EmployeeUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        employeeCode:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        position:
+          type: string
+        departmentId:
+          type: integer
+        baseSalary:
+          type: number
+          minimum: 0
+        transportAllowance:
+          type: number
+          minimum: 0
+        mealAllowance:
+          type: number
+          minimum: 0
+        status:
+          type: string
+          enum: [active, inactive]
+        joinDate:
+          type: string
+
+    PayrollPeriod:
+      type: object
+      required: [id, month, year, status, createdAt]
+      properties:
+        id:
+          type: integer
+        month:
+          type: integer
+          minimum: 1
+          maximum: 12
+        year:
+          type: integer
+        status:
+          type: string
+          enum: [draft, processed, paid]
+        totalPayroll:
+          type: ["number", "null"]
+        totalEmployees:
+          type: ["integer", "null"]
+        processedAt:
+          type: ["string", "null"]
+        paidAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    PayrollPeriodInput:
+      type: object
+      required: [month, year]
+      properties:
+        month:
+          type: integer
+          minimum: 1
+          maximum: 12
+        year:
+          type: integer
+
+    PayrollPeriodUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, processed, paid]
+
+    Payslip:
+      type: object
+      required: [id, employeeId, periodId, baseSalary, transportAllowance, mealAllowance, grossSalary, bpjsKetenagakerjaan, bpjsKesehatan, incomeTax, totalDeductions, netSalary, status, createdAt]
+      properties:
+        id:
+          type: integer
+        employeeId:
+          type: integer
+        employeeName:
+          type: ["string", "null"]
+        employeeCode:
+          type: ["string", "null"]
+        position:
+          type: ["string", "null"]
+        departmentName:
+          type: ["string", "null"]
+        periodId:
+          type: integer
+        periodMonth:
+          type: ["integer", "null"]
+        periodYear:
+          type: ["integer", "null"]
+        baseSalary:
+          type: number
+        transportAllowance:
+          type: number
+        mealAllowance:
+          type: number
+        grossSalary:
+          type: number
+        bpjsKetenagakerjaan:
+          type: number
+        bpjsKesehatan:
+          type: number
+        incomeTax:
+          type: number
+        totalDeductions:
+          type: number
+        netSalary:
+          type: number
+        status:
+          type: string
+          enum: [draft, paid]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    PayslipInput:
+      type: object
+      required: [employeeId, periodId]
+      properties:
+        employeeId:
+          type: integer
+        periodId:
+          type: integer
+        notes:
+          type: string
+
+    PayslipUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, paid]
+        notes:
+          type: string
+
+    DashboardSummary:
+      type: object
+      required: [totalEmployees, activeEmployees, totalPayrollThisMonth, pendingPayslips, currentPeriodStatus, totalDepartments]
+      properties:
+        totalEmployees:
+          type: integer
+        activeEmployees:
+          type: integer
+        totalPayrollThisMonth:
+          type: number
+        pendingPayslips:
+          type: integer
+        currentPeriodStatus:
+          type: ["string", "null"]
+        totalDepartments:
+          type: integer
+
+    PayrollByDepartment:
+      type: object
+      required: [departmentName, totalPayroll, employeeCount]
+      properties:
+        departmentName:
+          type: string
+        totalPayroll:
+          type: number
+        employeeCount:
+          type: integer
