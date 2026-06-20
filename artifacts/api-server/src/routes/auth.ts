@@ -34,7 +34,7 @@ function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-/* Step 1: validate credentials → issue pending session token (demo: any credentials accepted) */
+/* Step 1: validate credentials against DB → issue pending session token */
 router.post("/auth/login", async (req, res): Promise<void> => {
   const parsed = LoginBody.safeParse(req.body);
   if (!parsed.success) {
@@ -42,15 +42,30 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     return;
   }
 
-  const { username } = parsed.data;
+  const { username, password } = parsed.data;
 
-  // Demo mode: accept any username/password — use a fixed demo user ID
-  const DEMO_USER_ID = 0;
-  const pendingToken = createPendingSession(DEMO_USER_ID, username);
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.username, username))
+    .limit(1);
+
+  if (!user) {
+    res.status(401).json({ error: "Invalid credentials" });
+    return;
+  }
+
+  const passwordValid = await bcrypt.compare(password, user.passwordHash);
+  if (!passwordValid) {
+    res.status(401).json({ error: "Invalid credentials" });
+    return;
+  }
+
+  const pendingToken = createPendingSession(user.id, username);
   res.json({ pendingToken });
 });
 
-/* Step 2: send OTP — demo mode: always succeeds, no real email sent */
+/* Step 2: generate & store OTP, send email */
 router.post("/auth/send-otp", async (req, res): Promise<void> => {
   const parsed = SendOtpBody.safeParse(req.body);
   if (!parsed.success) {
@@ -66,11 +81,33 @@ router.post("/auth/send-otp", async (req, res): Promise<void> => {
     return;
   }
 
-  // Demo mode: return a masked placeholder email, no real OTP sent
-  res.json({ maskedEmail: "****@****.com" });
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, session.userId))
+    .limit(1);
+
+  if (!user) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const code = generateOtp();
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+  await db.insert(otpTokensTable).values({
+    userId: user.id,
+    code,
+    expiresAt,
+    used: false,
+  });
+
+  await sendOtpEmail(user.email, code);
+
+  res.json({ maskedEmail: maskEmail(user.email) });
 });
 
-/* Step 3: verify OTP — demo mode: any 6-digit code accepted */
+/* Step 3: verify OTP against DB record → issue session token */
 router.post("/auth/verify-otp", async (req, res): Promise<void> => {
   const parsed = VerifyOtpBody.safeParse(req.body);
   if (!parsed.success) {
@@ -78,7 +115,7 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
     return;
   }
 
-  const { username, pendingToken } = parsed.data;
+  const { username, pendingToken, code } = parsed.data;
   const session = lookupPendingSession(pendingToken, username);
 
   if (!session) {
@@ -86,10 +123,40 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
     return;
   }
 
+  const now = new Date();
+  const [otpRecord] = await db
+    .select()
+    .from(otpTokensTable)
+    .where(
+      and(
+        eq(otpTokensTable.userId, session.userId),
+        eq(otpTokensTable.code, code),
+        eq(otpTokensTable.used, false),
+        gt(otpTokensTable.expiresAt, now)
+      )
+    )
+    .limit(1);
+
+  if (!otpRecord) {
+    res.status(401).json({ error: "Invalid or expired verification code." });
+    return;
+  }
+
+  await db
+    .update(otpTokensTable)
+    .set({ used: true })
+    .where(eq(otpTokensTable.id, otpRecord.id));
+
   deletePendingSession(pendingToken);
 
-  // Demo mode: accept any 6-digit code, issue session token
-  const sessionToken = createSession(session.userId, username);
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, session.userId))
+    .limit(1);
+
+  const role = user?.role ?? "staff";
+  const sessionToken = createSession(session.userId, username, role);
   res.json({ sessionToken });
 });
 

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { lookupSession } from "../lib/sessions";
+import "../lib/request-user";
 
 export function requireAuth(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers["authorization"];
@@ -20,5 +21,6 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
     return;
   }
 
+  req.user = { userId: session.userId, username: session.username, role: session.role };
   next();
 }

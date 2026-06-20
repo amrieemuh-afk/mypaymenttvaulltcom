@@ -9,6 +9,7 @@ import {
   DeleteEmployeeParams,
   ListEmployeesQueryParams,
 } from "@workspace/api-zod";
+import { requireRole } from "../middleware/require-role";
 
 const router = Router();
 
@@ -55,7 +56,7 @@ router.get("/", async (req, res) => {
   })));
 });
 
-router.post("/", async (req, res) => {
+router.post("/", requireRole("admin"), async (req, res) => {
   const parsed = CreateEmployeeBody.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "Invalid input", details: parsed.error.issues });
 
@@ -115,7 +116,7 @@ router.get("/:id", async (req, res) => {
   });
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", requireRole("admin"), async (req, res) => {
   const params = UpdateEmployeeParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = UpdateEmployeeBody.safeParse(req.body);
@@ -141,7 +142,7 @@ router.patch("/:id", async (req, res) => {
   });
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireRole("admin"), async (req, res) => {
   const params = DeleteEmployeeParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(employeesTable).where(eq(employeesTable.id, params.data.id));

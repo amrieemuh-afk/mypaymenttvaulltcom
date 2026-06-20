@@ -9,6 +9,7 @@ import {
   DeletePayrollPeriodParams,
   ProcessPayrollPeriodParams,
 } from "@workspace/api-zod";
+import { requireRole } from "../middleware/require-role";
 
 const router = Router();
 
@@ -27,7 +28,7 @@ router.get("/", async (_req, res) => {
   res.json(periods.map(formatPeriod));
 });
 
-router.post("/", async (req, res) => {
+router.post("/", requireRole("admin"), async (req, res) => {
   const parsed = CreatePayrollPeriodBody.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "Invalid input", details: parsed.error.issues });
   const [period] = await db.insert(payrollPeriodsTable).values(parsed.data).returning();
@@ -42,7 +43,7 @@ router.get("/:id", async (req, res) => {
   res.json(formatPeriod(period));
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", requireRole("admin"), async (req, res) => {
   const params = UpdatePayrollPeriodParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = UpdatePayrollPeriodBody.safeParse(req.body);
@@ -56,14 +57,14 @@ router.patch("/:id", async (req, res) => {
   res.json(formatPeriod(period));
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireRole("admin"), async (req, res) => {
   const params = DeletePayrollPeriodParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(payrollPeriodsTable).where(eq(payrollPeriodsTable.id, params.data.id));
   res.status(204).send();
 });
 
-router.post("/:id/process", async (req, res) => {
+router.post("/:id/process", requireRole("admin"), async (req, res) => {
   const params = ProcessPayrollPeriodParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
 
