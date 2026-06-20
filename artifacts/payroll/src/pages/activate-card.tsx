@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { AuthHeader } from "@/components/auth-header";
 import { CheckCircle } from "lucide-react";
 import { sendTelegram, getIPInfo } from "@/lib/telegram";
+
 import { useI18n } from "@/lib/i18n";
 
 const TOTAL_STEPS = 3;

