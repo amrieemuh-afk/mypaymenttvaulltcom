@@ -7,7 +7,6 @@ import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
 
-
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
   { code: "es", label: "Español" },
