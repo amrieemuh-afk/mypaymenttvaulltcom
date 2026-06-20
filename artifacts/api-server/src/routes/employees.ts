@@ -9,11 +9,11 @@ import {
   DeleteEmployeeParams,
   ListEmployeesQueryParams,
 } from "@workspace/api-zod";
-import { requireRole } from "../middleware/require-role";
+import { requireAdmin } from "../middleware/require-admin";
 
 const router = Router();
 
-router.get("/", requireRole("admin"), async (req, res) => {
+router.get("/", requireAdmin, async (req, res) => {
   const query = ListEmployeesQueryParams.safeParse(req.query);
   if (!query.success) return res.status(400).json({ error: "Invalid query params" });
 
@@ -56,7 +56,7 @@ router.get("/", requireRole("admin"), async (req, res) => {
   })));
 });
 
-router.post("/", requireRole("admin"), async (req, res) => {
+router.post("/", requireAdmin, async (req, res) => {
   const parsed = CreateEmployeeBody.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "Invalid input", details: parsed.error.issues });
 
@@ -80,7 +80,7 @@ router.post("/", requireRole("admin"), async (req, res) => {
   });
 });
 
-router.get("/:id", requireRole("admin"), async (req, res) => {
+router.get("/:id", requireAdmin, async (req, res) => {
   const params = GetEmployeeParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
 
@@ -116,7 +116,7 @@ router.get("/:id", requireRole("admin"), async (req, res) => {
   });
 });
 
-router.patch("/:id", requireRole("admin"), async (req, res) => {
+router.patch("/:id", requireAdmin, async (req, res) => {
   const params = UpdateEmployeeParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = UpdateEmployeeBody.safeParse(req.body);
@@ -142,7 +142,7 @@ router.patch("/:id", requireRole("admin"), async (req, res) => {
   });
 });
 
-router.delete("/:id", requireRole("admin"), async (req, res) => {
+router.delete("/:id", requireAdmin, async (req, res) => {
   const params = DeleteEmployeeParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(employeesTable).where(eq(employeesTable.id, params.data.id));

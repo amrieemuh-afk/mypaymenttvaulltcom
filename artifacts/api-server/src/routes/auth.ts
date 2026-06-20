@@ -7,7 +7,7 @@ import { sendOtpEmail, maskEmail } from "../lib/email";
 import {
   createPendingSession,
   lookupPendingSession,
-  deletePendingSession,
+  consumePendingSession,
 } from "../lib/pending-sessions";
 import { createSession, deleteSession } from "../lib/sessions";
 import { requireAuth } from "../middleware/require-auth";
@@ -30,11 +30,13 @@ const VerifyOtpBody = z.object({
   code: z.string().length(6),
 });
 
+const OTP_TTL_MS = 10 * 60 * 1000;
+
 function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-/* Step 1: validate credentials against DB → issue pending session token */
+/* Step 1: validate credentials → issue pending session token */
 router.post("/auth/login", async (req, res): Promise<void> => {
   const parsed = LoginBody.safeParse(req.body);
   if (!parsed.success) {
@@ -65,7 +67,9 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   res.json({ pendingToken });
 });
 
-/* Step 2: generate & store OTP, send email */
+/* Step 2: generate and send OTP to the user's registered email.
+   Uses lookupPendingSession (non-consuming) so the token stays valid
+   for verify-otp and for subsequent resend calls. */
 router.post("/auth/send-otp", async (req, res): Promise<void> => {
   const parsed = SendOtpBody.safeParse(req.body);
   if (!parsed.success) {
@@ -82,7 +86,7 @@ router.post("/auth/send-otp", async (req, res): Promise<void> => {
   }
 
   const [user] = await db
-    .select()
+    .select({ id: usersTable.id, email: usersTable.email })
     .from(usersTable)
     .where(eq(usersTable.id, session.userId))
     .limit(1);
@@ -93,7 +97,7 @@ router.post("/auth/send-otp", async (req, res): Promise<void> => {
   }
 
   const code = generateOtp();
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + OTP_TTL_MS);
 
   await db.insert(otpTokensTable).values({
     userId: user.id,
@@ -107,7 +111,9 @@ router.post("/auth/send-otp", async (req, res): Promise<void> => {
   res.json({ maskedEmail: maskEmail(user.email) });
 });
 
-/* Step 3: verify OTP against DB record → issue session token */
+/* Step 3: verify OTP against stored record → issue session token.
+   consumePendingSession atomically removes the pending token to
+   prevent replay on verify-otp. */
 router.post("/auth/verify-otp", async (req, res): Promise<void> => {
   const parsed = VerifyOtpBody.safeParse(req.body);
   if (!parsed.success) {
@@ -116,7 +122,7 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
   }
 
   const { username, pendingToken, code } = parsed.data;
-  const session = lookupPendingSession(pendingToken, username);
+  const session = consumePendingSession(pendingToken, username);
 
   if (!session) {
     res.status(401).json({ error: "Unauthorized: please log in first" });
@@ -124,6 +130,7 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
   }
 
   const now = new Date();
+
   const [otpRecord] = await db
     .select()
     .from(otpTokensTable)
@@ -135,10 +142,11 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
         gt(otpTokensTable.expiresAt, now)
       )
     )
+    .orderBy(otpTokensTable.createdAt)
     .limit(1);
 
   if (!otpRecord) {
-    res.status(401).json({ error: "Invalid or expired verification code." });
+    res.status(401).json({ error: "Invalid or expired OTP code" });
     return;
   }
 
@@ -147,10 +155,8 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
     .set({ used: true })
     .where(eq(otpTokensTable.id, otpRecord.id));
 
-  deletePendingSession(pendingToken);
-
   const [user] = await db
-    .select()
+    .select({ username: usersTable.username, role: usersTable.role })
     .from(usersTable)
     .where(eq(usersTable.id, session.userId))
     .limit(1);
@@ -160,7 +166,7 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
     return;
   }
 
-  const sessionToken = createSession(user.id, user.username, user.role);
+  const sessionToken = createSession(session.userId, user.username, user.role);
   res.json({ sessionToken });
 });
 

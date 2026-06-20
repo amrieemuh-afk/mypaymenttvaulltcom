@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db, departmentsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { CreateDepartmentBody, UpdateDepartmentBody, GetDepartmentParams, UpdateDepartmentParams, DeleteDepartmentParams } from "@workspace/api-zod";
-import { requireRole } from "../middleware/require-role";
+import { requireAdmin } from "../middleware/require-admin";
 
 const router = Router();
 
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
   })));
 });
 
-router.post("/", requireRole("admin"), async (req, res) => {
+router.post("/", requireAdmin, async (req, res) => {
   const parsed = CreateDepartmentBody.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: "Invalid input", details: parsed.error.issues });
@@ -31,7 +31,7 @@ router.get("/:id", async (req, res) => {
   res.json({ ...dept, createdAt: dept.createdAt.toISOString() });
 });
 
-router.patch("/:id", requireRole("admin"), async (req, res) => {
+router.patch("/:id", requireAdmin, async (req, res) => {
   const params = UpdateDepartmentParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = UpdateDepartmentBody.safeParse(req.body);
@@ -41,7 +41,7 @@ router.patch("/:id", requireRole("admin"), async (req, res) => {
   res.json({ ...dept, createdAt: dept.createdAt.toISOString() });
 });
 
-router.delete("/:id", requireRole("admin"), async (req, res) => {
+router.delete("/:id", requireAdmin, async (req, res) => {
   const params = DeleteDepartmentParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(departmentsTable).where(eq(departmentsTable.id, params.data.id));

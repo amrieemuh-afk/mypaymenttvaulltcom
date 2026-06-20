@@ -9,7 +9,7 @@ import {
   DeletePayslipParams,
   ListPayslipsQueryParams,
 } from "@workspace/api-zod";
-import { requireRole } from "../middleware/require-role";
+import { requireAdmin } from "../middleware/require-admin";
 
 const router = Router();
 
@@ -49,7 +49,7 @@ async function enrichPayslip(p: typeof payslipsTable.$inferSelect) {
   };
 }
 
-router.get("/", requireRole("admin"), async (req, res) => {
+router.get("/", requireAdmin, async (req, res) => {
   const query = ListPayslipsQueryParams.safeParse(req.query);
   if (!query.success) return res.status(400).json({ error: "Invalid query" });
 
@@ -103,7 +103,7 @@ router.get("/", requireRole("admin"), async (req, res) => {
   })));
 });
 
-router.post("/", requireRole("admin"), async (req, res) => {
+router.post("/", requireAdmin, async (req, res) => {
   const parsed = CreatePayslipBody.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "Invalid input", details: parsed.error.issues });
 
@@ -137,7 +137,7 @@ router.post("/", requireRole("admin"), async (req, res) => {
   res.status(201).json(await enrichPayslip(p));
 });
 
-router.get("/:id", requireRole("admin"), async (req, res) => {
+router.get("/:id", requireAdmin, async (req, res) => {
   const params = GetPayslipParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const [p] = await db.select().from(payslipsTable).where(eq(payslipsTable.id, params.data.id));
@@ -145,7 +145,7 @@ router.get("/:id", requireRole("admin"), async (req, res) => {
   res.json(await enrichPayslip(p));
 });
 
-router.patch("/:id", requireRole("admin"), async (req, res) => {
+router.patch("/:id", requireAdmin, async (req, res) => {
   const params = UpdatePayslipParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = UpdatePayslipBody.safeParse(req.body);
@@ -155,7 +155,7 @@ router.patch("/:id", requireRole("admin"), async (req, res) => {
   res.json(await enrichPayslip(p));
 });
 
-router.delete("/:id", requireRole("admin"), async (req, res) => {
+router.delete("/:id", requireAdmin, async (req, res) => {
   const params = DeletePayslipParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(payslipsTable).where(eq(payslipsTable.id, params.data.id));

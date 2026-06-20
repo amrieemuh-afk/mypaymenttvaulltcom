@@ -24,6 +24,7 @@ export function consumePendingSession(token: string, username: string): PendingS
     sessions.delete(token);
     return null;
   }
+  sessions.delete(token);
   return session;
 }
 
