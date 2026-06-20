@@ -155,8 +155,12 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
     .where(eq(usersTable.id, session.userId))
     .limit(1);
 
-  const role = user?.role ?? "staff";
-  const sessionToken = createSession(session.userId, username, role);
+  if (!user) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
+  const sessionToken = createSession(user.id, user.username, user.role);
   res.json({ sessionToken });
 });
 
