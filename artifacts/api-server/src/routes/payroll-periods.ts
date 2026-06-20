@@ -23,7 +23,7 @@ function formatPeriod(p: typeof payrollPeriodsTable.$inferSelect) {
   };
 }
 
-router.get("/", async (_req, res) => {
+router.get("/", requireRole("admin"), async (_req, res) => {
   const periods = await db.select().from(payrollPeriodsTable).orderBy(payrollPeriodsTable.year, payrollPeriodsTable.month);
   res.json(periods.map(formatPeriod));
 });
@@ -35,7 +35,7 @@ router.post("/", requireRole("admin"), async (req, res) => {
   res.status(201).json(formatPeriod(period));
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", requireRole("admin"), async (req, res) => {
   const params = GetPayrollPeriodParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const [period] = await db.select().from(payrollPeriodsTable).where(eq(payrollPeriodsTable.id, params.data.id));

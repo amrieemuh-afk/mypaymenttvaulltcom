@@ -13,7 +13,7 @@ import { requireRole } from "../middleware/require-role";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
+router.get("/", requireRole("admin"), async (req, res) => {
   const query = ListEmployeesQueryParams.safeParse(req.query);
   if (!query.success) return res.status(400).json({ error: "Invalid query params" });
 
@@ -80,7 +80,7 @@ router.post("/", requireRole("admin"), async (req, res) => {
   });
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", requireRole("admin"), async (req, res) => {
   const params = GetEmployeeParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
 

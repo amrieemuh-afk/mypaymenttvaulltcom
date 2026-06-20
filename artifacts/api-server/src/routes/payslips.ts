@@ -49,7 +49,7 @@ async function enrichPayslip(p: typeof payslipsTable.$inferSelect) {
   };
 }
 
-router.get("/", async (req, res) => {
+router.get("/", requireRole("admin"), async (req, res) => {
   const query = ListPayslipsQueryParams.safeParse(req.query);
   if (!query.success) return res.status(400).json({ error: "Invalid query" });
 
@@ -137,7 +137,7 @@ router.post("/", requireRole("admin"), async (req, res) => {
   res.status(201).json(await enrichPayslip(p));
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", requireRole("admin"), async (req, res) => {
   const params = GetPayslipParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const [p] = await db.select().from(payslipsTable).where(eq(payslipsTable.id, params.data.id));
