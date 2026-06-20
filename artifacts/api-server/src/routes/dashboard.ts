@@ -1,11 +1,10 @@
 import { Router } from "express";
 import { db, employeesTable, payrollPeriodsTable, payslipsTable, departmentsTable } from "@workspace/db";
 import { eq, count, sum, desc } from "drizzle-orm";
-import { requireAdmin } from "../middleware/require-admin";
 
 const router = Router();
 
-router.get("/summary", requireAdmin, async (_req, res) => {
+router.get("/summary", async (_req, res) => {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
@@ -58,7 +57,7 @@ router.get("/summary", requireAdmin, async (_req, res) => {
   });
 });
 
-router.get("/payroll-by-department", requireAdmin, async (_req, res) => {
+router.get("/payroll-by-department", async (_req, res) => {
   const rows = await db
     .select({
       departmentName: departmentsTable.name,
@@ -78,7 +77,7 @@ router.get("/payroll-by-department", requireAdmin, async (_req, res) => {
   })));
 });
 
-router.get("/recent-payslips", requireAdmin, async (_req, res) => {
+router.get("/recent-payslips", async (_req, res) => {
   const rows = await db
     .select({
       id: payslipsTable.id,

@@ -3,7 +3,6 @@ import { randomUUID } from "crypto";
 interface Session {
   userId: number;
   username: string;
-  role: string;
   expiresAt: Date;
 }
 
@@ -11,12 +10,11 @@ const sessions = new Map<string, Session>();
 
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 
-export function createSession(userId: number, username: string, role: string): string {
+export function createSession(userId: number, username: string): string {
   const token = randomUUID();
   sessions.set(token, {
     userId,
     username,
-    role,
     expiresAt: new Date(Date.now() + SESSION_TTL_MS),
   });
   return token;

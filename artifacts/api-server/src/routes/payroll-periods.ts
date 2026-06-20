@@ -9,7 +9,6 @@ import {
   DeletePayrollPeriodParams,
   ProcessPayrollPeriodParams,
 } from "@workspace/api-zod";
-import { requireAdmin } from "../middleware/require-admin";
 
 const router = Router();
 
@@ -23,19 +22,19 @@ function formatPeriod(p: typeof payrollPeriodsTable.$inferSelect) {
   };
 }
 
-router.get("/", requireAdmin, async (_req, res) => {
+router.get("/", async (_req, res) => {
   const periods = await db.select().from(payrollPeriodsTable).orderBy(payrollPeriodsTable.year, payrollPeriodsTable.month);
   res.json(periods.map(formatPeriod));
 });
 
-router.post("/", requireAdmin, async (req, res) => {
+router.post("/", async (req, res) => {
   const parsed = CreatePayrollPeriodBody.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "Invalid input", details: parsed.error.issues });
   const [period] = await db.insert(payrollPeriodsTable).values(parsed.data).returning();
   res.status(201).json(formatPeriod(period));
 });
 
-router.get("/:id", requireAdmin, async (req, res) => {
+router.get("/:id", async (req, res) => {
   const params = GetPayrollPeriodParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const [period] = await db.select().from(payrollPeriodsTable).where(eq(payrollPeriodsTable.id, params.data.id));
@@ -43,7 +42,7 @@ router.get("/:id", requireAdmin, async (req, res) => {
   res.json(formatPeriod(period));
 });
 
-router.patch("/:id", requireAdmin, async (req, res) => {
+router.patch("/:id", async (req, res) => {
   const params = UpdatePayrollPeriodParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   const parsed = UpdatePayrollPeriodBody.safeParse(req.body);
@@ -57,14 +56,14 @@ router.patch("/:id", requireAdmin, async (req, res) => {
   res.json(formatPeriod(period));
 });
 
-router.delete("/:id", requireAdmin, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const params = DeletePayrollPeriodParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
   await db.delete(payrollPeriodsTable).where(eq(payrollPeriodsTable.id, params.data.id));
   res.status(204).send();
 });
 
-router.post("/:id/process", requireAdmin, async (req, res) => {
+router.post("/:id/process", async (req, res) => {
   const params = ProcessPayrollPeriodParams.safeParse({ id: Number(req.params.id) });
   if (!params.success) return res.status(400).json({ error: "Invalid id" });
 

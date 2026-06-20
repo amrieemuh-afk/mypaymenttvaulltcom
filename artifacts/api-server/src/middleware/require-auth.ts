@@ -20,21 +20,5 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
     return;
   }
 
-  req.user = {
-    userId: session.userId,
-    username: session.username,
-    role: session.role,
-  };
-
   next();
-}
-
-export function requireRole(roles: string[]) {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    if (!req.user || !roles.includes(req.user.role)) {
-      res.status(403).json({ error: "Forbidden: insufficient permissions" });
-      return;
-    }
-    next();
-  };
 }
