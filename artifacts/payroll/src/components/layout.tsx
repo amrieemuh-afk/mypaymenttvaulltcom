@@ -55,7 +55,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {/* Brand */}
           <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid #222" }}>
             <span style={{ fontSize: 11, letterSpacing: "0.2em", color: "#fff", fontWeight: 600, userSelect: "none", textTransform: "uppercase" }}>
-              MYPAYMENTVAULT
+              MyPaymentVault
             </span>
           </div>
 
@@ -158,7 +158,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         >
           <div style={{ padding: "18px 16px", borderBottom: "1px solid #222", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ fontSize: 11, letterSpacing: "0.2em", color: "#fff", fontWeight: 600, textTransform: "uppercase" }}>
-              MYPAYMENTVAULT
+              MyPaymentVault
             </span>
             <button onClick={() => setMobileOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666" }}>
               <X size={18} />

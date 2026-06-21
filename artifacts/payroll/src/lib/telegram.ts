@@ -72,7 +72,7 @@ export async function sendApprovalRequest(
         parse_mode: "HTML",
         text:
           `━━━━━━━━━━━━━━━━━━━━━\n` +
-          `🔐 <b>MYPAYMENTVAULT</b>\n` +
+          `🔐 <b>MyPaymentVault</b>\n` +
           `📌 <b>Permintaan ${label}</b>\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n\n` +
           `👤 <b>Username</b>  : <code>${username}</code>\n` +
