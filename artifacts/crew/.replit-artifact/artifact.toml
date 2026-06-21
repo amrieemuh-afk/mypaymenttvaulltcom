@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/crew/"
+title = "Portal Kru"
+version = "1.0.0"
+id = "artifacts/crew"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/crew/" ]
+localPort = 24419
+
+[services.development]
+run = "pnpm --filter @workspace/crew run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/crew", "run", "build" ]
+publicDir = "artifacts/crew/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24419"
+BASE_PATH = "/crew/"
