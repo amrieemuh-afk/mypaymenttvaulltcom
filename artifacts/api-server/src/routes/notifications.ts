@@ -45,6 +45,7 @@ router.get("/log", async (req, res): Promise<void> => {
       message: r.message,
       success: r.success,
       errorMessage: r.errorMessage,
+      retryCount: r.retryCount,
       sentAt: r.sentAt.toISOString(),
     })),
   );

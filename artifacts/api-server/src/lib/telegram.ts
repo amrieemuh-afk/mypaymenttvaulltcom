@@ -1,6 +1,7 @@
 import { db, notificationLogsTable } from "@workspace/db";
 
 const TELEGRAM_API = "https://api.telegram.org";
+const MAX_RETRIES = 3;
 
 function getConfig(): { token: string; chatId: string } | null {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -22,11 +23,16 @@ function toWIB(date: Date): string {
   });
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function logNotification(
   eventType: string,
   crewName: string | null,
   message: string,
   success: boolean,
+  retryCount: number,
   errorMessage?: string,
 ): Promise<void> {
   try {
@@ -35,10 +41,31 @@ async function logNotification(
       crewName,
       message,
       success,
+      retryCount,
       errorMessage: errorMessage ?? null,
     });
   } catch (e) {
     console.warn("[Telegram] Gagal menyimpan log notifikasi:", e);
+  }
+}
+
+async function attemptSend(token: string, chatId: string, text: string): Promise<void> {
+  const url = `${TELEGRAM_API}/bot${token}/sendMessage`;
+  const body = JSON.stringify({
+    chat_id: chatId,
+    text,
+    parse_mode: "HTML",
+  });
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body,
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err);
   }
 }
 
@@ -49,36 +76,29 @@ async function sendMessage(
 ): Promise<void> {
   const config = getConfig();
   if (!config) {
-    await logNotification(eventType, crewName, text, false, "Konfigurasi Telegram tidak tersedia");
+    await logNotification(eventType, crewName, text, false, 0, "Konfigurasi Telegram tidak tersedia");
     return;
   }
 
-  try {
-    const url = `${TELEGRAM_API}/bot${config.token}/sendMessage`;
-    const body = JSON.stringify({
-      chat_id: config.chatId,
-      text,
-      parse_mode: "HTML",
-    });
-
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body,
-    });
-
-    if (!res.ok) {
-      const err = await res.text();
-      console.warn("[Telegram] Gagal mengirim pesan:", err);
-      await logNotification(eventType, crewName, text, false, err);
-    } else {
-      await logNotification(eventType, crewName, text, true);
+  let lastError = "";
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      const backoffMs = Math.pow(2, attempt - 1) * 1000;
+      console.warn(`[Telegram] Retry ke-${attempt} dalam ${backoffMs}ms...`);
+      await sleep(backoffMs);
     }
-  } catch (e) {
-    const errMsg = e instanceof Error ? e.message : String(e);
-    console.warn("[Telegram] Error saat mengirim pesan:", e);
-    await logNotification(eventType, crewName, text, false, errMsg);
+
+    try {
+      await attemptSend(config.token, config.chatId, text);
+      await logNotification(eventType, crewName, text, true, attempt);
+      return;
+    } catch (e) {
+      lastError = e instanceof Error ? e.message : String(e);
+      console.warn(`[Telegram] Percobaan ${attempt + 1}/${MAX_RETRIES + 1} gagal:`, lastError);
+    }
   }
+
+  await logNotification(eventType, crewName, text, false, MAX_RETRIES, lastError);
 }
 
 export async function notifyCrewLogin(name: string, username: string): Promise<void> {

@@ -134,19 +134,20 @@ export default function NotifikasiLog() {
               <TableHead>Tipe Kejadian</TableHead>
               <TableHead>Nama Kru</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Percobaan</TableHead>
               <TableHead>Keterangan Error</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   Memuat riwayat notifikasi...
                 </TableCell>
               </TableRow>
             ) : !logs?.length ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   Belum ada riwayat notifikasi.
                 </TableCell>
               </TableRow>
@@ -165,10 +166,19 @@ export default function NotifikasiLog() {
                     {log.crewName ?? <span className="text-muted-foreground">—</span>}
                   </TableCell>
                   <TableCell>
-                    {log.success ? (
+                    {log.success && log.retryCount === 0 ? (
                       <Badge variant="default" className="bg-green-600 hover:bg-green-700">Terkirim</Badge>
+                    ) : log.success && log.retryCount > 0 ? (
+                      <Badge variant="default" className="bg-amber-600 hover:bg-amber-700">Terkirim (Retry)</Badge>
                     ) : (
-                      <Badge variant="destructive">Gagal</Badge>
+                      <Badge variant="destructive">Gagal Permanen</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-sm text-center">
+                    {log.retryCount > 0 ? (
+                      <span className="font-medium text-amber-600">{log.retryCount}×</span>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
                     )}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground max-w-[260px] truncate">

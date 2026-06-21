@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean, integer } from "drizzle-orm/pg-core";
 
 export const notificationLogsTable = pgTable("notification_logs", {
   id: serial("id").primaryKey(),
@@ -7,6 +7,7 @@ export const notificationLogsTable = pgTable("notification_logs", {
   message: text("message").notNull(),
   success: boolean("success").notNull().default(true),
   errorMessage: text("error_message"),
+  retryCount: integer("retry_count").notNull().default(0),
   sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

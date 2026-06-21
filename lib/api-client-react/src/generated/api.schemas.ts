@@ -322,6 +322,7 @@ export interface NotificationLog {
   success: boolean;
   /** @nullable */
   errorMessage?: string | null;
+  retryCount: number;
   sentAt: string;
 }
 
