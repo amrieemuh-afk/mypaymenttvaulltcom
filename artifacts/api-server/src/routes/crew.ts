@@ -16,8 +16,10 @@ import bcrypt from "bcryptjs";
 import {
   createCrewSession,
   deleteCrewSession,
+  clearMustChangePassword,
 } from "../lib/crew-sessions";
 import { requireCrewAuth } from "../middleware/require-crew-auth";
+import { requireAuth } from "../middleware/require-auth";
 
 const router: IRouter = Router();
 
@@ -46,13 +48,13 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     .where(eq(crewCredentialsTable.username, username));
 
   if (!cred) {
-    res.status(401).json({ error: "Kode kru atau kata sandi salah" });
+    res.status(401).json({ error: "Username atau kata sandi salah" });
     return;
   }
 
   const ok = await bcrypt.compare(password, cred.passwordHash);
   if (!ok) {
-    res.status(401).json({ error: "Kode kru atau kata sandi salah" });
+    res.status(401).json({ error: "Username atau kata sandi salah" });
     return;
   }
 
@@ -66,10 +68,11 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     return;
   }
 
-  const sessionToken = createCrewSession(cred.employeeId, username);
+  const sessionToken = createCrewSession(cred.employeeId, username, cred.mustChangePassword);
   res.json({
     sessionToken,
     employee: { id: emp.id, name: emp.name, employeeCode: emp.employeeCode },
+    mustChangePassword: cred.mustChangePassword,
   });
 });
 
@@ -79,6 +82,51 @@ router.post("/auth/logout", requireCrewAuth, (req, res): void => {
     deleteCrewSession(authHeader.slice(7).trim());
   }
   res.status(204).send();
+});
+
+/* ─── Change Password ─── */
+const ChangePasswordBody = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(6, "Kata sandi baru minimal 6 karakter"),
+});
+
+router.post("/auth/change-password", requireCrewAuth, async (req, res): Promise<void> => {
+  const parsed = ChangePasswordBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Invalid request" });
+    return;
+  }
+
+  const employeeId = req.crewEmployeeId!;
+  const { currentPassword, newPassword } = parsed.data;
+
+  const [cred] = await db
+    .select()
+    .from(crewCredentialsTable)
+    .where(eq(crewCredentialsTable.employeeId, employeeId));
+
+  if (!cred) {
+    res.status(404).json({ error: "Credential tidak ditemukan" });
+    return;
+  }
+
+  const ok = await bcrypt.compare(currentPassword, cred.passwordHash);
+  if (!ok) {
+    res.status(401).json({ error: "Kata sandi saat ini salah" });
+    return;
+  }
+
+  const newHash = await bcrypt.hash(newPassword, 12);
+  await db
+    .update(crewCredentialsTable)
+    .set({ passwordHash: newHash, mustChangePassword: false })
+    .where(eq(crewCredentialsTable.employeeId, employeeId));
+
+  if (req.crewSessionToken) {
+    clearMustChangePassword(req.crewSessionToken);
+  }
+
+  res.json({ ok: true });
 });
 
 /* ─── Profile ─── */
@@ -306,6 +354,70 @@ router.get("/schedules", requireCrewAuth, async (req, res): Promise<void> => {
     .orderBy(workSchedulesTable.date);
 
   res.json(rows);
+});
+
+/* ─── Admin: List crew credentials ─── */
+router.get("/admin/credentials", requireAuth, async (_req, res): Promise<void> => {
+  const rows = await db
+    .select({
+      employeeId: crewCredentialsTable.employeeId,
+      username: crewCredentialsTable.username,
+      mustChangePassword: crewCredentialsTable.mustChangePassword,
+      name: employeesTable.name,
+      employeeCode: employeesTable.employeeCode,
+      position: employeesTable.position,
+      status: employeesTable.status,
+    })
+    .from(crewCredentialsTable)
+    .leftJoin(employeesTable, eq(crewCredentialsTable.employeeId, employeesTable.id))
+    .orderBy(employeesTable.name);
+
+  res.json(rows);
+});
+
+/* ─── Admin: Set/reset credential kru ─── */
+const AdminSetCredentialBody = z.object({
+  username: z.string().min(3, "Username minimal 3 karakter"),
+  password: z.string().min(6, "Kata sandi minimal 6 karakter"),
+  mustChangePassword: z.boolean().optional().default(true),
+});
+
+router.put("/admin/credentials/:employeeId", requireAuth, async (req, res): Promise<void> => {
+  const employeeId = Number(req.params.employeeId);
+  if (Number.isNaN(employeeId)) {
+    res.status(400).json({ error: "Invalid employeeId" });
+    return;
+  }
+
+  const parsed = AdminSetCredentialBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Invalid input" });
+    return;
+  }
+
+  const [emp] = await db
+    .select({ id: employeesTable.id })
+    .from(employeesTable)
+    .where(eq(employeesTable.id, employeeId));
+
+  if (!emp) {
+    res.status(404).json({ error: "Karyawan tidak ditemukan" });
+    return;
+  }
+
+  const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+  const { username, mustChangePassword } = parsed.data;
+
+  const [result] = await db
+    .insert(crewCredentialsTable)
+    .values({ employeeId, username, passwordHash, mustChangePassword })
+    .onConflictDoUpdate({
+      target: crewCredentialsTable.employeeId,
+      set: { username, passwordHash, mustChangePassword },
+    })
+    .returning({ id: crewCredentialsTable.id, username: crewCredentialsTable.username, mustChangePassword: crewCredentialsTable.mustChangePassword });
+
+  res.json({ ok: true, ...result });
 });
 
 /* ─── Announcements ─── */

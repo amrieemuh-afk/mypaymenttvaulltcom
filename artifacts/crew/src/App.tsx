@@ -6,6 +6,7 @@ import { AuthProvider, ProtectedRoute } from "@/lib/auth";
 import { Layout } from "@/components/layout";
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
+import ChangePassword from "@/pages/change-password";
 import Dashboard from "@/pages/dashboard";
 import Payslips from "@/pages/payslips";
 import PayslipDetail from "@/pages/payslip-detail";
@@ -26,6 +27,12 @@ function Router() {
   return (
     <Switch>
       <Route path="/login" component={Login} />
+
+      <Route path="/ganti-password">
+        <ProtectedRoute allowMustChange>
+          <ChangePassword />
+        </ProtectedRoute>
+      </Route>
 
       <Route path="/">
         <ProtectedRoute>

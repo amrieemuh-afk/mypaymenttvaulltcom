@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function Login() {
   const { login, isAuthenticated } = useAuth();
@@ -25,7 +25,11 @@ export default function Login() {
     const res = await login(username, password);
     setLoading(false);
     if (res.ok) {
-      navigate("/");
+      if (res.mustChangePassword) {
+        navigate("/ganti-password");
+      } else {
+        navigate("/");
+      }
     } else {
       setError(res.error ?? "Gagal masuk. Coba lagi.");
     }
@@ -50,12 +54,12 @@ export default function Login() {
         >
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="username">Kode Kru</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
                 id="username"
                 data-testid="input-username"
-                placeholder="contoh: KRW001"
-                autoCapitalize="characters"
+                placeholder="Masukkan username Anda"
+                autoCapitalize="none"
                 autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -95,10 +99,9 @@ export default function Login() {
           </div>
         </form>
 
-        <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-          <ShieldCheck className="h-3.5 w-3.5" />
-          <span>Demo: KRW001 / crew123</span>
-        </div>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          Hubungi admin jika belum memiliki akun atau lupa kata sandi.
+        </p>
       </div>
     </div>
   );
