@@ -436,6 +436,31 @@ router.put("/admin/credentials/:employeeId", requireAuth, async (req, res): Prom
   res.json({ ok: true, ...result });
 });
 
+/* ─── Admin: Delete crew credential ─── */
+router.delete("/admin/credentials/:employeeId", requireAuth, async (req, res): Promise<void> => {
+  const employeeId = Number(req.params.employeeId);
+  if (Number.isNaN(employeeId)) {
+    res.status(400).json({ error: "Invalid employeeId" });
+    return;
+  }
+
+  const [existing] = await db
+    .select({ id: crewCredentialsTable.id })
+    .from(crewCredentialsTable)
+    .where(eq(crewCredentialsTable.employeeId, employeeId));
+
+  if (!existing) {
+    res.status(404).json({ error: "Akun kru tidak ditemukan" });
+    return;
+  }
+
+  await db
+    .delete(crewCredentialsTable)
+    .where(eq(crewCredentialsTable.employeeId, employeeId));
+
+  res.json({ ok: true });
+});
+
 /* ─── Announcements ─── */
 router.get("/announcements", requireCrewAuth, async (_req, res): Promise<void> => {
   const rows = await db

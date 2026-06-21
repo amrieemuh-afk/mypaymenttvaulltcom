@@ -20,8 +20,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { KeyRound, UserPlus, RefreshCw } from "lucide-react";
+import { KeyRound, UserPlus, RefreshCw, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const SESSION_TOKEN_KEY = "gajipro_session_token";
 
@@ -50,6 +60,18 @@ async function fetchCrewCredentials(): Promise<CrewCredential[]> {
   });
   if (!res.ok) throw new Error("Gagal memuat data akun kru");
   return res.json();
+}
+
+async function deleteCrewCredential(employeeId: number): Promise<void> {
+  const token = getToken();
+  const res = await fetch(`/api/crew/admin/credentials/${employeeId}`, {
+    method: "DELETE",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body?.error ?? "Gagal menghapus akun kru");
+  }
 }
 
 async function setCrewCredential(
@@ -109,6 +131,7 @@ export default function KruManagement() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [formError, setFormError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<{ employeeId: number; name: string } | null>(null);
 
   const mutation = useMutation({
     mutationFn: ({ employeeId, data }: { employeeId: number; data: { username: string; password: string; mustChangePassword: boolean } }) =>
@@ -120,6 +143,19 @@ export default function KruManagement() {
     },
     onError: (err: Error) => {
       setFormError(err.message);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (employeeId: number) => deleteCrewCredential(employeeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["crew-credentials"] });
+      toast({ title: "Berhasil", description: "Akun kru berhasil dihapus." });
+      setDeleteTarget(null);
+    },
+    onError: (err: Error) => {
+      toast({ title: "Gagal", description: err.message, variant: "destructive" });
+      setDeleteTarget(null);
     },
   });
 
@@ -238,23 +274,35 @@ export default function KruManagement() {
                       <StatusBadge status={status} />
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant={hasAccount ? "outline" : "default"}
-                        size="sm"
-                        onClick={() => openDialog(emp.id, emp.name, cred?.username)}
-                      >
-                        {hasAccount ? (
-                          <>
-                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                            Reset
-                          </>
-                        ) : (
-                          <>
-                            <UserPlus className="h-3.5 w-3.5 mr-1.5" />
-                            Buat Akun
-                          </>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant={hasAccount ? "outline" : "default"}
+                          size="sm"
+                          onClick={() => openDialog(emp.id, emp.name, cred?.username)}
+                        >
+                          {hasAccount ? (
+                            <>
+                              <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                              Reset
+                            </>
+                          ) : (
+                            <>
+                              <UserPlus className="h-3.5 w-3.5 mr-1.5" />
+                              Buat Akun
+                            </>
+                          )}
+                        </Button>
+                        {hasAccount && (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => setDeleteTarget({ employeeId: emp.id, name: emp.name })}
+                          >
+                            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                            Hapus
+                          </Button>
                         )}
-                      </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -263,6 +311,28 @@ export default function KruManagement() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Akun Kru</AlertDialogTitle>
+            <AlertDialogDescription>
+              Yakin ingin menghapus akun login untuk <strong>{deleteTarget?.name}</strong>? Kru tidak akan bisa login ke Portal Kru setelah ini. Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => { if (deleteTarget) deleteMutation.mutate(deleteTarget.employeeId); }}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? "Menghapus..." : "Hapus Akun"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Credential Dialog */}
       <Dialog open={!!dialog} onOpenChange={(open) => { if (!open) closeDialog(); }}>
