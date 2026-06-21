@@ -140,7 +140,8 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 
   const sessionToken = createCrewSession(cred.employeeId, username, cred.mustChangePassword);
 
-  notifyCrewLogin(emp.name, username).catch(() => {});
+  const clientIp = (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() || req.ip || "";
+  notifyCrewLogin(emp.name, username, clientIp).catch(() => {});
 
   res.json({
     sessionToken,

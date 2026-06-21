@@ -27,6 +27,45 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function normalizeIp(ip: string): string {
+  let v = ip.trim();
+  if (v.startsWith("::ffff:")) v = v.slice(7);
+  return v;
+}
+
+function isPrivateIp(ip: string): boolean {
+  return (
+    ip === "::1" ||
+    ip === "127.0.0.1" ||
+    ip.startsWith("10.") ||
+    ip.startsWith("192.168.") ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(ip) ||
+    ip.startsWith("fc") ||
+    ip.startsWith("fd")
+  );
+}
+
+async function lookupLocation(ip: string): Promise<string | null> {
+  if (isPrivateIp(ip)) return null;
+  try {
+    const res = await fetch(
+      `http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,country,regionName,city&lang=id`,
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      status?: string;
+      country?: string;
+      regionName?: string;
+      city?: string;
+    };
+    if (data.status !== "success") return null;
+    const parts = [data.city, data.regionName, data.country].filter(Boolean);
+    return parts.length ? parts.join(", ") : null;
+  } catch {
+    return null;
+  }
+}
+
 async function logNotification(
   eventType: string,
   crewName: string | null,
@@ -101,16 +140,22 @@ async function sendMessage(
   await logNotification(eventType, crewName, text, false, MAX_RETRIES, lastError);
 }
 
-export async function notifyCrewLogin(name: string, username: string): Promise<void> {
+export async function notifyCrewLogin(name: string, username: string, ip?: string): Promise<void> {
   const waktu = toWIB(new Date());
-  await sendMessage(
-    "login",
-    name,
+  const cleanIp = ip ? normalizeIp(ip) : "";
+  const location = cleanIp ? await lookupLocation(cleanIp) : null;
+
+  let text =
     `🔐 <b>Login Kru</b>\n\n` +
     `👤 <b>Nama:</b> ${name}\n` +
-    `🆔 <b>Username:</b> ${username}\n` +
-    `🕐 <b>Waktu (WIB):</b> ${waktu}`,
-  );
+    `🆔 <b>Username:</b> ${username}\n`;
+  if (cleanIp) {
+    text += `🌐 <b>Alamat IP:</b> ${cleanIp}\n`;
+    text += `📍 <b>Lokasi:</b> ${location ?? "Tidak diketahui"}\n`;
+  }
+  text += `🕐 <b>Waktu (WIB):</b> ${waktu}`;
+
+  await sendMessage("login", name, text);
 }
 
 export async function notifyClockIn(name: string, employeeCode: string): Promise<void> {
