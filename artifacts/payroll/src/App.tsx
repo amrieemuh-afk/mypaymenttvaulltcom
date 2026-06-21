@@ -29,6 +29,7 @@ import EditAnnouncement from "@/pages/pengumuman/[id]";
 import ScheduleList from "@/pages/jadwal/index";
 import AddSchedule from "@/pages/jadwal/tambah";
 import EditSchedule from "@/pages/jadwal/[id]";
+import KruManagement from "@/pages/kru/index";
 
 const queryClient = new QueryClient();
 
@@ -128,6 +129,11 @@ function App() {
                 <Route path="/jadwal">
                   <ProtectedRoute>
                     <Layout><ScheduleList /></Layout>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/kru">
+                  <ProtectedRoute>
+                    <Layout><KruManagement /></Layout>
                   </ProtectedRoute>
                 </Route>
                 <Route component={NotFound} />

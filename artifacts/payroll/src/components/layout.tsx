@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Megaphone,
   CalendarClock,
+  Anchor,
 } from "lucide-react";
 
 const navItems = [
@@ -24,6 +25,7 @@ const navItems = [
   { href: "/slip-gaji", label: "Slip Gaji", icon: ReceiptText },
   { href: "/pengumuman", label: "Pengumuman", icon: Megaphone },
   { href: "/jadwal", label: "Jadwal Kerja", icon: CalendarClock },
+  { href: "/kru", label: "Akun Kru", icon: Anchor },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
