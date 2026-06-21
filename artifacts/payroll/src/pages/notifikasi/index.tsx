@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -36,6 +36,7 @@ import {
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { RefreshCw, Trash2 } from "lucide-react";
+import { useNotificationBadge } from "@/hooks/use-notification-badge";
 
 const EVENT_LABELS: Record<string, string> = {
   login: "Login Kru",
@@ -66,9 +67,14 @@ function toWIBDisplay(isoString: string): string {
 
 export default function NotifikasiLog() {
   const queryClient = useQueryClient();
+  const { markAsSeen } = useNotificationBadge();
   const [eventType, setEventType] = useState<string>("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+
+  useEffect(() => {
+    markAsSeen();
+  }, []);
 
   const params = {
     ...(eventType !== "all" ? { eventType } : {}),

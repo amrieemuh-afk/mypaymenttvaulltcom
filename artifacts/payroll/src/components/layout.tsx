@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
+import { useNotificationBadge } from "@/hooks/use-notification-badge";
 import {
   LayoutDashboard,
   Users,
@@ -27,13 +28,14 @@ const navItems = [
   { href: "/pengumuman", label: "Pengumuman", icon: Megaphone },
   { href: "/jadwal", label: "Jadwal Kerja", icon: CalendarClock },
   { href: "/kru", label: "Akun Kru", icon: Anchor },
-  { href: "/notifikasi", label: "Notifikasi", icon: Bell },
+  { href: "/notifikasi", label: "Notifikasi", icon: Bell, badge: true },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { badgeCount } = useNotificationBadge();
 
   const isActive = (href: string) =>
     href === "/" ? location === "/" : location.startsWith(href);
@@ -59,8 +61,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           {/* Nav */}
           <nav style={{ flex: 1, padding: "12px 10px", overflowY: "auto" }}>
-            {navItems.map(({ href, label, icon: Icon }) => {
+            {navItems.map(({ href, label, icon: Icon, badge }) => {
               const active = isActive(href);
+              const count = badge ? badgeCount : 0;
               return (
                 <Link key={href} href={href}>
                   <div
@@ -83,6 +86,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   >
                     <Icon size={15} />
                     {label}
+                    {count > 0 && !active && (
+                      <span style={{
+                        marginLeft: "auto",
+                        background: "#e53e3e",
+                        color: "#fff",
+                        fontSize: 10,
+                        fontWeight: 700,
+                        borderRadius: 10,
+                        padding: "1px 6px",
+                        lineHeight: "16px",
+                        minWidth: 18,
+                        textAlign: "center",
+                      }}>
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
                     {active && <ChevronRight size={13} style={{ marginLeft: "auto", opacity: 0.5 }} />}
                   </div>
                 </Link>
@@ -146,8 +165,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </button>
           </div>
           <nav style={{ flex: 1, padding: "10px 8px" }}>
-            {navItems.map(({ href, label, icon: Icon }) => {
+            {navItems.map(({ href, label, icon: Icon, badge }) => {
               const active = isActive(href);
+              const count = badge ? badgeCount : 0;
               return (
                 <Link key={href} href={href}>
                   <div
@@ -163,6 +183,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   >
                     <Icon size={15} />
                     {label}
+                    {count > 0 && !active && (
+                      <span style={{
+                        marginLeft: "auto",
+                        background: "#e53e3e",
+                        color: "#fff",
+                        fontSize: 10,
+                        fontWeight: 700,
+                        borderRadius: 10,
+                        padding: "1px 6px",
+                        lineHeight: "16px",
+                        minWidth: 18,
+                        textAlign: "center",
+                      }}>
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
                   </div>
                 </Link>
               );

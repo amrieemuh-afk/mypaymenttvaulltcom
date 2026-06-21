@@ -11,4 +11,8 @@ eventType?: string;
 from?: string;
 to?: string;
 limit?: number;
+/**
+ * ISO 8601 timestamp — return only entries after this time
+ */
+since?: string;
 };

@@ -709,7 +709,8 @@ export const ListNotificationLogQueryParams = zod.object({
   "eventType": zod.coerce.string().optional(),
   "from": zod.coerce.string().optional(),
   "to": zod.coerce.string().optional(),
-  "limit": zod.coerce.number().optional()
+  "limit": zod.coerce.number().optional(),
+  "since": zod.coerce.string().optional().describe('ISO 8601 timestamp — return only entries after this time')
 })
 
 export const ListNotificationLogResponseItem = zod.object({

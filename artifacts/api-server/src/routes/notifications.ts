@@ -5,7 +5,7 @@ import { desc, and, gte, lte, eq } from "drizzle-orm";
 const router = Router();
 
 router.get("/log", async (req, res): Promise<void> => {
-  const { eventType, from, to, limit: limitParam } = req.query;
+  const { eventType, from, to, limit: limitParam, since } = req.query;
 
   const conditions = [];
 
@@ -25,6 +25,13 @@ router.get("/log", async (req, res): Promise<void> => {
     if (!isNaN(toDate.getTime())) {
       toDate.setHours(23, 59, 59, 999);
       conditions.push(lte(notificationLogsTable.sentAt, toDate));
+    }
+  }
+
+  if (typeof since === "string" && since) {
+    const sinceDate = new Date(since);
+    if (!isNaN(sinceDate.getTime())) {
+      conditions.push(gte(notificationLogsTable.sentAt, sinceDate));
     }
   }
 

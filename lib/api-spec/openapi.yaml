@@ -680,6 +680,12 @@ paths:
           required: false
           schema:
             type: integer
+        - name: since
+          in: query
+          required: false
+          description: ISO 8601 timestamp — return only entries after this time
+          schema:
+            type: string
       responses:
         "200":
           description: List of notification log entries
