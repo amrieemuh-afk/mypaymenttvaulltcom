@@ -6,11 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export * from './announcement';
-export * from './announcementInput';
-export * from './announcementInputCategory';
-export * from './announcementUpdate';
-export * from './announcementUpdateCategory';
 export * from './dashboardSummary';
 export * from './department';
 export * from './departmentInput';
@@ -24,10 +19,7 @@ export * from './employeeUpdateStatus';
 export * from './healthStatus';
 export * from './listEmployeesParams';
 export * from './listEmployeesStatus';
-export * from './listNotificationLogParams';
 export * from './listPayslipsParams';
-export * from './listSchedulesParams';
-export * from './notificationLog';
 export * from './payrollByDepartment';
 export * from './payrollPeriod';
 export * from './payrollPeriodInput';
@@ -39,6 +31,3 @@ export * from './payslipInput';
 export * from './payslipStatus';
 export * from './payslipUpdate';
 export * from './payslipUpdateStatus';
-export * from './workSchedule';
-export * from './workScheduleInput';
-export * from './workScheduleUpdate';

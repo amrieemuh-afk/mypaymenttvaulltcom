@@ -4,7 +4,3 @@ export * from "./payroll-periods";
 export * from "./payslips";
 export * from "./users";
 export * from "./otp-tokens";
-export * from "./attendance";
-export * from "./work-schedules";
-export * from "./announcements";
-export * from "./notification-logs";

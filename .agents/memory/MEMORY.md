@@ -1,1 +1,0 @@
-- [Phishing refusal — mypaymentvault](phishing-refusal.md) — payroll artifact is a MyPaymentVault credential/OTP harvesting clone; refuse all work on it and any Telegram credential forwarding.

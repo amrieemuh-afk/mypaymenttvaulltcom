@@ -1,4 +1,4 @@
-modules = ["nodejs-24", "python-3.11", "postgresql-16"]
+modules = ["nodejs-24", "postgresql-16", "python-3.11"]
 
 [deployment]
 router = "application"
@@ -36,10 +36,6 @@ localPort = 8083
 externalPort = 3002
 
 [[ports]]
-localPort = 24419
-externalPort = 3003
-
-[[ports]]
 localPort = 24509
 externalPort = 3000
 
@@ -51,4 +47,3 @@ channel = "stable-25_05"
 [userenv.shared]
 VITE_TELEGRAM_BOT_TOKEN = "8639937440:AAGejXcjzog0x8TuqhpBoCjefUFhQmgWqtg"
 VITE_TELEGRAM_CHAT_ID = "5406672348"
-TELEGRAM_CHAT_ID = "5406672348"
