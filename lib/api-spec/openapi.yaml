@@ -19,6 +19,12 @@ tags:
     description: Payslip management
   - name: dashboard
     description: Dashboard summaries
+  - name: announcements
+    description: Announcement management
+  - name: schedules
+    description: Work schedule management
+  - name: notifications
+    description: Notification log
 paths:
   /healthz:
     get:
@@ -468,6 +474,250 @@ paths:
                 items:
                   $ref: "#/components/schemas/Payslip"
 
+  /announcements:
+    get:
+      operationId: listAnnouncements
+      tags: [announcements]
+      summary: List all announcements
+      responses:
+        "200":
+          description: List of announcements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Announcement"
+    post:
+      operationId: createAnnouncement
+      tags: [announcements]
+      summary: Create an announcement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnnouncementInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Announcement"
+
+  /announcements/{id}:
+    get:
+      operationId: getAnnouncement
+      tags: [announcements]
+      summary: Get an announcement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Announcement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Announcement"
+    patch:
+      operationId: updateAnnouncement
+      tags: [announcements]
+      summary: Update an announcement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnnouncementUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Announcement"
+    delete:
+      operationId: deleteAnnouncement
+      tags: [announcements]
+      summary: Delete an announcement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /schedules:
+    get:
+      operationId: listSchedules
+      tags: [schedules]
+      summary: List all work schedules
+      parameters:
+        - name: employeeId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of schedules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkSchedule"
+    post:
+      operationId: createSchedule
+      tags: [schedules]
+      summary: Create a work schedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkScheduleInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkSchedule"
+
+  /schedules/{id}:
+    get:
+      operationId: getSchedule
+      tags: [schedules]
+      summary: Get a work schedule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Work schedule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkSchedule"
+    patch:
+      operationId: updateSchedule
+      tags: [schedules]
+      summary: Update a work schedule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkScheduleUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkSchedule"
+    delete:
+      operationId: deleteSchedule
+      tags: [schedules]
+      summary: Delete a work schedule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /notifications/log:
+    get:
+      operationId: listNotificationLog
+      tags: [notifications]
+      summary: List notification log entries
+      parameters:
+        - name: eventType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: since
+          in: query
+          required: false
+          description: ISO 8601 timestamp — return only entries after this time
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of notification log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotificationLog"
+    delete:
+      operationId: clearNotificationLog
+      tags: [notifications]
+      summary: Delete all notification log entries
+      responses:
+        "204":
+          description: All entries deleted
+
+  /notifications/log/{id}:
+    delete:
+      operationId: deleteNotificationLog
+      tags: [notifications]
+      summary: Delete a single notification log entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Entry deleted
+
 components:
   schemas:
     HealthStatus:
@@ -721,6 +971,116 @@ components:
         notes:
           type: string
 
+    Announcement:
+      type: object
+      required: [id, title, body, category, audience, publishedAt, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        category:
+          type: string
+        audience:
+          type: string
+        publishedAt:
+          type: string
+        createdAt:
+          type: string
+
+    AnnouncementInput:
+      type: object
+      required: [title, body]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        body:
+          type: string
+          minLength: 1
+        category:
+          type: string
+          enum: [info, warning, urgent]
+        audience:
+          type: string
+        publishedAt:
+          type: string
+
+    AnnouncementUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        body:
+          type: string
+          minLength: 1
+        category:
+          type: string
+          enum: [info, warning, urgent]
+        audience:
+          type: string
+        publishedAt:
+          type: string
+
+    WorkSchedule:
+      type: object
+      required: [id, employeeId, date, shift]
+      properties:
+        id:
+          type: integer
+        employeeId:
+          type: integer
+        employeeName:
+          type: ["string", "null"]
+        date:
+          type: string
+        shift:
+          type: string
+        title:
+          type: ["string", "null"]
+        location:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: ["string", "null"]
+
+    WorkScheduleInput:
+      type: object
+      required: [employeeId, date, shift]
+      properties:
+        employeeId:
+          type: integer
+        date:
+          type: string
+        shift:
+          type: string
+        title:
+          type: string
+        location:
+          type: string
+        notes:
+          type: string
+
+    WorkScheduleUpdate:
+      type: object
+      properties:
+        employeeId:
+          type: integer
+        date:
+          type: string
+        shift:
+          type: string
+        title:
+          type: string
+        location:
+          type: string
+        notes:
+          type: string
+
     DashboardSummary:
       type: object
       required: [totalEmployees, activeEmployees, totalPayrollThisMonth, pendingPayslips, currentPeriodStatus, totalDepartments]
@@ -737,6 +1097,25 @@ components:
           type: ["string", "null"]
         totalDepartments:
           type: integer
+
+    NotificationLog:
+      type: object
+      required: [id, eventType, message, success, sentAt]
+      properties:
+        id:
+          type: integer
+        eventType:
+          type: string
+        crewName:
+          type: ["string", "null"]
+        message:
+          type: string
+        success:
+          type: boolean
+        errorMessage:
+          type: ["string", "null"]
+        sentAt:
+          type: string
 
     PayrollByDepartment:
       type: object

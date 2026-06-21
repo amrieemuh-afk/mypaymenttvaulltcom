@@ -220,6 +220,89 @@ export interface PayslipUpdate {
   notes?: string;
 }
 
+export interface Announcement {
+  id: number;
+  title: string;
+  body: string;
+  category: string;
+  audience: string;
+  publishedAt: string;
+  createdAt: string;
+}
+
+export type AnnouncementInputCategory = typeof AnnouncementInputCategory[keyof typeof AnnouncementInputCategory];
+
+
+export const AnnouncementInputCategory = {
+  info: 'info',
+  warning: 'warning',
+  urgent: 'urgent',
+} as const;
+
+export interface AnnouncementInput {
+  /** @minLength 1 */
+  title: string;
+  /** @minLength 1 */
+  body: string;
+  category?: AnnouncementInputCategory;
+  audience?: string;
+  publishedAt?: string;
+}
+
+export type AnnouncementUpdateCategory = typeof AnnouncementUpdateCategory[keyof typeof AnnouncementUpdateCategory];
+
+
+export const AnnouncementUpdateCategory = {
+  info: 'info',
+  warning: 'warning',
+  urgent: 'urgent',
+} as const;
+
+export interface AnnouncementUpdate {
+  /** @minLength 1 */
+  title?: string;
+  /** @minLength 1 */
+  body?: string;
+  category?: AnnouncementUpdateCategory;
+  audience?: string;
+  publishedAt?: string;
+}
+
+export interface WorkSchedule {
+  id: number;
+  employeeId: number;
+  /** @nullable */
+  employeeName?: string | null;
+  date: string;
+  shift: string;
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  location?: string | null;
+  /** @nullable */
+  notes?: string | null;
+  /** @nullable */
+  createdAt?: string | null;
+}
+
+export interface WorkScheduleInput {
+  employeeId: number;
+  date: string;
+  shift: string;
+  title?: string;
+  location?: string;
+  notes?: string;
+}
+
+export interface WorkScheduleUpdate {
+  employeeId?: number;
+  date?: string;
+  shift?: string;
+  title?: string;
+  location?: string;
+  notes?: string;
+}
+
 export interface DashboardSummary {
   totalEmployees: number;
   activeEmployees: number;
@@ -228,6 +311,19 @@ export interface DashboardSummary {
   /** @nullable */
   currentPeriodStatus: string | null;
   totalDepartments: number;
+}
+
+export interface NotificationLog {
+  id: number;
+  eventType: string;
+  /** @nullable */
+  crewName?: string | null;
+  message: string;
+  success: boolean;
+  /** @nullable */
+  errorMessage?: string | null;
+  retryCount: number;
+  sentAt: string;
 }
 
 export interface PayrollByDepartment {
@@ -264,5 +360,23 @@ periodId?: number | null;
  * @nullable
  */
 employeeId?: number | null;
+};
+
+export type ListSchedulesParams = {
+/**
+ * @nullable
+ */
+employeeId?: number | null;
+};
+
+export type ListNotificationLogParams = {
+eventType?: string;
+from?: string;
+to?: string;
+limit?: number;
+/**
+ * ISO 8601 timestamp — return only entries after this time
+ */
+since?: string;
 };
 
