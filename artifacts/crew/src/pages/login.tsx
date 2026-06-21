@@ -99,8 +99,11 @@ export default function Login() {
           </div>
         </form>
 
-        <p className="mt-4 text-center text-xs text-muted-foreground">
-          Hubungi admin jika belum memiliki akun atau lupa kata sandi.
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          Belum punya akun?{" "}
+          <a href="/crew/daftar" className="font-medium text-primary hover:underline">
+            Daftar sekarang
+          </a>
         </p>
       </div>
     </div>

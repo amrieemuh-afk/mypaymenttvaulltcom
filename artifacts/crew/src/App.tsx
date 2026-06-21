@@ -14,6 +14,7 @@ import Attendance from "@/pages/attendance";
 import Schedule from "@/pages/schedule";
 import Announcements from "@/pages/announcements";
 import Profil from "@/pages/profil";
+import Daftar from "@/pages/daftar";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/login" component={Login} />
+      <Route path="/daftar" component={Daftar} />
 
       <Route path="/ganti-password">
         <ProtectedRoute allowMustChange>
