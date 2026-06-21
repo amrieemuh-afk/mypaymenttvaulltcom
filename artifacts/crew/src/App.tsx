@@ -13,6 +13,7 @@ import PayslipDetail from "@/pages/payslip-detail";
 import Attendance from "@/pages/attendance";
 import Schedule from "@/pages/schedule";
 import Announcements from "@/pages/announcements";
+import Profil from "@/pages/profil";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -73,6 +74,13 @@ function Router() {
         <ProtectedRoute>
           <Layout>
             <Announcements />
+          </Layout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/profil">
+        <ProtectedRoute>
+          <Layout>
+            <Profil />
           </Layout>
         </ProtectedRoute>
       </Route>

@@ -6,6 +6,7 @@ import {
   CalendarDays,
   Megaphone,
   LogOut,
+  UserCircle,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -47,10 +48,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <span className="font-semibold tracking-tight">Portal Kru</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {employee && (
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-secondary-foreground text-xs font-semibold">
+              <Link href="/profil" className="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-secondary/60 transition-colors">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold">
                   {initials(employee.name)}
                 </div>
                 <div className="hidden sm:block text-right leading-tight">
@@ -59,7 +60,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     {employee.employeeCode}
                   </p>
                 </div>
-              </div>
+              </Link>
             )}
             <Button
               variant="ghost"

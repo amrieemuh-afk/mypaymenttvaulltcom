@@ -88,6 +88,56 @@ router.post("/auth/logout", requireCrewAuth, (req, res): void => {
   res.status(204).send();
 });
 
+/* ─── Change Username ─── */
+const ChangeUsernameBody = z.object({
+  newUsername: z.string().min(3, "Username minimal 3 karakter").max(50).regex(/^[a-zA-Z0-9._-]+$/, "Username hanya boleh berisi huruf, angka, titik, garis bawah, atau tanda hubung"),
+  currentPassword: z.string().min(1),
+});
+
+router.post("/auth/change-username", requireCrewAuth, async (req, res): Promise<void> => {
+  const parsed = ChangeUsernameBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Permintaan tidak valid" });
+    return;
+  }
+
+  const employeeId = req.crewEmployeeId!;
+  const { newUsername, currentPassword } = parsed.data;
+
+  const [cred] = await db
+    .select()
+    .from(crewCredentialsTable)
+    .where(eq(crewCredentialsTable.employeeId, employeeId));
+
+  if (!cred) {
+    res.status(404).json({ error: "Akun tidak ditemukan" });
+    return;
+  }
+
+  const ok = await bcrypt.compare(currentPassword, cred.passwordHash);
+  if (!ok) {
+    res.status(401).json({ error: "Kata sandi salah" });
+    return;
+  }
+
+  const [existing] = await db
+    .select({ id: crewCredentialsTable.employeeId })
+    .from(crewCredentialsTable)
+    .where(eq(crewCredentialsTable.username, newUsername));
+
+  if (existing && existing.id !== employeeId) {
+    res.status(409).json({ error: "Username sudah digunakan, pilih yang lain" });
+    return;
+  }
+
+  await db
+    .update(crewCredentialsTable)
+    .set({ username: newUsername })
+    .where(eq(crewCredentialsTable.employeeId, employeeId));
+
+  res.json({ ok: true });
+});
+
 /* ─── Change Password ─── */
 const ChangePasswordBody = z.object({
   currentPassword: z.string().min(1),
