@@ -12,14 +12,18 @@ import {
   Menu,
   X,
   ChevronRight,
+  Megaphone,
+  CalendarClock,
 } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/karyawan", label: "Employees", icon: Users },
-  { href: "/departemen", label: "Departments", icon: Building2 },
-  { href: "/penggajian", label: "Payroll", icon: CalendarDays },
-  { href: "/slip-gaji", label: "Payslips", icon: ReceiptText },
+  { href: "/karyawan", label: "Karyawan", icon: Users },
+  { href: "/departemen", label: "Departemen", icon: Building2 },
+  { href: "/penggajian", label: "Penggajian", icon: CalendarDays },
+  { href: "/slip-gaji", label: "Slip Gaji", icon: ReceiptText },
+  { href: "/pengumuman", label: "Pengumuman", icon: Megaphone },
+  { href: "/jadwal", label: "Jadwal Kerja", icon: CalendarClock },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

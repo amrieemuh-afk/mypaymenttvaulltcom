@@ -7,6 +7,8 @@ import payslipsRouter from "./payslips";
 import dashboardRouter from "./dashboard";
 import authRouter from "./auth";
 import crewRouter from "./crew";
+import announcementsRouter from "./announcements";
+import schedulesRouter from "./schedules";
 import { requireAuth } from "../middleware/require-auth";
 
 const router: IRouter = Router();
@@ -20,5 +22,7 @@ router.use("/employees", requireAuth, employeesRouter);
 router.use("/payroll-periods", requireAuth, payrollPeriodsRouter);
 router.use("/payslips", requireAuth, payslipsRouter);
 router.use("/dashboard", requireAuth, dashboardRouter);
+router.use("/announcements", requireAuth, announcementsRouter);
+router.use("/schedules", requireAuth, schedulesRouter);
 
 export default router;

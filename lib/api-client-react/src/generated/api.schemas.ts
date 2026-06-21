@@ -266,3 +266,77 @@ periodId?: number | null;
 employeeId?: number | null;
 };
 
+export interface Announcement {
+  id: number;
+  title: string;
+  body: string;
+  category: string;
+  audience: string;
+  publishedAt: string;
+  createdAt: string;
+}
+
+export type AnnouncementInputCategory = 'info' | 'warning' | 'urgent';
+
+export interface AnnouncementInput {
+  /** @minLength 1 */
+  title: string;
+  /** @minLength 1 */
+  body: string;
+  category?: AnnouncementInputCategory;
+  audience?: string;
+  publishedAt?: string;
+}
+
+export type AnnouncementUpdateCategory = 'info' | 'warning' | 'urgent';
+
+export interface AnnouncementUpdate {
+  /** @minLength 1 */
+  title?: string;
+  /** @minLength 1 */
+  body?: string;
+  category?: AnnouncementUpdateCategory;
+  audience?: string;
+  publishedAt?: string;
+}
+
+export interface WorkSchedule {
+  id: number;
+  employeeId: number;
+  /** @nullable */
+  employeeName?: string | null;
+  date: string;
+  shift: string;
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  location?: string | null;
+  /** @nullable */
+  notes?: string | null;
+  /** @nullable */
+  createdAt?: string | null;
+}
+
+export interface WorkScheduleInput {
+  employeeId: number;
+  date: string;
+  shift: string;
+  title?: string;
+  location?: string;
+  notes?: string;
+}
+
+export interface WorkScheduleUpdate {
+  employeeId?: number;
+  date?: string;
+  shift?: string;
+  title?: string;
+  location?: string;
+  notes?: string;
+}
+
+export type ListSchedulesParams = {
+  /** @nullable */
+  employeeId?: number | null;
+};
+

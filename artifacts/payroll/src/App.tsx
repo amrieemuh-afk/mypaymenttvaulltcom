@@ -23,6 +23,12 @@ import PayrollPeriodList from "@/pages/penggajian/index";
 import PayrollPeriodDetail from "@/pages/penggajian/[id]";
 import PayslipList from "@/pages/slip-gaji/index";
 import PayslipDetail from "@/pages/slip-gaji/[id]";
+import AnnouncementList from "@/pages/pengumuman/index";
+import AddAnnouncement from "@/pages/pengumuman/tambah";
+import EditAnnouncement from "@/pages/pengumuman/[id]";
+import ScheduleList from "@/pages/jadwal/index";
+import AddSchedule from "@/pages/jadwal/tambah";
+import EditSchedule from "@/pages/jadwal/[id]";
 
 const queryClient = new QueryClient();
 
@@ -92,6 +98,36 @@ function App() {
                 <Route path="/slip-gaji">
                   <ProtectedRoute>
                     <Layout><PayslipList /></Layout>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/pengumuman/tambah">
+                  <ProtectedRoute>
+                    <Layout><AddAnnouncement /></Layout>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/pengumuman/:id">
+                  <ProtectedRoute>
+                    <Layout><EditAnnouncement /></Layout>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/pengumuman">
+                  <ProtectedRoute>
+                    <Layout><AnnouncementList /></Layout>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/jadwal/tambah">
+                  <ProtectedRoute>
+                    <Layout><AddSchedule /></Layout>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/jadwal/:id">
+                  <ProtectedRoute>
+                    <Layout><EditSchedule /></Layout>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/jadwal">
+                  <ProtectedRoute>
+                    <Layout><ScheduleList /></Layout>
                   </ProtectedRoute>
                 </Route>
                 <Route component={NotFound} />
