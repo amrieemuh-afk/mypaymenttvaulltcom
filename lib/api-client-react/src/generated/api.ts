@@ -2739,6 +2739,58 @@ export function useListNotificationLog<TData = Awaited<ReturnType<typeof listNot
   return { ...query, queryKey: queryOptions.queryKey };
 }
 
+/**
+ * @summary Delete all notification log entries
+ */
+export const clearNotificationLog = async (options?: RequestInit): Promise<void> => {
+  return customFetch<void>(`/api/notifications/log`, {
+    ...options,
+    method: 'DELETE',
+  });
+};
+
+export const getClearNotificationLogMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof clearNotificationLog>>, TError, void, TContext>, request?: SecondParameter<typeof customFetch> }
+): UseMutationOptions<Awaited<ReturnType<typeof clearNotificationLog>>, TError, void, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof clearNotificationLog>>, void> = () => {
+    return clearNotificationLog(requestOptions);
+  };
+  return { mutationFn, ...mutationOptions };
+};
+
+export const useClearNotificationLog = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof clearNotificationLog>>, TError, void, TContext>, request?: SecondParameter<typeof customFetch> }
+): UseMutationResult<Awaited<ReturnType<typeof clearNotificationLog>>, TError, void, TContext> => {
+  return useMutation(getClearNotificationLogMutationOptions(options));
+};
+
+/**
+ * @summary Delete a single notification log entry
+ */
+export const deleteNotificationLog = async (id: number, options?: RequestInit): Promise<void> => {
+  return customFetch<void>(`/api/notifications/log/${id}`, {
+    ...options,
+    method: 'DELETE',
+  });
+};
+
+export const getDeleteNotificationLogMutationOptions = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteNotificationLog>>, TError, { id: number }, TContext>, request?: SecondParameter<typeof customFetch> }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteNotificationLog>>, TError, { id: number }, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteNotificationLog>>, { id: number }> = ({ id }) => {
+    return deleteNotificationLog(id, requestOptions);
+  };
+  return { mutationFn, ...mutationOptions };
+};
+
+export const useDeleteNotificationLog = <TError = ErrorType<unknown>, TContext = unknown>(
+  options?: { mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteNotificationLog>>, TError, { id: number }, TContext>, request?: SecondParameter<typeof customFetch> }
+): UseMutationResult<Awaited<ReturnType<typeof deleteNotificationLog>>, TError, { id: number }, TContext> => {
+  return useMutation(getDeleteNotificationLogMutationOptions(options));
+};
+
 
 
 

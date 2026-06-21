@@ -51,4 +51,19 @@ router.get("/log", async (req, res): Promise<void> => {
   );
 });
 
+router.delete("/log", async (_req, res): Promise<void> => {
+  await db.delete(notificationLogsTable);
+  res.status(204).end();
+});
+
+router.delete("/log/:id", async (req, res): Promise<void> => {
+  const id = Number(req.params.id);
+  if (isNaN(id)) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+  await db.delete(notificationLogsTable).where(eq(notificationLogsTable.id, id));
+  res.status(204).end();
+});
+
 export default router;

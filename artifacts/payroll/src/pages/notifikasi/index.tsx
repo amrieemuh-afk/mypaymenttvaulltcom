@@ -17,9 +17,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useListNotificationLog, getListNotificationLogQueryKey } from "@workspace/api-client-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  useListNotificationLog,
+  getListNotificationLogQueryKey,
+  useClearNotificationLog,
+  useDeleteNotificationLog,
+} from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Trash2 } from "lucide-react";
 
 const EVENT_LABELS: Record<string, string> = {
   login: "Login Kru",
@@ -64,6 +80,22 @@ export default function NotifikasiLog() {
     query: { queryKey: getListNotificationLogQueryKey(params) },
   });
 
+  const { mutate: clearAll, isPending: isClearing } = useClearNotificationLog({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["/api/notifications/log"] });
+      },
+    },
+  });
+
+  const { mutate: deleteOne } = useDeleteNotificationLog({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["/api/notifications/log"] });
+      },
+    },
+  });
+
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: getListNotificationLogQueryKey(params) });
   };
@@ -75,10 +107,42 @@ export default function NotifikasiLog() {
           <h1 className="text-xl sm:text-3xl font-bold tracking-tight">Riwayat Notifikasi</h1>
           <p className="text-sm text-muted-foreground mt-1">Log pengiriman notifikasi Telegram sistem</p>
         </div>
-        <Button variant="outline" size="sm" onClick={handleRefresh}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Perbarui
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleRefresh}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Perbarui
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="destructive"
+                size="sm"
+                disabled={isClearing || !logs?.length}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Hapus Semua
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Hapus Semua Riwayat?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Semua entri log notifikasi akan dihapus secara permanen dan tidak dapat dikembalikan.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => clearAll()}
+                >
+                  Ya, Hapus Semua
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
 
       {/* Filters */}
@@ -136,6 +200,7 @@ export default function NotifikasiLog() {
               <TableHead>Status</TableHead>
               <TableHead>Percobaan</TableHead>
               <TableHead>Keterangan Error</TableHead>
+              <TableHead className="w-[60px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -183,6 +248,32 @@ export default function NotifikasiLog() {
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground max-w-[260px] truncate">
                     {log.errorMessage ?? <span>—</span>}
+                  </TableCell>
+                  <TableCell>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Hapus Entri Ini?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Entri log ini akan dihapus secara permanen.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Batal</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            onClick={() => deleteOne({ id: log.id })}
+                          >
+                            Hapus
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))

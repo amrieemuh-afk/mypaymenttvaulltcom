@@ -689,6 +689,28 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/NotificationLog"
+    delete:
+      operationId: clearNotificationLog
+      tags: [notifications]
+      summary: Delete all notification log entries
+      responses:
+        "204":
+          description: All entries deleted
+
+  /notifications/log/{id}:
+    delete:
+      operationId: deleteNotificationLog
+      tags: [notifications]
+      summary: Delete a single notification log entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Entry deleted
 
 components:
   schemas:
