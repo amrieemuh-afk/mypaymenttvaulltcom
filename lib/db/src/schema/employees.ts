@@ -15,7 +15,6 @@ export const employeesTable = pgTable("employees", {
   transportAllowance: numeric("transport_allowance", { precision: 15, scale: 2 }).notNull().default("0"),
   mealAllowance: numeric("meal_allowance", { precision: 15, scale: 2 }).notNull().default("0"),
   status: text("status").notNull().default("active"),
-  profileVerified: boolean("profile_verified").notNull().default(false),
   joinDate: date("join_date", { mode: "string" }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),

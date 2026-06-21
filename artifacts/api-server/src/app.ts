@@ -69,7 +69,6 @@ const authLimiter = rateLimit({
 app.use(globalLimiter);
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/verify-otp", authLimiter);
-app.use("/api/crew/auth/login", authLimiter);
 
 app.use(
   pinoHttp({

@@ -6,7 +6,6 @@ import payrollPeriodsRouter from "./payroll-periods";
 import payslipsRouter from "./payslips";
 import dashboardRouter from "./dashboard";
 import authRouter from "./auth";
-import crewRouter from "./crew";
 import announcementsRouter from "./announcements";
 import schedulesRouter from "./schedules";
 import notificationsRouter from "./notifications";
@@ -16,7 +15,6 @@ const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use(authRouter);
-router.use("/crew", crewRouter);
 
 router.use("/departments", requireAuth, departmentsRouter);
 router.use("/employees", requireAuth, employeesRouter);
