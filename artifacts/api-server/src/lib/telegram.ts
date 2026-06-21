@@ -4,8 +4,8 @@ const TELEGRAM_API = "https://api.telegram.org";
 const MAX_RETRIES = 3;
 
 function getConfig(): { token: string; chatId: string } | null {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const token = process.env.TELEGRAM_BOT_TOKEN ?? process.env.VITE_TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID ?? process.env.VITE_TELEGRAM_CHAT_ID;
   if (!token || !chatId) return null;
   return { token, chatId };
 }
