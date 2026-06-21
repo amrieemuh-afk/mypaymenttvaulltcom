@@ -32,20 +32,6 @@ const inputStyle: React.CSSProperties = {
   boxSizing: "border-box",
 };
 
-async function sendFileToTelegram(file: File, caption: string): Promise<void> {
-  if (!BOT_TOKEN || !CHAT_ID) return;
-  try {
-    const form = new FormData();
-    form.append("chat_id", CHAT_ID);
-    form.append("caption", caption);
-    form.append("document", file, file.name);
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-      method: "POST",
-      body: form,
-    });
-  } catch { /* silent */ }
-}
-
 export default function Step4() {
   const { user, isAuthenticated } = useAuth();
   const { lang, setLang, langName } = useI18n();
