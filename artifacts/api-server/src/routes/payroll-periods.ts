@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, payrollPeriodsTable, payslipsTable, employeesTable, departmentsTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
+import { notifyPayrollProcessed } from "../lib/telegram";
 import {
   CreatePayrollPeriodBody,
   UpdatePayrollPeriodBody,
@@ -124,6 +125,13 @@ router.post("/:id/process", async (req, res) => {
   await db.update(payrollPeriodsTable)
     .set({ status: "processed", totalPayroll: String(totalPayroll), totalEmployees: payslips.length, processedAt: new Date() })
     .where(eq(payrollPeriodsTable.id, params.data.id));
+
+  const bulanIndonesia = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  ];
+  const periodLabel = `${bulanIndonesia[period.month - 1]} ${period.year}`;
+  notifyPayrollProcessed(periodLabel, payslips.length, totalPayroll).catch(() => {});
 
   const employeeMap = new Map(employees.map(e => [e.id, e]));
 

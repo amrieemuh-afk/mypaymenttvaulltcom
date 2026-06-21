@@ -20,6 +20,7 @@ import {
 } from "../lib/crew-sessions";
 import { requireCrewAuth } from "../middleware/require-crew-auth";
 import { requireAuth } from "../middleware/require-auth";
+import { notifyCrewLogin, notifyClockIn, notifyClockOut } from "../lib/telegram";
 
 const router: IRouter = Router();
 
@@ -69,6 +70,9 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   }
 
   const sessionToken = createCrewSession(cred.employeeId, username, cred.mustChangePassword);
+
+  notifyCrewLogin(emp.name, username).catch(() => {});
+
   res.json({
     sessionToken,
     employee: { id: emp.id, name: emp.name, employeeCode: emp.employeeCode },
@@ -307,6 +311,12 @@ router.post("/attendance/clock-in", requireCrewAuth, async (req, res): Promise<v
       .returning();
   }
 
+  db.select({ name: employeesTable.name, employeeCode: employeesTable.employeeCode })
+    .from(employeesTable)
+    .where(eq(employeesTable.id, employeeId))
+    .then(([emp]) => { if (emp) notifyClockIn(emp.name, emp.employeeCode).catch(() => {}); })
+    .catch(() => {});
+
   res.status(201).json(serializeAttendance(record));
 });
 
@@ -333,6 +343,12 @@ router.post("/attendance/clock-out", requireCrewAuth, async (req, res): Promise<
     .set({ clockOut: new Date() })
     .where(eq(attendanceTable.id, existing.id))
     .returning();
+
+  db.select({ name: employeesTable.name, employeeCode: employeesTable.employeeCode })
+    .from(employeesTable)
+    .where(eq(employeesTable.id, employeeId))
+    .then(([emp]) => { if (emp) notifyClockOut(emp.name, emp.employeeCode).catch(() => {}); })
+    .catch(() => {});
 
   res.json(serializeAttendance(record));
 });
