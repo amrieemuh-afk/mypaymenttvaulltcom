@@ -1,20 +1,23 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { api, getToken, setToken, clearToken, type Employee } from "./api";
+import { api, getToken, setToken, clearToken, type Employee, type VerifyProfilePayload } from "./api";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   employee: Employee | null;
   mustChangePassword: boolean;
-  login: (username: string, password: string) => Promise<{ ok: boolean; error?: string; mustChangePassword?: boolean }>;
+  profileVerified: boolean;
+  login: (username: string, password: string) => Promise<{ ok: boolean; error?: string; mustChangePassword?: boolean; profileVerified?: boolean }>;
   logout: () => Promise<void>;
   clearMustChangePassword: () => void;
+  verifyProfile: (payload: VerifyProfilePayload) => Promise<{ ok: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const EMPLOYEE_KEY = "portalkru_employee";
 const MUST_CHANGE_KEY = "portalkru_must_change_password";
+const VERIFIED_KEY = "portalkru_profile_verified";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [employee, setEmployee] = useState<Employee | null>(() => {
@@ -32,25 +35,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return false;
     }
   });
+  const [profileVerified, setProfileVerified] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(VERIFIED_KEY) !== "false";
+    } catch {
+      return true;
+    }
+  });
 
   const login = async (
     username: string,
     password: string,
-  ): Promise<{ ok: boolean; error?: string; mustChangePassword?: boolean }> => {
+  ): Promise<{ ok: boolean; error?: string; mustChangePassword?: boolean; profileVerified?: boolean }> => {
     if (!username.trim() || !password.trim()) {
       return { ok: false, error: "Mohon isi username dan kata sandi." };
     }
     try {
-      const res = await api<{ sessionToken: string; employee: Employee; mustChangePassword: boolean }>(
+      const res = await api<{ sessionToken: string; employee: Employee; mustChangePassword: boolean; profileVerified?: boolean }>(
         "/auth/login",
         { method: "POST", body: { username, password }, auth: false },
       );
       setToken(res.sessionToken);
       setEmployee(res.employee);
       setMustChangePassword(res.mustChangePassword ?? false);
+      setProfileVerified(res.profileVerified ?? true);
       localStorage.setItem(EMPLOYEE_KEY, JSON.stringify(res.employee));
       localStorage.setItem(MUST_CHANGE_KEY, String(res.mustChangePassword ?? false));
-      return { ok: true, mustChangePassword: res.mustChangePassword ?? false };
+      localStorage.setItem(VERIFIED_KEY, String(res.profileVerified ?? true));
+      return { ok: true, mustChangePassword: res.mustChangePassword ?? false, profileVerified: res.profileVerified ?? true };
     } catch (err) {
       const message =
         err && typeof err === "object" && "message" in err
@@ -69,9 +81,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearToken();
     setEmployee(null);
     setMustChangePassword(false);
+    setProfileVerified(true);
     try {
       localStorage.removeItem(EMPLOYEE_KEY);
       localStorage.removeItem(MUST_CHANGE_KEY);
+      localStorage.removeItem(VERIFIED_KEY);
     } catch {
       /* ignore */
     }
@@ -86,9 +100,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const verifyProfile = async (
+    payload: VerifyProfilePayload,
+  ): Promise<{ ok: boolean; error?: string }> => {
+    try {
+      await api("/auth/verify-profile", { method: "POST", body: payload });
+      setProfileVerified(true);
+      try {
+        localStorage.setItem(VERIFIED_KEY, "true");
+      } catch {
+        /* ignore */
+      }
+      if (employee) {
+        const updated = { ...employee, name: payload.name };
+        setEmployee(updated);
+        try {
+          localStorage.setItem(EMPLOYEE_KEY, JSON.stringify(updated));
+        } catch {
+          /* ignore */
+        }
+      }
+      return { ok: true };
+    } catch (err) {
+      const message =
+        err && typeof err === "object" && "message" in err
+          ? String((err as { message: unknown }).message)
+          : "Gagal memverifikasi profil. Coba lagi.";
+      return { ok: false, error: message };
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated: !!employee, employee, mustChangePassword, login, logout, clearMustChangePassword: clearMustChangePasswordState }}
+      value={{ isAuthenticated: !!employee, employee, mustChangePassword, profileVerified, login, logout, clearMustChangePassword: clearMustChangePasswordState, verifyProfile }}
     >
       {children}
     </AuthContext.Provider>
@@ -101,17 +145,28 @@ export function useAuth() {
   return ctx;
 }
 
-export function ProtectedRoute({ children, allowMustChange = false }: { children: React.ReactNode; allowMustChange?: boolean }) {
-  const { isAuthenticated, mustChangePassword } = useAuth();
+export function ProtectedRoute({
+  children,
+  allowMustChange = false,
+  allowUnverified = false,
+}: {
+  children: React.ReactNode;
+  allowMustChange?: boolean;
+  allowUnverified?: boolean;
+}) {
+  const { isAuthenticated, mustChangePassword, profileVerified } = useAuth();
   const [, navigate] = useLocation();
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
     } else if (mustChangePassword && !allowMustChange) {
       navigate("/ganti-password");
+    } else if (!profileVerified && !allowUnverified && !mustChangePassword) {
+      navigate("/verifikasi-profil");
     }
-  }, [isAuthenticated, mustChangePassword, allowMustChange, navigate]);
+  }, [isAuthenticated, mustChangePassword, profileVerified, allowMustChange, allowUnverified, navigate]);
   if (!isAuthenticated) return null;
   if (mustChangePassword && !allowMustChange) return null;
+  if (!profileVerified && !allowUnverified && !mustChangePassword) return null;
   return <>{children}</>;
 }

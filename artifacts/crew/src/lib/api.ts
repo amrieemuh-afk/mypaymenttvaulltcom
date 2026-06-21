@@ -91,6 +91,14 @@ export interface Employee {
   employeeCode: string;
 }
 
+export interface VerifyProfilePayload {
+  name: string;
+  position: string;
+  departmentName: string;
+  phone?: string;
+  email?: string;
+}
+
 export interface Profile {
   id: number;
   employeeCode: string;

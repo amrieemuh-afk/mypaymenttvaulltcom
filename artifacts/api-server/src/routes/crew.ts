@@ -76,6 +76,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
       name,
       position: "Kru",
       departmentId: dept.id,
+      profileVerified: true,
       joinDate: new Date().toISOString().slice(0, 10),
     })
     .returning({ id: employeesTable.id, name: employeesTable.name, employeeCode: employeesTable.employeeCode });
@@ -128,7 +129,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   }
 
   const [emp] = await db
-    .select({ id: employeesTable.id, name: employeesTable.name, employeeCode: employeesTable.employeeCode })
+    .select({ id: employeesTable.id, name: employeesTable.name, employeeCode: employeesTable.employeeCode, profileVerified: employeesTable.profileVerified })
     .from(employeesTable)
     .where(eq(employeesTable.id, cred.employeeId));
 
@@ -145,6 +146,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     sessionToken,
     employee: { id: emp.id, name: emp.name, employeeCode: emp.employeeCode },
     mustChangePassword: cred.mustChangePassword,
+    profileVerified: emp.profileVerified,
   });
 });
 
@@ -202,6 +204,51 @@ router.post("/auth/change-username", requireCrewAuth, async (req, res): Promise<
     .update(crewCredentialsTable)
     .set({ username: newUsername })
     .where(eq(crewCredentialsTable.employeeId, employeeId));
+
+  res.json({ ok: true });
+});
+
+/* ─── Verify Profile (first login confirmation) ─── */
+const VerifyProfileBody = z.object({
+  name: z.string().min(2, "Nama minimal 2 karakter").max(100),
+  position: z.string().min(1, "Jabatan wajib diisi").max(100),
+  departmentName: z.string().min(1, "Nama kapal/unit wajib diisi").max(100),
+  phone: z.string().max(30).optional().or(z.literal("")),
+  email: z.string().email("Email tidak valid").max(120).optional().or(z.literal("")),
+});
+
+router.post("/auth/verify-profile", requireCrewAuth, async (req, res): Promise<void> => {
+  const parsed = VerifyProfileBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.issues[0]?.message ?? "Permintaan tidak valid" });
+    return;
+  }
+
+  const employeeId = req.crewEmployeeId!;
+  const { name, position, departmentName, phone, email } = parsed.data;
+
+  let [dept] = await db
+    .select({ id: departmentsTable.id })
+    .from(departmentsTable)
+    .where(eq(departmentsTable.name, departmentName));
+  if (!dept) {
+    [dept] = await db
+      .insert(departmentsTable)
+      .values({ name: departmentName })
+      .returning({ id: departmentsTable.id });
+  }
+
+  await db
+    .update(employeesTable)
+    .set({
+      name,
+      position,
+      departmentId: dept.id,
+      phone: phone ? phone : null,
+      email: email ? email : null,
+      profileVerified: true,
+    })
+    .where(eq(employeesTable.id, employeeId));
 
   res.json({ ok: true });
 });
@@ -268,6 +315,7 @@ router.get("/me", requireCrewAuth, async (req, res): Promise<void> => {
       transportAllowance: employeesTable.transportAllowance,
       mealAllowance: employeesTable.mealAllowance,
       status: employeesTable.status,
+      profileVerified: employeesTable.profileVerified,
       joinDate: employeesTable.joinDate,
     })
     .from(employeesTable)

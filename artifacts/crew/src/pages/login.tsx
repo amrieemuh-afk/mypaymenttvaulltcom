@@ -27,6 +27,8 @@ export default function Login() {
     if (res.ok) {
       if (res.mustChangePassword) {
         navigate("/ganti-password");
+      } else if (res.profileVerified === false) {
+        navigate("/verifikasi-profil");
       } else {
         navigate("/");
       }

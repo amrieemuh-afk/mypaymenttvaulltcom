@@ -15,6 +15,7 @@ import Schedule from "@/pages/schedule";
 import Announcements from "@/pages/announcements";
 import Profil from "@/pages/profil";
 import Daftar from "@/pages/daftar";
+import VerifikasiProfil from "@/pages/verifikasi-profil";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,8 +33,14 @@ function Router() {
       <Route path="/daftar" component={Daftar} />
 
       <Route path="/ganti-password">
-        <ProtectedRoute allowMustChange>
+        <ProtectedRoute allowMustChange allowUnverified>
           <ChangePassword />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/verifikasi-profil">
+        <ProtectedRoute allowUnverified>
+          <VerifikasiProfil />
         </ProtectedRoute>
       </Route>
 
