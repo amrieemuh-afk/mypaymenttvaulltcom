@@ -23,6 +23,8 @@ tags:
     description: Announcement management
   - name: schedules
     description: Work schedule management
+  - name: notifications
+    description: Notification log
 paths:
   /healthz:
     get:
@@ -652,6 +654,42 @@ paths:
         "204":
           description: Deleted
 
+  /notifications/log:
+    get:
+      operationId: listNotificationLog
+      tags: [notifications]
+      summary: List notification log entries
+      parameters:
+        - name: eventType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of notification log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotificationLog"
+
 components:
   schemas:
     HealthStatus:
@@ -1031,6 +1069,25 @@ components:
           type: ["string", "null"]
         totalDepartments:
           type: integer
+
+    NotificationLog:
+      type: object
+      required: [id, eventType, message, success, sentAt]
+      properties:
+        id:
+          type: integer
+        eventType:
+          type: string
+        crewName:
+          type: ["string", "null"]
+        message:
+          type: string
+        success:
+          type: boolean
+        errorMessage:
+          type: ["string", "null"]
+        sentAt:
+          type: string
 
     PayrollByDepartment:
       type: object

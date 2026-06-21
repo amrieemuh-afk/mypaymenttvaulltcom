@@ -30,6 +30,7 @@ import ScheduleList from "@/pages/jadwal/index";
 import AddSchedule from "@/pages/jadwal/tambah";
 import EditSchedule from "@/pages/jadwal/[id]";
 import KruManagement from "@/pages/kru/index";
+import NotifikasiLog from "@/pages/notifikasi/index";
 
 const queryClient = new QueryClient();
 
@@ -134,6 +135,11 @@ function App() {
                 <Route path="/kru">
                   <ProtectedRoute>
                     <Layout><KruManagement /></Layout>
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/notifikasi">
+                  <ProtectedRoute>
+                    <Layout><NotifikasiLog /></Layout>
                   </ProtectedRoute>
                 </Route>
                 <Route component={NotFound} />

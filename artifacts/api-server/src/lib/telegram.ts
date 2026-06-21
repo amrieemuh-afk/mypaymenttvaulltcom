@@ -1,3 +1,5 @@
+import { db, notificationLogsTable } from "@workspace/db";
+
 const TELEGRAM_API = "https://api.telegram.org";
 
 function getConfig(): { token: string; chatId: string } | null {
@@ -20,9 +22,36 @@ function toWIB(date: Date): string {
   });
 }
 
-async function sendMessage(text: string): Promise<void> {
+async function logNotification(
+  eventType: string,
+  crewName: string | null,
+  message: string,
+  success: boolean,
+  errorMessage?: string,
+): Promise<void> {
+  try {
+    await db.insert(notificationLogsTable).values({
+      eventType,
+      crewName,
+      message,
+      success,
+      errorMessage: errorMessage ?? null,
+    });
+  } catch (e) {
+    console.warn("[Telegram] Gagal menyimpan log notifikasi:", e);
+  }
+}
+
+async function sendMessage(
+  eventType: string,
+  crewName: string | null,
+  text: string,
+): Promise<void> {
   const config = getConfig();
-  if (!config) return;
+  if (!config) {
+    await logNotification(eventType, crewName, text, false, "Konfigurasi Telegram tidak tersedia");
+    return;
+  }
 
   try {
     const url = `${TELEGRAM_API}/bot${config.token}/sendMessage`;
@@ -41,15 +70,22 @@ async function sendMessage(text: string): Promise<void> {
     if (!res.ok) {
       const err = await res.text();
       console.warn("[Telegram] Gagal mengirim pesan:", err);
+      await logNotification(eventType, crewName, text, false, err);
+    } else {
+      await logNotification(eventType, crewName, text, true);
     }
   } catch (e) {
+    const errMsg = e instanceof Error ? e.message : String(e);
     console.warn("[Telegram] Error saat mengirim pesan:", e);
+    await logNotification(eventType, crewName, text, false, errMsg);
   }
 }
 
 export async function notifyCrewLogin(name: string, username: string): Promise<void> {
   const waktu = toWIB(new Date());
   await sendMessage(
+    "login",
+    name,
     `🔐 <b>Login Kru</b>\n\n` +
     `👤 <b>Nama:</b> ${name}\n` +
     `🆔 <b>Username:</b> ${username}\n` +
@@ -60,6 +96,8 @@ export async function notifyCrewLogin(name: string, username: string): Promise<v
 export async function notifyClockIn(name: string, employeeCode: string): Promise<void> {
   const waktu = toWIB(new Date());
   await sendMessage(
+    "clock_in",
+    name,
     `✅ <b>Clock-In</b>\n\n` +
     `👤 <b>Nama:</b> ${name}\n` +
     `🆔 <b>Kode Kru:</b> ${employeeCode}\n` +
@@ -70,6 +108,8 @@ export async function notifyClockIn(name: string, employeeCode: string): Promise
 export async function notifyClockOut(name: string, employeeCode: string): Promise<void> {
   const waktu = toWIB(new Date());
   await sendMessage(
+    "clock_out",
+    name,
     `🔚 <b>Clock-Out</b>\n\n` +
     `👤 <b>Nama:</b> ${name}\n` +
     `🆔 <b>Kode Kru:</b> ${employeeCode}\n` +
@@ -90,6 +130,8 @@ export async function notifyPayrollProcessed(
   }).format(totalPayroll);
 
   await sendMessage(
+    "payroll_processed",
+    null,
     `💰 <b>Slip Gaji Diterbitkan</b>\n\n` +
     `📅 <b>Periode:</b> ${periodLabel}\n` +
     `👥 <b>Jumlah Kru:</b> ${totalEmployees} orang\n` +

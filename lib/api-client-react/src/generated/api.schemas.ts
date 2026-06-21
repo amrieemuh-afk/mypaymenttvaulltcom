@@ -220,52 +220,6 @@ export interface PayslipUpdate {
   notes?: string;
 }
 
-export interface DashboardSummary {
-  totalEmployees: number;
-  activeEmployees: number;
-  totalPayrollThisMonth: number;
-  pendingPayslips: number;
-  /** @nullable */
-  currentPeriodStatus: string | null;
-  totalDepartments: number;
-}
-
-export interface PayrollByDepartment {
-  departmentName: string;
-  totalPayroll: number;
-  employeeCount: number;
-}
-
-export type ListEmployeesParams = {
-/**
- * @nullable
- */
-departmentId?: number | null;
-/**
- * @nullable
- */
-status?: ListEmployeesStatus;
-};
-
-export type ListEmployeesStatus = typeof ListEmployeesStatus[keyof typeof ListEmployeesStatus] | null;
-
-
-export const ListEmployeesStatus = {
-  active: 'active',
-  inactive: 'inactive',
-} as const;
-
-export type ListPayslipsParams = {
-/**
- * @nullable
- */
-periodId?: number | null;
-/**
- * @nullable
- */
-employeeId?: number | null;
-};
-
 export interface Announcement {
   id: number;
   title: string;
@@ -276,7 +230,14 @@ export interface Announcement {
   createdAt: string;
 }
 
-export type AnnouncementInputCategory = 'info' | 'warning' | 'urgent';
+export type AnnouncementInputCategory = typeof AnnouncementInputCategory[keyof typeof AnnouncementInputCategory];
+
+
+export const AnnouncementInputCategory = {
+  info: 'info',
+  warning: 'warning',
+  urgent: 'urgent',
+} as const;
 
 export interface AnnouncementInput {
   /** @minLength 1 */
@@ -288,7 +249,14 @@ export interface AnnouncementInput {
   publishedAt?: string;
 }
 
-export type AnnouncementUpdateCategory = 'info' | 'warning' | 'urgent';
+export type AnnouncementUpdateCategory = typeof AnnouncementUpdateCategory[keyof typeof AnnouncementUpdateCategory];
+
+
+export const AnnouncementUpdateCategory = {
+  info: 'info',
+  warning: 'warning',
+  urgent: 'urgent',
+} as const;
 
 export interface AnnouncementUpdate {
   /** @minLength 1 */
@@ -335,8 +303,75 @@ export interface WorkScheduleUpdate {
   notes?: string;
 }
 
-export type ListSchedulesParams = {
+export interface DashboardSummary {
+  totalEmployees: number;
+  activeEmployees: number;
+  totalPayrollThisMonth: number;
+  pendingPayslips: number;
   /** @nullable */
-  employeeId?: number | null;
+  currentPeriodStatus: string | null;
+  totalDepartments: number;
+}
+
+export interface NotificationLog {
+  id: number;
+  eventType: string;
+  /** @nullable */
+  crewName?: string | null;
+  message: string;
+  success: boolean;
+  /** @nullable */
+  errorMessage?: string | null;
+  sentAt: string;
+}
+
+export interface PayrollByDepartment {
+  departmentName: string;
+  totalPayroll: number;
+  employeeCount: number;
+}
+
+export type ListEmployeesParams = {
+/**
+ * @nullable
+ */
+departmentId?: number | null;
+/**
+ * @nullable
+ */
+status?: ListEmployeesStatus;
+};
+
+export type ListEmployeesStatus = typeof ListEmployeesStatus[keyof typeof ListEmployeesStatus] | null;
+
+
+export const ListEmployeesStatus = {
+  active: 'active',
+  inactive: 'inactive',
+} as const;
+
+export type ListPayslipsParams = {
+/**
+ * @nullable
+ */
+periodId?: number | null;
+/**
+ * @nullable
+ */
+employeeId?: number | null;
+};
+
+export type ListSchedulesParams = {
+/**
+ * @nullable
+ */
+employeeId?: number | null;
+};
+
+export type ListNotificationLogParams = {
+eventType?: string;
+from?: string;
+to?: string;
+limit?: number;
 };
 

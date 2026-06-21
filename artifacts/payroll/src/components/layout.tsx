@@ -15,6 +15,7 @@ import {
   Megaphone,
   CalendarClock,
   Anchor,
+  Bell,
 } from "lucide-react";
 
 const navItems = [
@@ -26,6 +27,7 @@ const navItems = [
   { href: "/pengumuman", label: "Pengumuman", icon: Megaphone },
   { href: "/jadwal", label: "Jadwal Kerja", icon: CalendarClock },
   { href: "/kru", label: "Akun Kru", icon: Anchor },
+  { href: "/notifikasi", label: "Notifikasi", icon: Bell },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
