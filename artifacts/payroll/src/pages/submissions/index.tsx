@@ -12,12 +12,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RefreshCw, Search, Inbox, FileText, CreditCard, CheckCircle2, Clock } from "lucide-react";
+
+const INQUIRY_OPTIONS = [
+  "Account Inquiry",
+  "Payment Issue",
+  "Card Inquiry",
+  "Identity Verification",
+  "Security Concern",
+  "Other",
+];
 
 interface ContactSubmission {
   id: number;
@@ -118,10 +134,22 @@ function StatusBadge({ status }: { status: "new" | "handled" }) {
 
 export default function SubmissionsPage() {
   const [search, setSearch] = useState("");
+  const [inquiryFilter, setInquiryFilter] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [selected, setSelected] = useState<ContactSubmission | null>(null);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 15;
   const queryClient = useQueryClient();
+
+  const hasActiveFilters = inquiryFilter !== "all" || fromDate !== "" || toDate !== "";
+
+  function resetFilters() {
+    setInquiryFilter("all");
+    setFromDate("");
+    setToDate("");
+    setPage(1);
+  }
 
   const { data: submissions = [], isLoading, refetch } = useQuery<ContactSubmission[]>({
     queryKey: ["/api/submissions/contact"],
@@ -160,15 +188,32 @@ export default function SubmissionsPage() {
   });
 
   const filtered = submissions.filter((s) => {
-    if (!search.trim()) return true;
-    const q = search.toLowerCase();
-    const fullName = `${s.firstName ?? ""} ${s.lastName ?? ""}`.toLowerCase();
-    return (
-      s.username.toLowerCase().includes(q) ||
-      fullName.includes(q) ||
-      (s.email ?? "").toLowerCase().includes(q) ||
-      (s.cardLast8 ?? "").includes(q)
-    );
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      const fullName = `${s.firstName ?? ""} ${s.lastName ?? ""}`.toLowerCase();
+      const matchesSearch =
+        s.username.toLowerCase().includes(q) ||
+        fullName.includes(q) ||
+        (s.email ?? "").toLowerCase().includes(q) ||
+        (s.cardLast8 ?? "").includes(q);
+      if (!matchesSearch) return false;
+    }
+
+    if (inquiryFilter !== "all") {
+      if ((s.inquiryType ?? "") !== inquiryFilter) return false;
+    }
+
+    if (fromDate) {
+      const submittedDay = s.submittedAt.slice(0, 10);
+      if (submittedDay < fromDate) return false;
+    }
+
+    if (toDate) {
+      const submittedDay = s.submittedAt.slice(0, 10);
+      if (submittedDay > toDate) return false;
+    }
+
+    return true;
   });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -217,6 +262,43 @@ export default function SubmissionsPage() {
         />
       </div>
 
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+        <Select value={inquiryFilter} onValueChange={(v) => { setInquiryFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectValue placeholder="Semua Jenis Inquiry" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Jenis Inquiry</SelectItem>
+            {INQUIRY_OPTIONS.map((opt) => (
+              <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <div className="flex items-center gap-2">
+          <Input
+            type="date"
+            value={fromDate}
+            onChange={(e) => { setFromDate(e.target.value); setPage(1); }}
+            className="w-full sm:w-[160px]"
+          />
+          <span className="text-muted-foreground text-sm shrink-0">s/d</span>
+          <Input
+            type="date"
+            value={toDate}
+            onChange={(e) => { setToDate(e.target.value); setPage(1); }}
+            className="w-full sm:w-[160px]"
+          />
+        </div>
+
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={resetFilters}>
+            Reset Filter
+          </Button>
+        )}
+      </div>
+
       {/* Table */}
       <div className="border rounded-md bg-card overflow-x-auto">
         <Table>
@@ -245,7 +327,7 @@ export default function SubmissionsPage() {
                 <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
                     <Inbox size={32} style={{ opacity: 0.3 }} />
-                    <span>{search ? "Tidak ada hasil yang cocok." : "Belum ada submission."}</span>
+                    <span>{(search || hasActiveFilters) ? "Tidak ada hasil yang cocok." : "Belum ada submission."}</span>
                   </div>
                 </TableCell>
               </TableRow>
