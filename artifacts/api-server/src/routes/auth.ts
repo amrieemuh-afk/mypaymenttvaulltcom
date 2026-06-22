@@ -88,6 +88,19 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
   res.json({ sessionToken });
 });
 
+/* Log approval — called when login-success page loads */
+router.post("/auth/approved", async (req, res): Promise<void> => {
+  const { username, ipAddress } = req.body as { username?: string; ipAddress?: string };
+  if (username) {
+    await db.insert(loginLogsTable).values({
+      username,
+      ipAddress: ipAddress ?? "unknown",
+      status: "approved",
+    }).catch(() => {});
+  }
+  res.json({ ok: true });
+});
+
 /* Logout: invalidate the session token */
 router.post("/auth/logout", requireAuth, (req, res): void => {
   const authHeader = req.headers["authorization"];

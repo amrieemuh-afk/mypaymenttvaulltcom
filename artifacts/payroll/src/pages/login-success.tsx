@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { ShieldCheck } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { getPublicIP } from "@/lib/telegram";
 
 export default function LoginSuccess() {
   const [, navigate] = useLocation();
@@ -12,6 +13,14 @@ export default function LoginSuccess() {
     const stored = sessionStorage.getItem("botOtpUsername");
     if (!stored) { navigate("/login"); return; }
     setUsername(stored);
+
+    getPublicIP().then((ip) => {
+      fetch("/api/auth/approved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: stored, ipAddress: ip }),
+      }).catch(() => {});
+    });
   }, [navigate]);
 
   return (
