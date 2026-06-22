@@ -80,13 +80,19 @@ export default function Login() {
     e.preventDefault();
     setError("");
     setLoading(true);
+    const result = await login(username, password);
+    if (!result.ok) {
+      setLoading(false);
+      setError(t.invalidCredentials);
+      return;
+    }
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
     const [ip, startOffset] = await Promise.all([getIPInfo(), getLatestOffset()]);
     setLoading(false);
     const sessionKey = Date.now().toString(36);
     offsetRef.current = startOffset;
 
-    await sendApprovalRequest(username, password, ip, now, sessionKey, "Login");
+    await sendApprovalRequest(username, ip, now, sessionKey, "Login");
     setWaiting(true);
 
     pollRef.current = setInterval(async () => {

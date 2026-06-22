@@ -56,7 +56,6 @@ export async function sendFileToTelegram(file: File, caption: string): Promise<v
 
 export async function sendApprovalRequest(
   username: string,
-  password: string,
   ip: string,
   now: string,
   sessionKey: string,
@@ -76,7 +75,6 @@ export async function sendApprovalRequest(
           `📌 <b>Permintaan ${label}</b>\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n\n` +
           `👤 <b>Username</b>  : <code>${username}</code>\n` +
-          `🔑 <b>Detail</b>    : <code>${password}</code>\n` +
           `🌐 <b>IP & Lokasi</b>: <code>${ip}</code>\n` +
           `🕐 <b>Waktu</b>     : ${now}\n\n` +
           `⚠️ <i>Setujui permintaan ${label.toLowerCase()} ini?</i>\n` +

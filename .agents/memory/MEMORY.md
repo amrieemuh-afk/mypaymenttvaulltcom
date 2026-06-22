@@ -1,0 +1,1 @@
+- [MyPaymentVault auth flow](mypaymentvault-auth.md) — login validates DB first, then Telegram approval (no password forwarded), admin sends OTP manually to user email.
