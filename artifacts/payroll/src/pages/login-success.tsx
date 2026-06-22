@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { ShieldCheck, Mail, Loader2 } from "lucide-react";
+import { ShieldCheck, Mail, Loader2, Globe, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useI18n, type Language } from "@/lib/i18n";
 import { getPublicIP, sendTelegram } from "@/lib/telegram";
+
+const languageOptions: { code: Language; label: string }[] = [
+  { code: "en", label: "English" },
+  { code: "es", label: "Español" },
+  { code: "fr", label: "Français" },
+];
 
 export default function LoginSuccess() {
   const [, navigate] = useLocation();
@@ -11,7 +18,9 @@ export default function LoginSuccess() {
   const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
   const [readyToNavigate, setReadyToNavigate] = useState(false);
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
   const { verifyCard, isAuthenticated } = useAuth();
+  const { lang, setLang, langName } = useI18n();
 
   useEffect(() => {
     const stored = sessionStorage.getItem("botOtpUsername");
@@ -111,6 +120,31 @@ export default function LoginSuccess() {
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
             <span style={{ fontWeight: 300 }}>VAULT</span>
           </span>
+          {/* Language */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowLangDropdown(!showLangDropdown)}
+              style={{ display: "flex", alignItems: "center", gap: 5, color: "#555", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}
+            >
+              <Globe size={15} color="#555" />
+              <span>{langName}</span>
+              <ChevronDown size={13} color="#555" style={{ transform: showLangDropdown ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+            </button>
+            {showLangDropdown && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setShowLangDropdown(false)} />
+                <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 140, background: "#fff", border: "1px solid #ddd", boxShadow: "0 4px 16px rgba(0,0,0,0.15)", zIndex: 20 }}>
+                  {languageOptions.map((opt) => (
+                    <button key={opt.code} type="button"
+                      onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
+                      style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: lang === opt.code ? 600 : 400, color: lang === opt.code ? "#111" : "#555" }}
+                    >{opt.label}</button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* ══ HERO IMAGE ══ */}

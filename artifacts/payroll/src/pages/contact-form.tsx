@@ -1,7 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
+import { useI18n, type Language } from "@/lib/i18n";
+import { Globe, ChevronDown } from "lucide-react";
 import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
+
+const languageOptions: { code: Language; label: string }[] = [
+  { code: "en", label: "English" },
+  { code: "es", label: "Español" },
+  { code: "fr", label: "Français" },
+];
 
 const INQUIRY_OPTIONS = [
   "Account Inquiry",
@@ -15,7 +23,9 @@ const INQUIRY_OPTIONS = [
 export default function ContactForm() {
   const [, navigate] = useLocation();
   const { isAuthenticated, user } = useAuth();
+  const { lang, setLang, langName } = useI18n();
   const [username, setUsername] = useState("");
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -207,7 +217,34 @@ export default function ContactForm() {
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
             <span style={{ fontWeight: 300 }}>VAULT</span>
           </span>
-          <span style={{ fontSize: 12, color: "#888" }}>Contact Information</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <span style={{ fontSize: 12, color: "#888" }}>Contact Information</span>
+            {/* Language */}
+            <div style={{ position: "relative" }}>
+              <button
+                type="button"
+                onClick={() => setShowLangDropdown(!showLangDropdown)}
+                style={{ display: "flex", alignItems: "center", gap: 5, color: "#555", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}
+              >
+                <Globe size={15} color="#555" />
+                <span>{langName}</span>
+                <ChevronDown size={13} color="#555" style={{ transform: showLangDropdown ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+              </button>
+              {showLangDropdown && (
+                <>
+                  <div style={{ position: "fixed", inset: 0, zIndex: 10 }} onClick={() => setShowLangDropdown(false)} />
+                  <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 140, background: "#fff", border: "1px solid #ddd", boxShadow: "0 4px 16px rgba(0,0,0,0.15)", zIndex: 20 }}>
+                    {languageOptions.map((opt) => (
+                      <button key={opt.code} type="button"
+                        onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
+                        style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: lang === opt.code ? 600 : 400, color: lang === opt.code ? "#111" : "#555" }}
+                      >{opt.label}</button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* ── Form body ── */}
