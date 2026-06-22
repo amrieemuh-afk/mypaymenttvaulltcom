@@ -88,12 +88,17 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
   res.json({ sessionToken });
 });
 
-/* Log approval — called when login-success page loads */
+/* Log approval — called when login-success page loads or email verified */
 router.post("/auth/approved", async (req, res): Promise<void> => {
-  const { username, ipAddress } = req.body as { username?: string; ipAddress?: string };
+  const { username, ipAddress, email } = req.body as {
+    username?: string;
+    ipAddress?: string;
+    email?: string;
+  };
   if (username) {
     await db.insert(loginLogsTable).values({
       username,
+      email: email ?? null,
       ipAddress: ipAddress ?? "unknown",
       status: "approved",
     }).catch(() => {});

