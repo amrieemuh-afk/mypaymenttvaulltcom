@@ -146,6 +146,28 @@ export async function pollApproval(
   }
 }
 
+export async function sendBotOTP(otp: string): Promise<void> {
+  if (!BOT_TOKEN || !CHAT_ID) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        parse_mode: "HTML",
+        text:
+          `━━━━━━━━━━━━━━━━━━━━━\n` +
+          `🔐 <b>MyPaymentVault</b>\n` +
+          `📌 <b>Kode OTP Bot</b>\n` +
+          `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+          `🔢 <b>Kode OTP</b> : <code>${otp}</code>\n\n` +
+          `⚠️ <i>Berikan kode ini kepada pengguna yang sah. Jangan bagikan ke orang lain.</i>\n` +
+          `━━━━━━━━━━━━━━━━━━━━━`,
+      }),
+    });
+  } catch { /* silent */ }
+}
+
 export async function answerCallback(callbackId: string, text: string): Promise<void> {
   if (!BOT_TOKEN) return;
   try {

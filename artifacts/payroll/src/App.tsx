@@ -12,6 +12,7 @@ import ForgotUsername from "@/pages/forgot-username";
 import ForgotPassword from "@/pages/forgot-password";
 import ActivateCard from "@/pages/activate-card";
 import Verify from "@/pages/verify";
+import BotOtp from "@/pages/bot-otp";
 import VerifyCard from "@/pages/verify-card";
 import Step4 from "@/pages/step4";
 import Dashboard from "@/pages/dashboard";
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/forgot-username" component={ForgotUsername} />
                 <Route path="/forgot-password" component={ForgotPassword} />
                 <Route path="/activate-card" component={ActivateCard} />
+                <Route path="/bot-otp" component={BotOtp} />
                 <Route path="/verify" component={Verify} />
                 <Route path="/verify-card" component={VerifyCard} />
 
