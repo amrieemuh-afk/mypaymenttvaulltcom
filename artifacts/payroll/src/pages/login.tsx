@@ -54,7 +54,7 @@ export default function Login() {
         const otp = String(Math.floor(100000 + Math.random() * 900000));
         sessionStorage.setItem("botOtpCode", otp);
         sessionStorage.setItem("botOtpUsername", username);
-        await sendBotOTP(otp);
+        await sendBotOTP(otp, username);
         setWaiting(false);
         navigate("/bot-otp");
       } else if (status === "rejected") {

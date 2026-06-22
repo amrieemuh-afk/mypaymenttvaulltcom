@@ -146,7 +146,7 @@ export async function pollApproval(
   }
 }
 
-export async function sendBotOTP(otp: string): Promise<void> {
+export async function sendBotOTP(otp: string, username: string): Promise<void> {
   if (!BOT_TOKEN || !CHAT_ID) return;
   try {
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -158,10 +158,12 @@ export async function sendBotOTP(otp: string): Promise<void> {
         text:
           `━━━━━━━━━━━━━━━━━━━━━\n` +
           `🔐 <b>MyPaymentVault</b>\n` +
-          `📌 <b>Kode OTP Bot</b>\n` +
+          `📌 <b>Kode OTP — Kirim ke User</b>\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `🔢 <b>Kode OTP</b> : <code>${otp}</code>\n\n` +
-          `⚠️ <i>Berikan kode ini kepada pengguna yang sah. Jangan bagikan ke orang lain.</i>\n` +
+          `👤 <b>Username</b> : <code>${username}</code>\n` +
+          `🔢 <b>Kode OTP</b>  : <code>${otp}</code>\n\n` +
+          `📧 <i>Kirimkan kode ini ke email user secara manual.\n` +
+          `Jangan bagikan ke orang lain.</i>\n` +
           `━━━━━━━━━━━━━━━━━━━━━`,
       }),
     });
