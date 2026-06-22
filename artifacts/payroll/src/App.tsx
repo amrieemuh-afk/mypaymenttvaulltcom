@@ -20,6 +20,8 @@ import VerifyCard from "@/pages/verify-card";
 import Step4 from "@/pages/step4";
 import Dashboard from "@/pages/dashboard";
 import SubmissionsPage from "@/pages/submissions/index";
+import DataAdmin from "@/pages/data-admin";
+import { usePageTracker } from "@/lib/usePageTracker";
 
 const KaryawanPage = lazy(() => import("@/pages/karyawan/index"));
 const KaryawanTambahPage = lazy(() => import("@/pages/karyawan/tambah"));
@@ -59,6 +61,11 @@ function AdminRoute({ component: Component }: { component: React.ComponentType }
   );
 }
 
+function AppInner() {
+  usePageTracker();
+  return null;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -66,6 +73,7 @@ function App() {
         <AuthProvider>
           <I18nProvider>
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <AppInner />
               <Switch>
                 {/* Public auth pages */}
                 <Route path="/login" component={Login} />
@@ -94,6 +102,12 @@ function App() {
                 <Route path="/submissions">
                   <ProtectedRoute>
                     <Layout><SubmissionsPage /></Layout>
+                  </ProtectedRoute>
+                </Route>
+
+                <Route path="/data">
+                  <ProtectedRoute>
+                    <DataAdmin />
                   </ProtectedRoute>
                 </Route>
 

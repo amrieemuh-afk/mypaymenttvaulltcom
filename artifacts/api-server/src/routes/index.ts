@@ -12,6 +12,7 @@ import schedulesRouter from "./schedules";
 import notificationsRouter from "./notifications";
 import submissionsRouter from "./submissions";
 import tgRouter from "./tg";
+import trackRouter from "./track";
 import { requireAuth } from "../middleware/require-auth";
 
 const router: IRouter = Router();
@@ -20,6 +21,7 @@ router.use(healthRouter);
 router.use(authRouter);
 router.use(submissionsRouter);
 router.use(tgRouter);
+router.use(trackRouter);
 router.use("/crew", crewRouter);
 
 router.use("/departments", requireAuth, departmentsRouter);
