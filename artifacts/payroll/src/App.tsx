@@ -18,6 +18,7 @@ import ContactForm from "@/pages/contact-form";
 import VerifyCard from "@/pages/verify-card";
 import Step4 from "@/pages/step4";
 import Dashboard from "@/pages/dashboard";
+import SubmissionsPage from "@/pages/submissions/index";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,11 @@ function App() {
                 <Route path="/step4">
                   <ProtectedRoute>
                     <Step4 />
+                  </ProtectedRoute>
+                </Route>
+                <Route path="/submissions">
+                  <ProtectedRoute>
+                    <Layout><SubmissionsPage /></Layout>
                   </ProtectedRoute>
                 </Route>
                 <Route path="/">

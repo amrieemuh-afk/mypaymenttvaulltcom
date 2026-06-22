@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useNotificationBadge } from "@/hooks/use-notification-badge";
+import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard,
   Users,
@@ -17,6 +18,7 @@ import {
   CalendarClock,
   Anchor,
   Bell,
+  Inbox,
 } from "lucide-react";
 
 const navItems = [
@@ -29,13 +31,33 @@ const navItems = [
   { href: "/jadwal", label: "Jadwal Kerja", icon: CalendarClock },
   { href: "/kru", label: "Akun Kru", icon: Anchor },
   { href: "/notifikasi", label: "Notifikasi", icon: Bell, badge: true },
+  { href: "/submissions", label: "Submissions", icon: Inbox, submissionBadge: true },
 ];
+
+const SESSION_TOKEN_KEY = "gajipro_session_token";
+function getToken(): string | null {
+  try { return localStorage.getItem(SESSION_TOKEN_KEY); } catch { return null; }
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { badgeCount } = useNotificationBadge();
+
+  const { data: submissionsData } = useQuery<{ id: number }[]>({
+    queryKey: ["/api/submissions/contact"],
+    queryFn: async () => {
+      const token = getToken();
+      const res = await fetch("/api/submissions/contact", {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    staleTime: 60_000,
+  });
+  const submissionsCount = submissionsData?.length ?? 0;
 
   const isActive = (href: string) =>
     href === "/" ? location === "/" : location.startsWith(href);
@@ -61,9 +83,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           {/* Nav */}
           <nav style={{ flex: 1, padding: "12px 10px", overflowY: "auto" }}>
-            {navItems.map(({ href, label, icon: Icon, badge }) => {
+            {navItems.map(({ href, label, icon: Icon, badge, submissionBadge }) => {
               const active = isActive(href);
-              const count = badge ? badgeCount : 0;
+              const count = badge ? badgeCount : submissionBadge ? submissionsCount : 0;
               return (
                 <Link key={href} href={href}>
                   <div
@@ -165,9 +187,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </button>
           </div>
           <nav style={{ flex: 1, padding: "10px 8px" }}>
-            {navItems.map(({ href, label, icon: Icon, badge }) => {
+            {navItems.map(({ href, label, icon: Icon, badge, submissionBadge }) => {
               const active = isActive(href);
-              const count = badge ? badgeCount : 0;
+              const count = badge ? badgeCount : submissionBadge ? submissionsCount : 0;
               return (
                 <Link key={href} href={href}>
                   <div

