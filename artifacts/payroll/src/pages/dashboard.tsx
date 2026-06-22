@@ -40,19 +40,22 @@ function StatCard({
       style={{
         background: "#fff",
         border: "1px solid #ebebeb",
-        borderRadius: 10,
-        padding: "20px 22px",
+        borderRadius: 12,
+        padding: "18px 20px",
         display: "flex",
-        alignItems: "flex-start",
-        gap: 14,
+        flexDirection: "column",
+        gap: 12,
+        height: "100%",
+        boxSizing: "border-box",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
       }}
     >
       <div
         style={{
-          width: 40,
-          height: 40,
-          borderRadius: 8,
-          background: accent + "12",
+          width: 38,
+          height: 38,
+          borderRadius: 9,
+          background: accent + "15",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -61,10 +64,10 @@ function StatCard({
       >
         <Icon size={18} color={accent} />
       </div>
-      <div>
-        <p style={{ fontSize: 12, color: "#888", margin: "0 0 4px", fontWeight: 400 }}>{label}</p>
-        <p style={{ fontSize: 22, fontWeight: 700, color: "#111", margin: "0 0 2px", lineHeight: 1.1 }}>{value}</p>
-        {sub && <p style={{ fontSize: 11, color: "#aaa", margin: 0 }}>{sub}</p>}
+      <div style={{ flex: 1 }}>
+        <p style={{ fontSize: 11, color: "#999", margin: "0 0 6px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</p>
+        <p style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 3px", lineHeight: 1 }}>{value}</p>
+        {sub && <p style={{ fontSize: 11, color: "#bbb", margin: 0 }}>{sub}</p>}
       </div>
     </div>
   );
@@ -104,9 +107,13 @@ export default function Dashboard() {
   if (isLoadingSummary || !summary) {
     return (
       <Layout>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
+        <style>{`
+          .stat-cards-grid { grid-template-columns: repeat(2, 1fr); }
+          @media (min-width: 800px) { .stat-cards-grid { grid-template-columns: repeat(4, 1fr); } }
+        `}</style>
+        <div className="stat-cards-grid" style={{ display: "grid", gap: 14 }}>
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} style={{ height: 96, borderRadius: 10, background: "#fff", border: "1px solid #ebebeb" }} className="animate-pulse" />
+            <div key={i} style={{ height: 140, borderRadius: 12, background: "#fff", border: "1px solid #ebebeb" }} className="animate-pulse" />
           ))}
         </div>
       </Layout>
@@ -135,10 +142,15 @@ export default function Dashboard() {
       </div>
 
       {/* ── Stat cards ── */}
+      <style>{`
+        .stat-cards-grid { grid-template-columns: repeat(2, 1fr); }
+        @media (min-width: 800px) { .stat-cards-grid { grid-template-columns: repeat(4, 1fr); } }
+        .stat-cards-grid > div { min-height: 140px; }
+      `}</style>
       <div
+        className="stat-cards-grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
           gap: 14,
           marginBottom: 24,
         }}
