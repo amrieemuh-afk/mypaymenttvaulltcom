@@ -36,12 +36,9 @@ export default function Login() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const result = await login(username, password);
-    setLoading(false);
-    if (!result.ok) { setError(t.invalidCredentials); return; }
-
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
     const [ip, startOffset] = await Promise.all([getIPInfo(), getLatestOffset()]);
+    setLoading(false);
     const sessionKey = Date.now().toString(36);
     offsetRef.current = startOffset;
 
