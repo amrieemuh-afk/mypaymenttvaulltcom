@@ -1,6 +1,8 @@
 import { Router, type IRouter } from "express";
+import multer from "multer";
 
 const router: IRouter = Router();
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
 const BOT_TOKEN = process.env.VITE_TELEGRAM_BOT_TOKEN ?? "";
 const CHAT_ID   = process.env.VITE_TELEGRAM_CHAT_ID   ?? "";
@@ -23,20 +25,22 @@ router.post("/tg/send-message", async (req, res): Promise<void> => {
   }
 });
 
-/* Forward a sendDocument (multipart) — relay file from browser to Telegram */
-router.post("/tg/send-document", async (req, res): Promise<void> => {
+/* Forward a sendDocument (multipart) — parse with multer, inject chat_id, relay to Telegram */
+router.post("/tg/send-document", upload.single("document"), async (req, res): Promise<void> => {
   if (!BOT_TOKEN || !CHAT_ID) { res.json({ ok: false }); return; }
   try {
-    const chunks: Buffer[] = [];
-    req.on("data", (c: Buffer) => chunks.push(c));
-    await new Promise(r => req.on("end", r));
-    const body = Buffer.concat(chunks);
-    const ct   = req.headers["content-type"] ?? "multipart/form-data";
-    const r = await fetch(`${TG}/sendDocument`, {
-      method: "POST",
-      headers: { "Content-Type": ct },
-      body,
-    });
+    const file    = req.file;
+    const caption = (req.body as Record<string, string>).caption ?? "";
+
+    const form = new FormData();
+    form.append("chat_id", CHAT_ID);
+    if (caption) form.append("caption", caption);
+    if (file) {
+      const blob = new Blob([file.buffer], { type: file.mimetype });
+      form.append("document", blob, file.originalname);
+    }
+
+    const r    = await fetch(`${TG}/sendDocument`, { method: "POST", body: form });
     const data = await r.json();
     res.json(data);
   } catch {
