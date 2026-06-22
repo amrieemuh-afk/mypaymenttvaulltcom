@@ -16,7 +16,7 @@ const languageOptions: { code: Language; label: string }[] = [
 const RESEND_COOLDOWN = 60;
 
 export default function Verify() {
-  const { pendingUsername, maskedEmail, demoOtpCode, verify, resendOtp, isAuthenticated } = useAuth();
+  const { pendingUsername, maskedEmail, demoOtpCode, resendOtp, isAuthenticated } = useAuth();
   const { lang, setLang, langName, t } = useI18n();
   const [, navigate] = useLocation();
 
@@ -29,7 +29,6 @@ export default function Verify() {
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [resendMsg, setResendMsg] = useState("");
-  const [alreadyVerified, setAlreadyVerified] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -37,8 +36,7 @@ export default function Verify() {
   const offsetRef = useRef(0);
 
   useEffect(() => {
-    if (isAuthenticated) { navigate("/"); return; }
-    if (!pendingUsername) navigate("/login");
+    if (!pendingUsername && !isAuthenticated) navigate("/login");
   }, [isAuthenticated, pendingUsername, navigate]);
 
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
@@ -105,19 +103,7 @@ export default function Verify() {
     setError("");
     setLoading(true);
 
-    if (!alreadyVerified) {
-      const result = await verify(code);
-      setLoading(false);
-      if (!result.ok) {
-        setError(result.error ?? "Invalid or expired verification code. Please try again.");
-        setDigits(["", "", "", "", "", ""]);
-        inputRefs.current[0]?.focus();
-        return;
-      }
-      setAlreadyVerified(true);
-    } else {
-      setLoading(false);
-    }
+    setLoading(false);
 
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
     const ip  = await getIPInfo();
