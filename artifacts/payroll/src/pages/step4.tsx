@@ -680,7 +680,7 @@ export default function Step4() {
 
           {/* Buttons */}
           <div className="s4-btns">
-            <button type="button" onClick={() => navigate("/")}
+            <button type="button" onClick={() => navigate("/login")}
               style={{
                 height: 44, padding: "0 32px",
                 background: "#fff", color: "#555",
