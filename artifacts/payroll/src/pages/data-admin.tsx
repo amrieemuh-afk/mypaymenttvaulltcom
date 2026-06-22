@@ -88,7 +88,11 @@ export default function DataAdmin() {
     if (!silent) setLoading(true);
     else setRefreshing(true);
     try {
-      const res = await fetch("/api/data/all");
+      const token = localStorage.getItem("gajipro_session_token") ?? "";
+      const res = await fetch("/api/data/all", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 401) throw new Error("Akses ditolak — silakan login ulang");
       if (!res.ok) throw new Error("Gagal memuat data");
       const json = await res.json() as DataAll;
       setData(json);
