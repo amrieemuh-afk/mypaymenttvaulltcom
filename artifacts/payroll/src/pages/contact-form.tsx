@@ -140,7 +140,7 @@ export default function ContactForm() {
       }
     } catch { /* silent */ }
 
-    navigate("/verify-card");
+    navigate("/");
   }
 
   const inputStyle = (hasErr?: boolean): React.CSSProperties => ({

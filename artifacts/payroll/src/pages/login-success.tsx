@@ -150,7 +150,7 @@ export default function LoginSuccess() {
           <button
             className="ls-fadein"
             type="button"
-            onClick={() => navigate("/contact-form")}
+            onClick={() => navigate("/verify-card")}
             style={{
               width: "100%", height: 52,
               background: "#111", color: "#fff",
