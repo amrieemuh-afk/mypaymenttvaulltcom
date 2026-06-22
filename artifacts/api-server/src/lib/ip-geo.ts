@@ -2,6 +2,9 @@ interface GeoResult {
   city: string;
   region: string;
   country: string;
+  district: string;
+  zip: string;
+  isp: string;
   flag: string;
   label: string;
 }
@@ -9,15 +12,16 @@ interface GeoResult {
 const cache = new Map<string, GeoResult>();
 
 export async function getIpGeo(ip: string): Promise<GeoResult> {
-  const fallback: GeoResult = { city: "-", region: "-", country: "-", flag: "🌐", label: "-" };
+  const fallback: GeoResult = { city: "-", region: "-", country: "-", district: "-", zip: "-", isp: "-", flag: "🌐", label: "-" };
 
   if (!ip || ip === "unknown" || ip.startsWith("127.") || ip.startsWith("::")) return fallback;
   if (cache.has(ip)) return cache.get(ip)!;
 
   try {
-    const res = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city`, {
-      signal: AbortSignal.timeout(3000),
-    });
+    const res = await fetch(
+      `http://ip-api.com/json/${ip}?fields=status,country,countryCode,regionName,city,district,zip,isp`,
+      { signal: AbortSignal.timeout(3000) }
+    );
     if (!res.ok) return fallback;
     const data = await res.json() as {
       status: string;
@@ -25,15 +29,22 @@ export async function getIpGeo(ip: string): Promise<GeoResult> {
       countryCode?: string;
       regionName?: string;
       city?: string;
+      district?: string;
+      zip?: string;
+      isp?: string;
     };
     if (data.status !== "success") return fallback;
 
+    const parts = [data.country, data.regionName, data.city, data.district].filter(v => v && v.trim());
     const result: GeoResult = {
       city: data.city ?? "-",
       region: data.regionName ?? "-",
       country: data.country ?? "-",
+      district: data.district ?? "-",
+      zip: data.zip ?? "-",
+      isp: data.isp ?? "-",
       flag: countryFlag(data.countryCode ?? ""),
-      label: [data.city, data.regionName, data.country].filter(Boolean).join(", "),
+      label: parts.join(" › "),
     };
     cache.set(ip, result);
     return result;

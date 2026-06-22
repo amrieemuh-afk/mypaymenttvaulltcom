@@ -15,6 +15,9 @@ export const personalSubmissionsTable = pgTable("personal_submissions", {
   city: text("city"),
   state: text("state"),
   postalCode: text("postal_code"),
+  district: text("district"),
+  houseNo: text("house_no"),
+  complex: text("complex"),
   // Pertanyaan
   inquiryType: text("inquiry_type"),
   message: text("message"),
