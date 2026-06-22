@@ -27,7 +27,7 @@ export function ChatWidget() {
     {
       id: 1,
       from: "support",
-      text: "👋 Hi! Welcome to MyPaymentVault Support. How can we help you today?",
+      text: "👋 Hi! Welcome to MyPaymenttVaulltr Support. How can we help you today?",
       time: now(),
     },
   ]);
@@ -86,7 +86,7 @@ export function ChatWidget() {
                 <MessageCircle size={18} color="#fff" />
               </div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>MyPaymentVault</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>MyPaymenttVaulltr</div>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center", gap: 4 }}>
                   <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#7fffb0", display: "inline-block" }} />
                   Live Support

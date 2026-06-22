@@ -37,9 +37,9 @@ export function AuthCard({ children, showBack = false, backTo = "/login" }: Auth
                 </button>
               )}
               <div className="text-[15px] tracking-wide font-normal text-gray-900 select-none">
-                <span className="font-light">MY</span>
-                <span className="font-bold">PAYMENT</span>
-                <span className="font-light">VAULT</span>
+                <span className="font-light">My</span>
+                <span className="font-bold">Paymentt</span>
+                <span className="font-light">Vaulltr</span>
               </div>
             </div>
             <div className="relative">

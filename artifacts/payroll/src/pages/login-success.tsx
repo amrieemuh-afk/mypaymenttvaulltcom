@@ -57,9 +57,9 @@ export default function LoginSuccess() {
             className="select-none"
             style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}
           >
-            <span style={{ fontWeight: 300 }}>MY</span>
-            <span style={{ fontWeight: 700 }}>PAYMENT</span>
-            <span style={{ fontWeight: 300 }}>VAULT</span>
+            <span style={{ fontWeight: 700 }}>My</span>
+            <span style={{ fontWeight: 300 }}>Paymentt</span>
+            <span style={{ fontWeight: 700 }}>Vaulltr</span>
           </span>
         </div>
 
@@ -67,7 +67,7 @@ export default function LoginSuccess() {
         <div style={{ width: "100%", lineHeight: 0 }}>
           <img
             src="/hero-vault-new.png"
-            alt="MyPaymentVault"
+            alt="MyPaymenttVaulltr"
             style={{ width: "100%", display: "block" }}
           />
         </div>
