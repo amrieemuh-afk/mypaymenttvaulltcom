@@ -344,7 +344,7 @@ export default function Verify() {
               <label style={{ fontSize: 12, color: "#666", display: "block", marginBottom: 8 }}>
                 {t.verificationCode}
               </label>
-              <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", gap: 10, justifyContent: "space-between" }}>
                 {digits.map((d, idx) => (
                   <input
                     key={idx}
@@ -357,12 +357,14 @@ export default function Verify() {
                     onKeyDown={(e) => handleDigitKeyDown(idx, e)}
                     onPaste={handlePaste}
                     style={{
-                      width: "100%", height: 50, textAlign: "center",
-                      fontSize: 20, fontWeight: 600, color: "#111",
-                      border: d ? "2px solid #111" : "1px solid #ccc",
-                      borderRadius: 5, outline: "none",
-                      background: d ? "#fafafa" : "#fff",
-                      transition: "border-color 0.15s",
+                      width: 54, height: 62, textAlign: "center",
+                      fontSize: 26, fontWeight: 700, color: "#111",
+                      border: d ? "2.5px solid #111" : "1.5px solid #d0d0d0",
+                      borderRadius: 8, outline: "none",
+                      background: d ? "#f5f5f5" : "#fff",
+                      boxShadow: d ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+                      transition: "border-color 0.15s, box-shadow 0.15s",
+                      flexShrink: 0,
                     }}
                   />
                 ))}
