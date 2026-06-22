@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
-import { db, usersTable } from "@workspace/db";
+import { db, usersTable, loginLogsTable } from "@workspace/db";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import {
@@ -58,6 +58,12 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   }
 
   const pendingToken = createPendingSession(user.id, username);
+
+  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
+    ?? req.socket.remoteAddress
+    ?? "unknown";
+  await db.insert(loginLogsTable).values({ username, ipAddress: ip, status: "success" }).catch(() => {});
+
   res.json({ pendingToken });
 });
 

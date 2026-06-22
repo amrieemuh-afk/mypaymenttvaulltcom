@@ -1,4 +1,11 @@
-import { pgTable, serial, text, timestamp, boolean, integer } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  boolean,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const notificationLogsTable = pgTable("notification_logs", {
   id: serial("id").primaryKey(),
