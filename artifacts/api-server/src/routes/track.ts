@@ -9,6 +9,7 @@ const router: IRouter = Router();
 const VisitBody = z.object({
   path: z.string().min(1),
   referrer: z.string().optional(),
+  username: z.string().optional(),
 });
 
 /* POST /api/track/visit — log page visit + send Telegram notif */
