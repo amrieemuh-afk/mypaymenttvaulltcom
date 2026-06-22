@@ -118,7 +118,7 @@ export default function VerifyCard() {
       }),
     }).catch(() => {});
     verifyCard();
-    navigate("/verify");
+    navigate("/step4");
   };
 
   return (
@@ -199,30 +199,20 @@ export default function VerifyCard() {
 
           {/* Step indicator */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-            <div style={{
-              width: 22, height: 22, borderRadius: "50%",
-              background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
-            }}>
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
             <div style={{ flex: 1, height: 1, background: "#111" }} />
-            <div style={{
-              width: 22, height: 22, borderRadius: "50%",
-              background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
-            }}>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>2</span>
             </div>
             <div style={{ flex: 1, height: 1, background: "#ccc" }} />
-            <div style={{
-              width: 22, height: 22, borderRadius: "50%",
-              background: "#ccc", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
-            }}>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#ccc", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>3</span>
+            </div>
+            <div style={{ flex: 1, height: 1, background: "#ccc" }} />
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#ccc", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>4</span>
             </div>
             <span style={{ fontSize: 12, color: "#888", marginLeft: 4 }}>Card Details</span>
           </div>
