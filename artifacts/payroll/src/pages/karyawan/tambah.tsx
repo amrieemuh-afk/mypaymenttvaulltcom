@@ -19,17 +19,17 @@ import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft } from "lucide-react";
 
 const employeeSchema = z.object({
-  name: z.string().min(1, "Nama wajib diisi"),
-  employeeCode: z.string().min(1, "Kode karyawan wajib diisi"),
-  email: z.string().email("Email tidak valid").optional().or(z.literal("")),
+  name: z.string().min(1, "Name is required"),
+  employeeCode: z.string().min(1, "Employee code is required"),
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
-  position: z.string().min(1, "Posisi wajib diisi"),
-  departmentId: z.coerce.number().min(1, "Departemen wajib dipilih"),
-  baseSalary: z.coerce.number().min(0, "Gaji pokok tidak boleh negatif"),
-  transportAllowance: z.coerce.number().min(0, "Tunjangan transport tidak boleh negatif").optional(),
-  mealAllowance: z.coerce.number().min(0, "Tunjangan makan tidak boleh negatif").optional(),
+  position: z.string().min(1, "Position is required"),
+  departmentId: z.coerce.number().min(1, "Department is required"),
+  baseSalary: z.coerce.number().min(0, "Base salary cannot be negative"),
+  transportAllowance: z.coerce.number().min(0, "Transport allowance cannot be negative").optional(),
+  mealAllowance: z.coerce.number().min(0, "Meal allowance cannot be negative").optional(),
   status: z.enum(["active", "inactive"]),
-  joinDate: z.string().min(1, "Tanggal bergabung wajib diisi"),
+  joinDate: z.string().min(1, "Join date is required"),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
@@ -67,15 +67,15 @@ export default function AddEmployee() {
     createEmployee.mutate({ data }, {
       onSuccess: () => {
         toast({
-          title: "Berhasil",
-          description: "Karyawan berhasil ditambahkan",
+          title: "Success",
+          description: "Employee added successfully",
         });
         setLocation("/karyawan");
       },
       onError: () => {
         toast({
-          title: "Gagal",
-          description: "Terjadi kesalahan saat menambahkan karyawan",
+          title: "Error",
+          description: "Failed to add employee",
           variant: "destructive",
         });
       }

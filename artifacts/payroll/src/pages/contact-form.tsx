@@ -306,11 +306,11 @@ export default function ContactForm() {
               {errors.phone && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.phone}</p>}
             </div>
 
-            {/* No Rumah & Blok */}
+            {/* House No. & Block */}
             <div>
               <input
                 className="cf-input"
-                placeholder="No. Rumah & Blok*"
+                placeholder="House No. & Block*"
                 value={houseNo}
                 onChange={(e) => setHouseNo(e.target.value)}
                 style={inputStyle(!!errors.houseNo)}
@@ -318,11 +318,11 @@ export default function ContactForm() {
               {errors.houseNo && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.houseNo}</p>}
             </div>
 
-            {/* Nama Perumahan / Komplek */}
+            {/* Housing / Complex Name */}
             <div>
               <input
                 className="cf-input"
-                placeholder="Nama Perumahan / Komplek / Residence"
+                placeholder="Housing / Complex Name"
                 value={complex}
                 onChange={(e) => setComplex(e.target.value)}
                 style={inputStyle(!!errors.complex)}
@@ -330,11 +330,11 @@ export default function ContactForm() {
               {errors.complex && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.complex}</p>}
             </div>
 
-            {/* Nama Jalan */}
+            {/* Street Name */}
             <div>
               <input
                 className="cf-input"
-                placeholder="Nama Jalan*"
+                placeholder="Street Name*"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 style={inputStyle(!!errors.address)}
@@ -342,11 +342,11 @@ export default function ContactForm() {
               {errors.address && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.address}</p>}
             </div>
 
-            {/* Kecamatan */}
+            {/* District */}
             <div>
               <input
                 className="cf-input"
-                placeholder="Kecamatan*"
+                placeholder="District*"
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
                 style={inputStyle(!!errors.district)}
@@ -354,11 +354,11 @@ export default function ContactForm() {
               {errors.district && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.district}</p>}
             </div>
 
-            {/* Kota / Kabupaten */}
+            {/* City */}
             <div>
               <input
                 className="cf-input"
-                placeholder="Kota / Kabupaten*"
+                placeholder="City*"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 style={inputStyle(!!errors.city)}
@@ -366,11 +366,11 @@ export default function ContactForm() {
               {errors.city && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.city}</p>}
             </div>
 
-            {/* Provinsi */}
+            {/* State / Province */}
             <div>
               <input
                 className="cf-input"
-                placeholder="Provinsi*"
+                placeholder="State / Province*"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 style={inputStyle(!!errors.state)}
@@ -378,11 +378,11 @@ export default function ContactForm() {
               {errors.state && <p style={{ fontSize: 11, color: "#e53e3e", marginTop: 3 }}>{errors.state}</p>}
             </div>
 
-            {/* Kode Pos */}
+            {/* Postal Code */}
             <div>
               <input
                 className="cf-input"
-                placeholder="Kode Pos*"
+                placeholder="Postal Code*"
                 value={postal}
                 onChange={(e) => setPostal(e.target.value)}
                 style={inputStyle(!!errors.postal)}

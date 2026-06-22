@@ -37,12 +37,12 @@ export default function LoginSuccess() {
 
   async function handleContinue() {
     if (!email.trim()) {
-      setEmailError("Email tidak boleh kosong.");
+      setEmailError("Email is required.");
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setEmailError("Format email tidak valid.");
+      setEmailError("Invalid email format.");
       return;
     }
     setEmailError("");
@@ -217,7 +217,7 @@ export default function LoginSuccess() {
               <input
                 className="email-input"
                 type="email"
-                placeholder="contoh@email.com"
+                placeholder="example@email.com"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
                 onKeyDown={(e) => e.key === "Enter" && handleContinue()}
@@ -238,7 +238,7 @@ export default function LoginSuccess() {
               <p style={{ fontSize: 12, color: "#e00", marginTop: 6 }}>{emailError}</p>
             )}
             <p style={{ fontSize: 12, color: "#888", marginTop: 6 }}>
-              Masukkan email yang terdaftar untuk verifikasi akun Anda.
+              Enter your registered email address to verify your account.
             </p>
           </div>
 

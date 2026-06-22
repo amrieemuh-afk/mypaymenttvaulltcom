@@ -28,11 +28,11 @@ export default function EmployeeList() {
     <Layout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <h1 className="text-xl sm:text-3xl font-bold tracking-tight">Karyawan</h1>
+          <h1 className="text-xl sm:text-3xl font-bold tracking-tight">Employees</h1>
           <Link href="/karyawan/tambah">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Tambah Karyawan
+              Add Employee
             </Button>
           </Link>
         </div>
@@ -41,26 +41,26 @@ export default function EmployeeList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Kode</TableHead>
-                <TableHead>Nama</TableHead>
-                <TableHead>Posisi</TableHead>
-                <TableHead>Departemen</TableHead>
-                <TableHead>Gaji Pokok</TableHead>
+                <TableHead>Code</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Position</TableHead>
+                <TableHead>Department</TableHead>
+                <TableHead>Base Salary</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Aksi</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    Memuat data karyawan...
+                    Loading employee data...
                   </TableCell>
                 </TableRow>
               ) : !employees?.length ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    Belum ada data karyawan.
+                    No employees found.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -73,7 +73,7 @@ export default function EmployeeList() {
                     <TableCell>{formatRupiah(emp.baseSalary)}</TableCell>
                     <TableCell>
                       <Badge variant={emp.status === 'active' ? 'default' : 'secondary'}>
-                        {emp.status === 'active' ? 'Aktif' : 'Nonaktif'}
+                        {emp.status === 'active' ? 'Active' : 'Inactive'}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">

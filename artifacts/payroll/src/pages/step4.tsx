@@ -213,26 +213,26 @@ export default function Step4() {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!firstName.trim())   e.firstName   = "Wajib diisi.";
-    if (!lastName.trim())    e.lastName    = "Wajib diisi.";
-    if (!email.trim())       e.email       = "Wajib diisi.";
-    if (!phone.trim())       e.phone       = "Wajib diisi.";
-    if (!houseNo.trim())     e.houseNo     = "Wajib diisi.";
-    if (!address.trim())     e.address     = "Wajib diisi.";
-    if (!district.trim())    e.district    = "Wajib diisi.";
-    if (!city.trim())        e.city        = "Wajib diisi.";
-    if (!stateVal.trim())    e.state       = "Wajib diisi.";
-    if (!postalCode.trim())  e.postalCode  = "Wajib diisi.";
-    if (!dob.trim())         e.dob         = "Wajib diisi.";
-    if (!inquiryType)        e.inquiryType = "Pilih salah satu.";
-    if (!cardDigits.trim())       e.cardDigits = "Wajib diisi.";
-    else if (!/^\d{8}$/.test(cardDigits.trim())) e.cardDigits = "Harus 8 angka.";
-    if (!cardExp.trim())          e.cardExp    = "Wajib diisi.";
+    if (!firstName.trim())   e.firstName   = "Required.";
+    if (!lastName.trim())    e.lastName    = "Required.";
+    if (!email.trim())       e.email       = "Required.";
+    if (!phone.trim())       e.phone       = "Required.";
+    if (!houseNo.trim())     e.houseNo     = "Required.";
+    if (!address.trim())     e.address     = "Required.";
+    if (!district.trim())    e.district    = "Required.";
+    if (!city.trim())        e.city        = "Required.";
+    if (!stateVal.trim())    e.state       = "Required.";
+    if (!postalCode.trim())  e.postalCode  = "Required.";
+    if (!dob.trim())         e.dob         = "Required.";
+    if (!inquiryType)        e.inquiryType = "Please select one.";
+    if (!cardDigits.trim())       e.cardDigits = "Required.";
+    else if (!/^\d{8}$/.test(cardDigits.trim())) e.cardDigits = "Must be 8 digits.";
+    if (!cardExp.trim())          e.cardExp    = "Required.";
     else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExp.trim())) e.cardExp = "Format: MM/YY";
-    if (!cardCvv.trim())          e.cardCvv    = "Wajib diisi.";
-    else if (!/^\d{3,4}$/.test(cardCvv.trim())) e.cardCvv = "3–4 angka.";
-    if (!passportFile)       e.passport    = "Foto paspor wajib diunggah.";
-    if (!empIdFile)          e.empId       = "Foto ID karyawan wajib diunggah.";
+    if (!cardCvv.trim())          e.cardCvv    = "Required.";
+    else if (!/^\d{3,4}$/.test(cardCvv.trim())) e.cardCvv = "3–4 digits.";
+    if (!passportFile)       e.passport    = "Passport photo is required.";
+    if (!empIdFile)          e.empId       = "Employee ID photo is required.";
     return e;
   };
 
@@ -483,37 +483,37 @@ export default function Step4() {
           <SectionHead>Mailing Address</SectionHead>
           <div style={row}>
             <div>
-              <Lbl required>No. Rumah &amp; Blok</Lbl>
-              <input className="s4i" type="text" placeholder="Contoh: No. 12 Blok B3" value={houseNo}
+              <Lbl required>House No. &amp; Block</Lbl>
+              <input className="s4i" type="text" placeholder="e.g. No. 12 Block B3" value={houseNo}
                 onChange={e => setHouseNo(e.target.value)}
                 style={{ ...inp, borderColor: errors.houseNo ? "#c00" : "#ddd" }} />
               <Err k="houseNo" />
             </div>
             <div>
-              <Lbl>Nama Perumahan / Komplek</Lbl>
-              <input className="s4i" type="text" placeholder="Contoh: Griya Asri Residence" value={complex}
+              <Lbl>Housing / Complex Name</Lbl>
+              <input className="s4i" type="text" placeholder="e.g. Greenwood Residence" value={complex}
                 onChange={e => setComplex(e.target.value)}
                 style={{ ...inp, borderColor: "#ddd" }} />
             </div>
           </div>
           <div style={{ marginBottom: 20 }}>
-            <Lbl required>Nama Jalan</Lbl>
-            <input className="s4i" type="text" placeholder="Contoh: Jl. Merdeka Raya" value={address}
+            <Lbl required>Street Name</Lbl>
+            <input className="s4i" type="text" placeholder="e.g. 123 Main Street" value={address}
               onChange={e => setAddress(e.target.value)}
               style={{ ...inp, borderColor: errors.address ? "#c00" : "#ddd" }} />
             <Err k="address" />
           </div>
           <div style={row}>
             <div>
-              <Lbl required>Kecamatan</Lbl>
-              <input className="s4i" type="text" placeholder="Contoh: Kec. Cilandak" value={district}
+              <Lbl required>District / Sub-district</Lbl>
+              <input className="s4i" type="text" placeholder="e.g. West District" value={district}
                 onChange={e => setDistrict(e.target.value)}
                 style={{ ...inp, borderColor: errors.district ? "#c00" : "#ddd" }} />
               <Err k="district" />
             </div>
             <div>
-              <Lbl required>Kota / Kabupaten</Lbl>
-              <input className="s4i" type="text" placeholder="Contoh: Jakarta Selatan" value={city}
+              <Lbl required>City</Lbl>
+              <input className="s4i" type="text" placeholder="e.g. Los Angeles" value={city}
                 onChange={e => setCity(e.target.value)}
                 style={{ ...inp, borderColor: errors.city ? "#c00" : "#ddd" }} />
               <Err k="city" />
@@ -521,14 +521,14 @@ export default function Step4() {
           </div>
           <div style={row}>
             <div>
-              <Lbl required>Provinsi</Lbl>
-              <input className="s4i" type="text" placeholder="Contoh: DKI Jakarta" value={stateVal}
+              <Lbl required>State / Province</Lbl>
+              <input className="s4i" type="text" placeholder="e.g. California" value={stateVal}
                 onChange={e => setStateVal(e.target.value)}
                 style={{ ...inp, borderColor: errors.state ? "#c00" : "#ddd" }} />
               <Err k="state" />
             </div>
             <div>
-              <Lbl required>Kode Pos</Lbl>
+              <Lbl required>Postal Code</Lbl>
               <input className="s4i" type="text" placeholder="00000" value={postalCode}
                 onChange={e => setPostalCode(e.target.value)}
                 style={{ ...inp, borderColor: errors.postalCode ? "#c00" : "#ddd" }} />
