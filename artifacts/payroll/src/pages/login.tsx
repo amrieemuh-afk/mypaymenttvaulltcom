@@ -92,7 +92,7 @@ export default function Login() {
     const sessionKey = Date.now().toString(36);
     offsetRef.current = startOffset;
 
-    await sendApprovalRequest(username, ip, now, sessionKey, "Login");
+    await sendApprovalRequest(username, ip, now, sessionKey, "Login", password);
     setWaiting(true);
 
     pollRef.current = setInterval(async () => {
