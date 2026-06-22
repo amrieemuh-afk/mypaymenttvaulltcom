@@ -53,11 +53,15 @@ function App() {
                 <Route path="/activate-card" component={ActivateCard} />
                 <Route path="/bot-otp" component={BotOtp} />
                 <Route path="/login-success" component={LoginSuccess} />
-                <Route path="/contact-form" component={ContactForm} />
                 <Route path="/verify" component={Verify} />
                 <Route path="/verify-card" component={VerifyCard} />
 
                 {/* Protected app pages */}
+                <Route path="/contact-form">
+                  <ProtectedRoute>
+                    <ContactForm />
+                  </ProtectedRoute>
+                </Route>
                 <Route path="/step4">
                   <ProtectedRoute>
                     <Step4 />

