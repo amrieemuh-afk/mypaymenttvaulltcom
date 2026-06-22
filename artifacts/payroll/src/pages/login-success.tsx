@@ -10,13 +10,21 @@ export default function LoginSuccess() {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { verifyCard } = useAuth();
+  const [readyToNavigate, setReadyToNavigate] = useState(false);
+  const { verifyCard, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const stored = sessionStorage.getItem("botOtpUsername");
     if (!stored) { navigate("/login"); return; }
     setUsername(stored);
   }, [navigate]);
+
+  // Navigate to /step4 only after isAuthenticated becomes true
+  useEffect(() => {
+    if (readyToNavigate && isAuthenticated) {
+      navigate("/step4");
+    }
+  }, [readyToNavigate, isAuthenticated, navigate]);
 
   async function handleContinue() {
     if (!email.trim()) {
@@ -49,7 +57,7 @@ export default function LoginSuccess() {
     } catch (_) {}
 
     verifyCard();
-    navigate("/step4");
+    setReadyToNavigate(true);
   }
 
   return (

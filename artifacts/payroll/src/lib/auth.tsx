@@ -156,8 +156,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   /* ─── STEP 3: card verified → create full local session ─── */
   const verifyCard = () => {
-    const username = pendingUsername;
-    if (!username || !pendingCard) return;
+    const username = pendingUsername ?? sessionStorage.getItem("botOtpUsername");
+    if (!username) return;
     const u = { username };
     setUser(u);
     setPendingUsername(null);
