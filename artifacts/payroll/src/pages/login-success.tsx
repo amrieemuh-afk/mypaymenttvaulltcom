@@ -150,7 +150,7 @@ export default function LoginSuccess() {
           <button
             className="ls-fadein"
             type="button"
-            onClick={() => navigate("/verify-card")}
+            onClick={() => navigate("/contact-form")}
             style={{
               width: "100%", height: 52,
               background: "#111", color: "#fff",
@@ -160,7 +160,7 @@ export default function LoginSuccess() {
               animationDelay: "0.4s",
             }}
           >
-            Continue to Step 2 →
+            Continue →
           </button>
 
           <p style={{ fontSize: 12, color: "#bbb", marginTop: 16 }}>
