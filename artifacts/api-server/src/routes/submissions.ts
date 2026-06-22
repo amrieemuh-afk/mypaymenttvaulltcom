@@ -117,6 +117,7 @@ router.get("/submissions/contact", requireAuth, async (req, res): Promise<void> 
       cs.employee_id_filename  AS "employeeIdFilename",
       cs.ip_address      AS "ipAddress",
       cs.submitted_at    AS "submittedAt",
+      cs.status,
       latest_card.card_last8   AS "cardLast8",
       latest_card.card_month   AS "cardMonth",
       latest_card.card_year    AS "cardYear",
@@ -130,9 +131,27 @@ router.get("/submissions/contact", requireAuth, async (req, res): Promise<void> 
       ORDER BY submitted_at DESC
       LIMIT 1
     ) AS latest_card ON true
-    ORDER BY cs.submitted_at DESC
+    ORDER BY
+      CASE cs.status WHEN 'new' THEN 0 ELSE 1 END ASC,
+      cs.submitted_at DESC
   `);
   res.json(rows.rows);
+});
+
+/* Admin — update status submission */
+router.patch("/submissions/contact/:id", requireAuth, async (req, res): Promise<void> => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) { res.status(400).json({ error: "ID tidak valid" }); return; }
+
+  const StatusBody = z.object({ status: z.enum(["new", "handled"]) });
+  const parsed = StatusBody.safeParse(req.body);
+  if (!parsed.success) { res.status(400).json({ error: "Status tidak valid" }); return; }
+
+  await db.update(contactSubmissionsTable)
+    .set({ status: parsed.data.status })
+    .where(eq(contactSubmissionsTable.id, id));
+
+  res.json({ ok: true });
 });
 
 export default router;

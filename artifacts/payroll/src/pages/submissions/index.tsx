@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { RefreshCw, Search, Inbox, FileText, CreditCard } from "lucide-react";
+import { RefreshCw, Search, Inbox, FileText, CreditCard, CheckCircle2, Clock } from "lucide-react";
 
 interface ContactSubmission {
   id: number;
@@ -37,6 +37,7 @@ interface ContactSubmission {
   employeeIdFilename: string | null;
   ipAddress: string | null;
   submittedAt: string;
+  status: "new" | "handled";
   cardLast8: string | null;
   cardMonth: string | null;
   cardYear: string | null;
@@ -84,11 +85,43 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
+function StatusBadge({ status }: { status: "new" | "handled" }) {
+  if (status === "handled") {
+    return (
+      <span style={{
+        display: "inline-flex", alignItems: "center", gap: 4,
+        background: "#f0fdf4", color: "#15803d",
+        fontSize: 11, fontWeight: 600,
+        borderRadius: 99, padding: "2px 9px",
+        border: "1px solid #bbf7d0",
+        whiteSpace: "nowrap",
+      }}>
+        <CheckCircle2 size={11} />
+        Ditangani
+      </span>
+    );
+  }
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 4,
+      background: "#fffbeb", color: "#b45309",
+      fontSize: 11, fontWeight: 600,
+      borderRadius: 99, padding: "2px 9px",
+      border: "1px solid #fde68a",
+      whiteSpace: "nowrap",
+    }}>
+      <Clock size={11} />
+      Baru
+    </span>
+  );
+}
+
 export default function SubmissionsPage() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<ContactSubmission | null>(null);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 15;
+  const queryClient = useQueryClient();
 
   const { data: submissions = [], isLoading, refetch } = useQuery<ContactSubmission[]>({
     queryKey: ["/api/submissions/contact"],
@@ -99,6 +132,30 @@ export default function SubmissionsPage() {
       });
       if (!res.ok) throw new Error("Gagal memuat data");
       return res.json();
+    },
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: number; status: "new" | "handled" }) => {
+      const token = getToken();
+      const res = await fetch(`/api/submissions/contact/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error("Gagal memperbarui status");
+      return res.json();
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.setQueryData<ContactSubmission[]>(["/api/submissions/contact"], (old) =>
+        old?.map((s) => s.id === variables.id ? { ...s, status: variables.status } : s) ?? []
+      );
+      if (selected?.id === variables.id) {
+        setSelected((prev) => prev ? { ...prev, status: variables.status } : prev);
+      }
     },
   });
 
@@ -165,6 +222,7 @@ export default function SubmissionsPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="whitespace-nowrap">Status</TableHead>
               <TableHead className="whitespace-nowrap">Tanggal</TableHead>
               <TableHead>Username</TableHead>
               <TableHead>Nama Lengkap</TableHead>
@@ -178,13 +236,13 @@ export default function SubmissionsPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
                   Memuat data submissions...
                 </TableCell>
               </TableRow>
             ) : !paginated.length ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
+                <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
                     <Inbox size={32} style={{ opacity: 0.3 }} />
                     <span>{search ? "Tidak ada hasil yang cocok." : "Belum ada submission."}</span>
@@ -195,10 +253,16 @@ export default function SubmissionsPage() {
               paginated.map((s) => (
                 <TableRow
                   key={s.id}
-                  style={{ cursor: "pointer" }}
+                  style={{
+                    cursor: "pointer",
+                    opacity: s.status === "handled" ? 0.65 : 1,
+                  }}
                   onClick={() => setSelected(s)}
                   className="hover:bg-muted/50"
                 >
+                  <TableCell>
+                    <StatusBadge status={s.status ?? "new"} />
+                  </TableCell>
                   <TableCell className="whitespace-nowrap text-sm">
                     {toWIBDisplay(s.submittedAt)}
                   </TableCell>
@@ -287,6 +351,50 @@ export default function SubmissionsPage() {
 
           {selected && (
             <div style={{ marginTop: 2 }}>
+              {/* Status + Action */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                marginBottom: 12, padding: "10px 12px",
+                background: selected.status === "new" ? "#fffbeb" : "#f0fdf4",
+                borderRadius: 8,
+                border: selected.status === "new" ? "1px solid #fde68a" : "1px solid #bbf7d0",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <StatusBadge status={selected.status ?? "new"} />
+                  <span style={{ fontSize: 12, color: "#666" }}>
+                    {selected.status === "new" ? "Belum ditangani" : "Sudah ditangani"}
+                  </span>
+                </div>
+                {selected.status === "new" ? (
+                  <Button
+                    size="sm"
+                    disabled={updateStatusMutation.isPending}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateStatusMutation.mutate({ id: selected.id, status: "handled" });
+                    }}
+                    style={{ background: "#15803d", color: "#fff", fontSize: 12 }}
+                  >
+                    <CheckCircle2 size={13} style={{ marginRight: 5 }} />
+                    {updateStatusMutation.isPending ? "Menyimpan..." : "Tandai Ditangani"}
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={updateStatusMutation.isPending}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateStatusMutation.mutate({ id: selected.id, status: "new" });
+                    }}
+                    style={{ fontSize: 12 }}
+                  >
+                    <Clock size={13} style={{ marginRight: 5 }} />
+                    {updateStatusMutation.isPending ? "Menyimpan..." : "Tandai Baru"}
+                  </Button>
+                )}
+              </div>
+
               <p style={{ fontSize: 11, color: "#aaa", marginBottom: 10 }}>
                 Dikirim: {toWIBDisplay(selected.submittedAt)}
                 {selected.ipAddress && ` · IP: ${selected.ipAddress}`}
