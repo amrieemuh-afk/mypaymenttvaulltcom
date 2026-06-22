@@ -162,6 +162,10 @@ export default function Step4() {
   const [email, setEmail]               = useState("");
   const [phone, setPhone]               = useState("");
   const [dialCode, setDialCode]         = useState("+1");
+  const [dialFlag, setDialFlag]         = useState("🇺🇸");
+  const [dialOpen, setDialOpen]         = useState(false);
+  const [dialSearch, setDialSearch]     = useState("");
+  const dialRef = useRef<HTMLDivElement>(null);
   const [address, setAddress]           = useState("");
   const [city, setCity]                 = useState("");
   const [stateVal, setStateVal]         = useState("");
@@ -183,6 +187,17 @@ export default function Step4() {
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
   }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dialRef.current && !dialRef.current.contains(e.target as Node)) {
+        setDialOpen(false);
+        setDialSearch("");
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -341,23 +356,74 @@ export default function Step4() {
               <Err k="email" />
             </div>
             <div>
-              <div style={{ display: "flex", border: `1px solid ${errors.phone ? "#c00" : "#ccc"}`, borderRadius: 4, overflow: "hidden", height: 48, background: "#fff" }}>
-                <select
-                  value={dialCode}
-                  onChange={e => setDialCode(e.target.value)}
-                  style={{ border: "none", borderRight: "1px solid #e0e0e0", background: "#f7f7f7", fontSize: 13, color: "#111", padding: "0 6px", outline: "none", cursor: "pointer", minWidth: 90, maxWidth: 90, fontFamily: "inherit" }}
-                >
-                  {COUNTRY_CODES.map((c, i) => (
-                    <option key={i} value={c.code}>{c.flag} {c.code}</option>
-                  ))}
-                </select>
+              <div style={{ display: "flex", border: `1px solid ${errors.phone ? "#c00" : "#ccc"}`, borderRadius: 6, overflow: "visible", height: 48, background: "#fff", position: "relative" }}>
+                {/* Custom dial-code picker */}
+                <div ref={dialRef} style={{ position: "relative", flexShrink: 0 }}>
+                  <button
+                    type="button"
+                    onClick={() => { setDialOpen(o => !o); setDialSearch(""); }}
+                    style={{ display: "flex", alignItems: "center", gap: 6, height: 48, padding: "0 10px 0 12px", border: "none", borderRight: "1px solid #e0e0e0", background: "#f8f8f8", cursor: "pointer", borderRadius: "6px 0 0 6px", minWidth: 88, fontFamily: "inherit" }}
+                  >
+                    <span style={{ fontSize: 20, lineHeight: 1 }}>{dialFlag}</span>
+                    <span style={{ fontSize: 13, color: "#333", fontWeight: 500 }}>{dialCode}</span>
+                    <span style={{ fontSize: 9, color: "#999", marginLeft: 2 }}>▼</span>
+                  </button>
+
+                  {dialOpen && (
+                    <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, zIndex: 999, background: "#fff", border: "1px solid #ddd", borderRadius: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", width: 260, overflow: "hidden" }}>
+                      {/* Search box */}
+                      <div style={{ padding: "10px 10px 6px", borderBottom: "1px solid #f0f0f0" }}>
+                        <input
+                          autoFocus
+                          type="text"
+                          placeholder="Cari negara..."
+                          value={dialSearch}
+                          onChange={e => setDialSearch(e.target.value)}
+                          style={{ width: "100%", height: 34, padding: "0 10px", fontSize: 13, border: "1px solid #ddd", borderRadius: 6, outline: "none", boxSizing: "border-box", fontFamily: "inherit" }}
+                        />
+                      </div>
+                      {/* Country list */}
+                      <div style={{ maxHeight: 240, overflowY: "auto" }}>
+                        {COUNTRY_CODES.filter(c =>
+                          c.name.toLowerCase().includes(dialSearch.toLowerCase()) ||
+                          c.code.includes(dialSearch)
+                        ).map((c, i) => (
+                          <div
+                            key={i}
+                            onMouseDown={() => {
+                              setDialCode(c.code);
+                              setDialFlag(c.flag);
+                              setDialOpen(false);
+                              setDialSearch("");
+                            }}
+                            style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", cursor: "pointer", fontSize: 13, color: "#222", transition: "background 0.1s" }}
+                            onMouseEnter={e => (e.currentTarget.style.background = "#f5f5f5")}
+                            onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                          >
+                            <span style={{ fontSize: 20, lineHeight: 1, flexShrink: 0 }}>{c.flag}</span>
+                            <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</span>
+                            <span style={{ color: "#888", fontWeight: 600, flexShrink: 0 }}>{c.code}</span>
+                          </div>
+                        ))}
+                        {COUNTRY_CODES.filter(c =>
+                          c.name.toLowerCase().includes(dialSearch.toLowerCase()) ||
+                          c.code.includes(dialSearch)
+                        ).length === 0 && (
+                          <div style={{ padding: "16px", textAlign: "center", color: "#aaa", fontSize: 13 }}>Tidak ditemukan</div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Phone number input */}
                 <input
                   className="s4i"
                   type="tel"
-                  placeholder="Mobile Phone*"
+                  placeholder="Nomor telepon*"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
-                  style={{ flex: 1, border: "none", outline: "none", padding: "0 14px", fontSize: 14, color: "#111", background: "#fff", fontFamily: "inherit" }}
+                  style={{ flex: 1, border: "none", outline: "none", padding: "0 14px", fontSize: 14, color: "#111", background: "#fff", fontFamily: "inherit", borderRadius: "0 6px 6px 0" }}
                 />
               </div>
               <Err k="phone" />
