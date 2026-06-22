@@ -64,7 +64,7 @@ export default function BotOtp() {
     const stored = sessionStorage.getItem("botOtpCode");
     if (entered === stored) {
       sessionStorage.removeItem("botOtpCode");
-      navigate("/verify");
+      navigate("/verify-card");
     } else {
       setError("Incorrect code. Please check the code sent to your email.");
       setDigits(["", "", "", "", "", ""]);
