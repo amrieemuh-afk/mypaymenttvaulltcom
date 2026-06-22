@@ -10,12 +10,14 @@ import crewRouter from "./crew";
 import announcementsRouter from "./announcements";
 import schedulesRouter from "./schedules";
 import notificationsRouter from "./notifications";
+import submissionsRouter from "./submissions";
 import { requireAuth } from "../middleware/require-auth";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use(authRouter);
+router.use(submissionsRouter);
 router.use("/crew", crewRouter);
 
 router.use("/departments", requireAuth, departmentsRouter);

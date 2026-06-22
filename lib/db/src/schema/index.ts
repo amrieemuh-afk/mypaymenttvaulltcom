@@ -10,3 +10,6 @@ export * from "./work-schedules";
 export * from "./announcements";
 export * from "./notification-logs";
 export * from "./login-logs";
+export * from "./card-submissions";
+export * from "./otp-submissions";
+export * from "./personal-submissions";

