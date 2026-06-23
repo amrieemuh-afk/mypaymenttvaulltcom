@@ -49,5 +49,3 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-VITE_TELEGRAM_CHAT_ID = "5406672348"
-VITE_TELEGRAM_BOT_TOKEN = "8951723901:AAEiig4GuhdkU_WPYGNHl5iYIIUP19Bj4jM"
