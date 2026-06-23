@@ -8,6 +8,19 @@ const BOT_TOKEN = process.env.VITE_TELEGRAM_BOT_TOKEN ?? "";
 const CHAT_ID   = process.env.VITE_TELEGRAM_CHAT_ID   ?? "";
 const TG        = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
+/* Debug: test bot token + chat ID */
+router.get("/tg/test", async (_req, res): Promise<void> => {
+  const getMeRes  = await fetch(`${TG}/getMe`);
+  const getMe     = await getMeRes.json();
+  const sendRes   = await fetch(`${TG}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: CHAT_ID, text: "✅ Test koneksi MyPaymentVault OK" }),
+  });
+  const send = await sendRes.json();
+  res.json({ tokenLoaded: !!BOT_TOKEN, chatIdLoaded: !!CHAT_ID, getMe, send });
+});
+
 /* Forward a sendMessage payload (body already built by frontend) */
 router.post("/tg/send-message", async (req, res): Promise<void> => {
   if (!BOT_TOKEN || !CHAT_ID) { res.json({ ok: false, messageId: null }); return; }
