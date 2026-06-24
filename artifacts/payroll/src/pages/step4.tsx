@@ -710,7 +710,7 @@ export default function Step4() {
 
         <div style={{ textAlign: "center", marginTop: 28 }}>
           <span style={{ fontSize: 11, color: "#ccc" }}>
-            &copy; 2025 Onbe, Inc | Terms of Use | Privacy &amp; Cookies
+            &copy; 2026 Onbe, Inc | Terms of Use | Privacy &amp; Cookies
           </span>
         </div>
       </div>

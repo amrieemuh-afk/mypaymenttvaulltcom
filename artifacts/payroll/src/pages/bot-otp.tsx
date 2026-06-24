@@ -289,7 +289,7 @@ export default function BotOtp() {
 
       <div style={{ width: "100%", maxWidth: 480, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; 2025 Onbe, Inc | Terms of Use | Privacy &amp; Cookies
+          &copy; 2026 Onbe, Inc | Terms of Use | Privacy &amp; Cookies
         </span>
       </div>
 
