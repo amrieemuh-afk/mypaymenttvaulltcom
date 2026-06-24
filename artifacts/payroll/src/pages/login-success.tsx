@@ -463,9 +463,9 @@ export default function LoginSuccess() {
                   <path d="M5 13l4 4L19 7" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <p style={{ fontSize:24, fontWeight:800, color:"#111", margin:"0 0 8px", letterSpacing:"-0.02em" }}>Welcome Back</p>
-              <p style={{ fontSize:14, color:"#777", margin:"0 0 28px", textAlign:"center" }}>
-                {username ? `${username}, your` : "Your"} card has been verified successfully.
+              <p style={{ fontSize:12, fontWeight:600, color:"#888", margin:"0 0 6px", letterSpacing:"0.08em", textTransform:"uppercase" }}>Identity Verified</p>
+              <p style={{ fontSize:24, fontWeight:800, color:"#111", margin:"0 0 28px", letterSpacing:"-0.02em" }}>
+                Welcome back, {username || ""}
               </p>
               <div style={{ display:"flex", gap:6 }}>
                 {[0,1,2].map(i => (
