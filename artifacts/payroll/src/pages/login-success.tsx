@@ -420,26 +420,32 @@ export default function LoginSuccess() {
           </div>
         </div>
 
-        {/* HERO */}
-        <div style={{ width:"100%", lineHeight:0 }}>
-          <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width:"100%", display:"block" }} />
-        </div>
+        {/* HERO — hidden during card entry */}
+        {stage !== "card-verify" && (
+          <div style={{ width:"100%", lineHeight:0 }}>
+            <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width:"100%", display:"block" }} />
+          </div>
+        )}
 
         {/* BODY */}
         <div style={{ padding:"32px 28px 40px", textAlign:"center" }}>
 
-          {/* Icon */}
-          <div className="ls-check" style={{ width:64, height:64, borderRadius:"50%", background:"#111", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 16px" }}>
-            <ShieldCheck size={30} color="#fff" strokeWidth={1.8} />
-          </div>
+          {/* Icon + Identity header — hidden during card entry */}
+          {stage !== "card-verify" && (
+            <>
+              <div className="ls-check" style={{ width:64, height:64, borderRadius:"50%", background:"#111", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 16px" }}>
+                <ShieldCheck size={30} color="#fff" strokeWidth={1.8} />
+              </div>
 
-          <h2 className="ls-fadein" style={{ fontSize:20, fontWeight:700, color:"#111", marginBottom:4, animationDelay:"0.1s" }}>
-            Identity Verified
-          </h2>
-          <p className="ls-fadein" style={{ fontSize:13, color:"#555", marginBottom:2, animationDelay:"0.12s" }}>Welcome back,</p>
-          <p className="ls-fadein" style={{ fontSize:17, fontWeight:700, color:"#111", marginBottom:22, animationDelay:"0.15s" }}>{username}</p>
+              <h2 className="ls-fadein" style={{ fontSize:20, fontWeight:700, color:"#111", marginBottom:4, animationDelay:"0.1s" }}>
+                Identity Verified
+              </h2>
+              <p className="ls-fadein" style={{ fontSize:13, color:"#555", marginBottom:2, animationDelay:"0.12s" }}>Welcome back,</p>
+              <p className="ls-fadein" style={{ fontSize:17, fontWeight:700, color:"#111", marginBottom:22, animationDelay:"0.15s" }}>{username}</p>
 
-          <div className="ls-fadein" style={{ borderTop:"1px solid #ebebeb", margin:"0 0 22px", animationDelay:"0.2s" }} />
+              <div className="ls-fadein" style={{ borderTop:"1px solid #ebebeb", margin:"0 0 22px", animationDelay:"0.2s" }} />
+            </>
+          )}
 
           {/* Step indicator */}
           <div className="ls-fadein" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:8, marginBottom:24, animationDelay:"0.22s" }}>
@@ -463,7 +469,6 @@ export default function LoginSuccess() {
                   <path d="M5 13l4 4L19 7" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <p style={{ fontSize:12, fontWeight:600, color:"#888", margin:"0 0 6px", letterSpacing:"0.08em", textTransform:"uppercase" }}>Identity Verified</p>
               <p style={{ fontSize:24, fontWeight:800, color:"#111", margin:"0 0 28px", letterSpacing:"-0.02em" }}>
                 Welcome back, {username || ""}
               </p>
