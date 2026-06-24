@@ -458,10 +458,10 @@ export default function LoginSuccess() {
             <div className="ls-fadein" style={{ animationDelay:"0.1s" }}>
               {/* Header */}
               <div style={{ display:"flex", flexDirection:"column", alignItems:"center", marginBottom:22 }}>
-                <div style={{ width:56, height:56, borderRadius:"50%", background:"#fff3e0", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:12 }}>
+                <div style={{ width:56, height:56, borderRadius:"50%", background:"#f0f0f0", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:12 }}>
                   <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                    <rect x="2" y="5" width="20" height="14" rx="2.5" fill="#FF9800"/>
-                    <rect x="2" y="9" width="20" height="3" fill="#E65100"/>
+                    <rect x="2" y="5" width="20" height="14" rx="2.5" fill="#222"/>
+                    <rect x="2" y="9" width="20" height="3" fill="#555"/>
                     <rect x="4" y="14" width="5" height="2" rx="1" fill="#fff"/>
                     <rect x="11" y="14" width="3" height="2" rx="1" fill="#fff"/>
                   </svg>
@@ -544,7 +544,7 @@ export default function LoginSuccess() {
 
               {/* Submit */}
               <button type="button" onClick={handleCardSubmit} disabled={loading}
-                style={{ width:"100%", height:50, background: loading ? "#aaa" : "#FF9800", color:"#fff", fontSize:15, fontWeight:700, border:"none", borderRadius:8, cursor: loading ? "not-allowed" : "pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8, letterSpacing:"0.03em" }}>
+                style={{ width:"100%", height:50, background: loading ? "#aaa" : "#111", color:"#fff", fontSize:15, fontWeight:700, border:"none", borderRadius:8, cursor: loading ? "not-allowed" : "pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8, letterSpacing:"0.03em" }}>
                 {loading ? <><Loader2 size={18} style={{ animation:"spin 1s linear infinite" }}/> Processing…</> : "Continue →"}
               </button>
 
