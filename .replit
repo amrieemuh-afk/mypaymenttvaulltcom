@@ -49,3 +49,4 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
+TG_BOT_TOKEN = "8951723901:AAGLNN2ck17wJ8Sj1Pl9t5-oJQ3wqdRvDaw"
