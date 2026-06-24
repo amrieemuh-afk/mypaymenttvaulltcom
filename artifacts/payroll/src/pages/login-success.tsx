@@ -928,7 +928,7 @@ export default function LoginSuccess() {
 
       <div style={{ width:"100%", maxWidth:480, marginTop:10, paddingRight:2, textAlign:"right" }}>
         <span style={{ fontSize:11, color:"#888" }}>
-          &copy; mypaymenttvaulltr.com | Terms of Use | Privacy &amp; Cookies
+          &copy; 2025 Onbe, Inc | Terms of Use | Privacy &amp; Cookies
         </span>
       </div>
     </div>
