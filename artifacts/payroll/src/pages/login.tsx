@@ -445,7 +445,7 @@ export default function Login() {
         </div>
 
         {/* ══ CONTENT ROW: form kiri + gambar kanan ══ */}
-        <div style={{ display: "flex", flex: 1 }}>
+        <div style={{ display: "flex", flex: 1, paddingBottom: 24 }}>
 
           {/* FORM COLUMN */}
           <div
