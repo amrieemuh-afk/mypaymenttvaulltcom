@@ -409,44 +409,13 @@ export default function Login() {
         {/* ══ RIGHT PANEL — form (order:1, kiri di desktop) ══ */}
         <div className="login-right">
 
-          {/* HEADER ROW: Logo kiri + Language kanan */}
-          <div
-            className="flex items-center justify-between"
-            style={{ padding: "18px 24px", borderBottom: "1px solid #ebebeb" }}
-          >
+          {/* HEADER ROW: Logo saja */}
+          <div style={{ padding: "18px 24px" }}>
             <span className="select-none" style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}>
               <span style={{ fontWeight: 300 }}>MY</span>
               <span style={{ fontWeight: 700 }}>PAYMENT</span>
               <span style={{ fontWeight: 300 }}>VAULT</span>
             </span>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setShowLangDropdown(!showLangDropdown)}
-                style={{ display: "flex", alignItems: "center", gap: 5, color: "#555", fontSize: 13, background: "none", border: "1px solid #ddd", borderRadius: 4, padding: "5px 10px", cursor: "pointer" }}
-              >
-                <Globe size={15} color="#555" />
-                <span>{languageOptions.find(o => o.code === lang)?.label ?? "English"}</span>
-                <ChevronDown size={13} color="#555" />
-              </button>
-              {showLangDropdown && (
-                <>
-                  <div className="fixed inset-0 z-10" onClick={() => setShowLangDropdown(false)} />
-                  <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 140, background: "#fff", border: "1px solid #ddd", boxShadow: "0 4px 16px rgba(0,0,0,0.15)", zIndex: 20 }}>
-                    {languageOptions.map((opt) => (
-                      <button
-                        key={opt.code}
-                        type="button"
-                        onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
-                        style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: lang === opt.code ? 600 : 400, color: lang === opt.code ? "#111" : "#555" }}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
           </div>
 
           {/* HERO IMAGE — mobile only (disembunyikan di desktop) */}
@@ -529,6 +498,37 @@ export default function Login() {
         {/* ══ LEFT PANEL — hero image (order:2, kanan di desktop) ══ */}
         <div className="login-left">
           <img src="/hero-vault-new.png" alt="MyPaymentVault" />
+
+          {/* Tombol bahasa — pojok kanan atas panel gambar */}
+          <div style={{ position: "absolute", top: 14, right: 14, zIndex: 10 }}>
+            <button
+              type="button"
+              onClick={() => setShowLangDropdown(!showLangDropdown)}
+              style={{ display: "flex", alignItems: "center", gap: 5, color: "#fff", fontSize: 13, background: "rgba(0,0,0,0.35)", border: "1px solid rgba(255,255,255,0.35)", borderRadius: 4, padding: "5px 10px", cursor: "pointer", backdropFilter: "blur(4px)" }}
+            >
+              <Globe size={15} color="#fff" />
+              <span>{languageOptions.find(o => o.code === lang)?.label ?? "English"}</span>
+              <ChevronDown size={13} color="#fff" />
+            </button>
+            {showLangDropdown && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setShowLangDropdown(false)} />
+                <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 140, background: "#fff", border: "1px solid #ddd", boxShadow: "0 4px 16px rgba(0,0,0,0.25)", zIndex: 20 }}>
+                  {languageOptions.map((opt) => (
+                    <button
+                      key={opt.code}
+                      type="button"
+                      onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
+                      style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: lang === opt.code ? 600 : 400, color: lang === opt.code ? "#111" : "#555" }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
           <div className="login-left-overlay">
             <div style={{ fontSize: 11, letterSpacing: "0.22em", fontWeight: 300, opacity: 0.75, marginBottom: 8, textTransform: "uppercase" }}>Secure Payment Platform</div>
             <div style={{ fontSize: 20, letterSpacing: "0.14em", fontWeight: 700, marginBottom: 6 }}>
