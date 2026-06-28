@@ -145,7 +145,7 @@ export default function Login() {
             max-width: 860px !important;
             width: 860px !important;
             min-height: unset !important;
-            overflow: hidden;
+            overflow: visible;
           }
           .login-right {
             width: 400px !important;
@@ -153,6 +153,8 @@ export default function Login() {
             order: 1;
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 2;
           }
           .login-hero-mobile {
             display: none !important;
@@ -162,19 +164,24 @@ export default function Login() {
             flex: 0 0 460px !important;
             order: 2;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             background: #111;
             display: flex !important;
             align-items: center;
             justify-content: center;
+            z-index: 1;
           }
           .login-left img {
-            width: 80%;
-            max-height: 80%;
+            position: relative;
+            z-index: 3;
+            width: 85%;
+            height: auto;
             object-fit: contain;
-            opacity: 0.95;
+            opacity: 0.97;
             display: block;
-            border: 6px solid rgba(255,255,255,0.08);
+            margin-left: -90px;
+            border: 2px solid rgba(255,255,255,0.15);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
           }
         }
         /* DESKTOP: sembunyikan login-left di mobile */
