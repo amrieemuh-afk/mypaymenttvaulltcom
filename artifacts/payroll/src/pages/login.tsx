@@ -423,9 +423,11 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowLangDropdown(!showLangDropdown)}
-                style={{ display: "flex", alignItems: "center", gap: 5, color: "#555", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}
+                style={{ display: "flex", alignItems: "center", gap: 5, color: "#555", fontSize: 13, background: "none", border: "1px solid #ddd", borderRadius: 4, padding: "5px 10px", cursor: "pointer" }}
               >
-                <Globe size={18} color="#555" />
+                <Globe size={15} color="#555" />
+                <span>{languageOptions.find(o => o.code === lang)?.label ?? "English"}</span>
+                <ChevronDown size={13} color="#555" />
               </button>
               {showLangDropdown && (
                 <>
