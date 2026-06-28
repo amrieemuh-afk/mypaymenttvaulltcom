@@ -549,7 +549,7 @@ export default function Login() {
       </div>
 
       {/* ─── FOOTER ─── */}
-      <div className="login-footer" style={{ width: "100%", maxWidth: 960, marginTop: 12, textAlign: "center" }}>
+      <div className="login-footer" style={{ width: "100%", maxWidth: 960, marginTop: 12, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
           &copy; {t.copyright} |{" "}
           <button onClick={() => {}} style={{ fontSize: 11, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
