@@ -149,19 +149,22 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: #ffffff !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
             max-width: 1140px !important;
             width: 1140px !important;
           }
           .login-form-col {
-            flex: 0 0 475px !important;
-            width: 475px !important;
+            flex: 0 0 41.67% !important;
+            width: 41.67% !important;
+            max-width: 41.67% !important;
           }
           .login-image-col {
             display: flex !important;
-            flex: 1 1 auto !important;
-            background: #212121 !important;
-            overflow: visible !important;
+            flex: 0 0 50% !important;
+            width: 50% !important;
+            max-width: 50% !important;
+            background: transparent !important;
+            overflow: hidden !important;
           }
           .login-hero-mobile { display: none !important; }
         }
@@ -446,7 +449,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "42%", padding: "8px 60px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "41.67%", padding: "8px 40px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", width: "100%", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
@@ -526,34 +529,22 @@ export default function Login() {
             className="login-image-col"
             style={{
               display: "none",
-              overflow: "visible",
+              width: "50%",
+              overflow: "hidden",
               position: "relative",
-              zIndex: 1,
             }}
           >
-            {/* image positioned absolute so pop-out is reliable */}
-            <div style={{
-              position: "absolute",
-              top: "50%",
-              left: "-30px",
-              right: "20px",
-              transform: "translateY(-50%)",
-            }}>
-              <img
-                src="/hero-vault-new.png"
-                alt="MyPaymentVault"
-                style={{
-                  display: "block",
-                  width: "100%",
-                  height: "auto",
-                  maxHeight: "300px",
-                  objectFit: "contain",
-                  objectPosition: "center",
-                  border: "2px solid rgba(255,255,255,0.15)",
-                  boxShadow: "0 6px 32px rgba(0,0,0,0.45)",
-                }}
-              />
-            </div>
+            <img
+              src="/hero-vault-new.png"
+              alt=""
+              style={{
+                display: "block",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+              }}
+            />
           </div>
 
         </div>{/* end content row */}
