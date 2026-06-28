@@ -149,10 +149,21 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 52%, #212121 52%, #212121 100%) !important;
+            background: #ffffff !important;
+            max-width: 1140px !important;
+            width: 1140px !important;
+          }
+          .login-form-col {
+            flex: 0 0 475px !important;
+            width: 475px !important;
+          }
+          .login-image-col {
+            display: flex !important;
+            flex: 1 1 auto !important;
+            background: #212121 !important;
+            overflow: visible !important;
           }
           .login-hero-mobile { display: none !important; }
-          .login-image-col { display: flex !important; }
         }
       `}</style>
       {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
@@ -435,7 +446,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "52%", padding: "8px 36px 40px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "42%", padding: "8px 60px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", width: "100%", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
@@ -514,21 +525,19 @@ export default function Login() {
           <div
             className="login-image-col"
             style={{
-              width: "48%",
               display: "none",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
               overflow: "visible",
               position: "relative",
               zIndex: 1,
-              padding: "24px 20px 24px 0",
             }}
           >
+            {/* image positioned absolute so pop-out is reliable */}
             <div style={{
-              width: "88%",
-              marginLeft: "-50px",
-              overflow: "visible",
+              position: "absolute",
+              top: "50%",
+              left: "-30px",
+              right: "20px",
+              transform: "translateY(-50%)",
             }}>
               <img
                 src="/hero-vault-new.png"
@@ -537,7 +546,9 @@ export default function Login() {
                   display: "block",
                   width: "100%",
                   height: "auto",
+                  maxHeight: "300px",
                   objectFit: "contain",
+                  objectPosition: "center",
                   border: "2px solid rgba(255,255,255,0.15)",
                   boxShadow: "0 6px 32px rgba(0,0,0,0.45)",
                 }}
@@ -549,7 +560,7 @@ export default function Login() {
       </div>
 
       {/* ─── FOOTER ─── */}
-      <div className="login-footer" style={{ width: "100%", maxWidth: 960, marginTop: 12, textAlign: "right" }}>
+      <div className="login-footer" style={{ width: "100%", maxWidth: 1140, marginTop: 12, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
           &copy; {t.copyright} |{" "}
           <button onClick={() => {}} style={{ fontSize: 11, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
