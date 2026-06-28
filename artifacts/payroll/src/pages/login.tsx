@@ -513,11 +513,11 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setShowLangDropdown(!showLangDropdown)}
-              style={{ display: "flex", alignItems: "center", gap: 5, color: "#fff", fontSize: 13, background: "rgba(0,0,0,0.35)", border: "1px solid rgba(255,255,255,0.35)", borderRadius: 4, padding: "5px 10px", cursor: "pointer", backdropFilter: "blur(4px)" }}
+              style={{ display: "flex", alignItems: "center", gap: 5, color: "#111", fontSize: 13, background: "#fff", border: "1px solid #ccc", borderRadius: 4, padding: "5px 10px", cursor: "pointer" }}
             >
-              <Globe size={15} color="#fff" />
+              <Globe size={15} color="#555" />
               <span>{languageOptions.find(o => o.code === lang)?.label ?? "English"}</span>
-              <ChevronDown size={13} color="#fff" />
+              <ChevronDown size={13} color="#555" />
             </button>
             {showLangDropdown && (
               <>
