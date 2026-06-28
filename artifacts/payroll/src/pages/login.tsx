@@ -164,7 +164,7 @@ export default function Login() {
             width: 50% !important;
             max-width: 50% !important;
             background: transparent !important;
-            overflow: visible !important;
+            overflow: hidden !important;
           }
           .login-hero-mobile { display: none !important; }
         }
@@ -539,9 +539,10 @@ export default function Login() {
               alt=""
               style={{
                 position: "absolute",
-                top: "-30px",
-                left: "75px",
-                height: "calc(100% + 30px)",
+                top: "50%",
+                left: "150px",
+                transform: "translateY(-50%)",
+                height: "270px",
                 width: "auto",
               }}
             />
