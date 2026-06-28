@@ -150,8 +150,8 @@ export default function Login() {
         @media (min-width: 769px) {
           .login-card {
             background: linear-gradient(to right, #ffffff 0%, #ffffff 60%, #212121 60%, #212121 100%) !important;
-            max-width: 1140px !important;
-            width: 1140px !important;
+            max-width: 1060px !important;
+            width: 1060px !important;
           }
           .login-form-col {
             flex: 0 0 41.67% !important;
