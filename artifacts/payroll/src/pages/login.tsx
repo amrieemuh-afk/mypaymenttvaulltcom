@@ -149,9 +149,9 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 60%, #212121 60%, #212121 100%) !important;
-            max-width: 1060px !important;
-            width: 1060px !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
+            max-width: 1140px !important;
+            width: 1140px !important;
           }
           .login-form-col {
             flex: 0 0 41.67% !important;
@@ -160,12 +160,11 @@ export default function Login() {
           }
           .login-image-col {
             display: flex !important;
-            flex: 0 0 54% !important;
-            width: 54% !important;
-            max-width: 54% !important;
+            flex: 0 0 50% !important;
+            width: 50% !important;
+            max-width: 50% !important;
             background: transparent !important;
             overflow: hidden !important;
-            align-items: stretch !important;
           }
           .login-hero-mobile { display: none !important; }
         }
@@ -450,7 +449,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "41.67%", padding: "60px 40px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "41.67%", padding: "8px 40px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", width: "100%", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
@@ -533,7 +532,6 @@ export default function Login() {
               width: "50%",
               overflow: "hidden",
               position: "relative",
-              padding: "10px 0 30px 30px",
             }}
           >
             <img
@@ -553,14 +551,14 @@ export default function Login() {
       </div>
 
       {/* ─── FOOTER ─── */}
-      <div className="login-footer" style={{ width: "100%", maxWidth: 1060, marginTop: 12, textAlign: "right" }}>
-        <span style={{ fontSize: 13, color: "#888" }}>
+      <div className="login-footer" style={{ width: "100%", maxWidth: 1140, marginTop: 12, textAlign: "right" }}>
+        <span style={{ fontSize: 11, color: "#888" }}>
           &copy; {t.copyright} |{" "}
-          <button onClick={() => {}} style={{ fontSize: 13, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => {}} style={{ fontSize: 11, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
             {t.termsOfUse}
           </button>
           {" | "}
-          <button onClick={() => {}} style={{ fontSize: 13, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => {}} style={{ fontSize: 11, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
             {t.privacyCookies}
           </button>
         </span>
