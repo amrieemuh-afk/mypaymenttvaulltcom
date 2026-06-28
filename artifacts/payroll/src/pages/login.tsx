@@ -530,7 +530,7 @@ export default function Login() {
             style={{
               display: "none",
               width: "50%",
-              overflow: "hidden",
+              overflow: "visible",
               position: "relative",
             }}
           >
@@ -538,11 +538,12 @@ export default function Login() {
               src="/hero-vault-new.png"
               alt=""
               style={{
-                display: "block",
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center",
+                position: "absolute",
+                top: "50%",
+                left: "86px",
+                transform: "translateY(-50%)",
+                height: "270px",
+                width: "auto",
               }}
             />
           </div>
