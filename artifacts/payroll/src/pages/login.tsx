@@ -142,12 +142,14 @@ export default function Login() {
         @media (min-width: 769px) {
           .login-card {
             flex-direction: row !important;
-            max-width: 900px !important;
+            max-width: 860px !important;
+            width: 860px !important;
             min-height: unset !important;
             overflow: hidden;
           }
           .login-right {
-            flex: 0 0 420px;
+            width: 400px !important;
+            flex: 0 0 400px !important;
             order: 1;
             display: flex;
             flex-direction: column;
@@ -156,7 +158,8 @@ export default function Login() {
             display: none !important;
           }
           .login-left {
-            flex: 1;
+            width: 460px !important;
+            flex: 0 0 460px !important;
             order: 2;
             position: relative;
             overflow: hidden;
@@ -166,13 +169,12 @@ export default function Login() {
             justify-content: center;
           }
           .login-left img {
-            width: 90%;
-            height: auto;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
             opacity: 0.95;
             display: block;
-            position: relative;
-            z-index: 1;
           }
         }
         /* DESKTOP: sembunyikan login-left di mobile */
