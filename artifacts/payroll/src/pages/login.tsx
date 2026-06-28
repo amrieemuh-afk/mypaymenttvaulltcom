@@ -118,7 +118,7 @@ export default function Login() {
   return (
     <div
       className="login-outer"
-      style={{ padding: "40px 0", background: "#f7f7f7", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
+      style={{ minHeight: "100vh", background: "#f7f7f7", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
       <style>{`
         /* ── MOBILE ── */
