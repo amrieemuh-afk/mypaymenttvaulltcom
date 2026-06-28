@@ -162,19 +162,22 @@ export default function Login() {
             order: 2;
             position: relative;
             min-height: 100%;
-            overflow: hidden;
+            overflow: visible;
             background: #111;
             display: flex !important;
-            margin-left: -36px;
-            box-shadow: -6px 0 28px rgba(0,0,0,0.18);
           }
           .login-left img {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: -50px;
+            transform: translateY(-50%);
+            width: calc(100% + 50px);
+            height: auto;
+            max-height: 100%;
             object-fit: cover;
-            object-position: center center;
-            opacity: 0.9;
+            opacity: 0.92;
             display: block;
+            pointer-events: none;
           }
           .login-left-overlay {
             position: absolute;
@@ -535,13 +538,6 @@ export default function Login() {
             )}
           </div>
 
-          <div className="login-left-overlay">
-            <div style={{ fontSize: 11, letterSpacing: "0.22em", fontWeight: 300, opacity: 0.75, marginBottom: 8, textTransform: "uppercase" }}>Secure Payment Platform</div>
-            <div style={{ fontSize: 20, letterSpacing: "0.14em", fontWeight: 700, marginBottom: 6 }}>
-              <span style={{ fontWeight: 300 }}>MY</span>PAYMENT<span style={{ fontWeight: 300 }}>VAULT</span>
-            </div>
-            <div style={{ fontSize: 13, opacity: 0.6, fontWeight: 300 }}>Access and manage your account securely.</div>
-          </div>
         </div>
 
       </div>
