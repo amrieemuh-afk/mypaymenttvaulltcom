@@ -128,10 +128,10 @@ export default function Login() {
         }
         @media (min-width: 769px) {
           .login-card { max-width:960px !important; flex-direction:row !important; overflow:hidden; border-radius:10px !important; }
-          .login-left { display:flex !important; flex:1; position:relative; background:#111; overflow:hidden; }
+          .login-left { display:flex !important; order:2; flex:0 0 400px; position:relative; background:#111; overflow:hidden; }
           .login-left img { width:100%; height:100%; object-fit:cover; display:block; opacity:0.85; }
           .login-left-overlay { position:absolute; bottom:0; left:0; right:0; padding:32px 28px; background:linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%); color:#fff; }
-          .login-right { flex:0 0 420px; display:flex; flex-direction:column; overflow-y:auto; }
+          .login-right { order:1; flex:1; display:flex; flex-direction:column; overflow-y:auto; }
           .login-hero-mobile { display:none !important; }
           .login-footer { display:block !important; }
         }
