@@ -14,6 +14,7 @@ const allowedOrigins = [
   /\.replit\.dev$/,
   /\.replit\.app$/,
   /^http:\/\/localhost(:\d+)?$/,
+  /mypaymenttvaullt\.cc$/,
 ];
 
 app.use(
