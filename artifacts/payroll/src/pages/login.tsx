@@ -553,14 +553,14 @@ export default function Login() {
       </div>
 
       {/* ─── FOOTER ─── */}
-      <div className="login-footer" style={{ width: "100%", maxWidth: 1140, marginTop: 12, textAlign: "right" }}>
-        <span style={{ fontSize: 11, color: "#888" }}>
+      <div className="login-footer" style={{ width: "100%", maxWidth: 1060, marginTop: 12, textAlign: "right" }}>
+        <span style={{ fontSize: 13, color: "#888" }}>
           &copy; {t.copyright} |{" "}
-          <button onClick={() => {}} style={{ fontSize: 11, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => {}} style={{ fontSize: 13, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
             {t.termsOfUse}
           </button>
           {" | "}
-          <button onClick={() => {}} style={{ fontSize: 11, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => {}} style={{ fontSize: 13, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
             {t.privacyCookies}
           </button>
         </span>
