@@ -77,7 +77,7 @@ export function AuthCard({ children, showBack = false, backTo = "/login" }: Auth
 
         {/* Bottom footer */}
         <p className="text-[11px] text-gray-400 text-center mt-6">
-          &copy; 2026 Onbe, Inc. |{" "}
+          &copy; 2025 Onbe, Inc. |{" "}
           <button className="underline hover:text-gray-600">Terms of Use</button>
           {" | "}
           <button className="underline hover:text-gray-600">Privacy and Cookies</button>

@@ -122,21 +122,20 @@ export default function Login() {
     >
       <style>{`
         @media (max-width: 520px) {
-          .login-outer { background:#fff !important; justify-content:flex-start !important; padding:0 !important; }
-          .login-card { max-width:100% !important; min-height:100dvh !important; box-shadow:none !important; border-radius:0 !important; }
-          .login-footer { display:none !important; }
-        }
-        @media (min-width: 769px) {
-          .login-card { max-width:960px !important; flex-direction:row !important; overflow:hidden; border-radius:10px !important; }
-          .login-left { display:flex !important; order:2; flex:0 0 400px; position:relative; background:#111; overflow:hidden; }
-          .login-left img { width:100%; height:100%; object-fit:cover; display:block; opacity:0.85; }
-          .login-left-overlay { position:absolute; bottom:0; left:0; right:0; padding:32px 28px; background:linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%); color:#fff; }
-          .login-right { order:1; flex:1; display:flex; flex-direction:column; overflow-y:auto; }
-          .login-hero-mobile { display:none !important; }
-          .login-footer { display:block !important; }
-        }
-        @media (max-width: 768px) {
-          .login-left { display:none !important; }
+          .login-outer {
+            background: #fff !important;
+            justify-content: flex-start !important;
+            padding: 0 !important;
+          }
+          .login-card {
+            max-width: 100% !important;
+            min-height: 100dvh !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+          }
+          .login-footer {
+            display: none !important;
+          }
         }
       `}</style>
       {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
@@ -359,21 +358,6 @@ export default function Login() {
         className="w-full flex flex-col bg-white login-card"
         style={{ maxWidth: 480, boxShadow: "0 2px 32px rgba(0,0,0,0.13)" }}
       >
-        {/* ══ LEFT PANEL — desktop hero ══ */}
-        <div className="login-left" style={{ display:"none" }}>
-          <img src="/hero-vault-new.png" alt="MyPaymentVault" />
-          <div className="login-left-overlay">
-            <div style={{ fontSize:12, letterSpacing:"0.22em", fontWeight:300, opacity:0.8, marginBottom:8, textTransform:"uppercase" }}>Secure Payment Platform</div>
-            <div style={{ fontSize:22, letterSpacing:"0.16em", fontWeight:700, marginBottom:6 }}>
-              <span style={{ fontWeight:300 }}>MY</span>PAYMENT<span style={{ fontWeight:300 }}>VAULT</span>
-            </div>
-            <div style={{ fontSize:13, opacity:0.65, fontWeight:300 }}>Access and manage your account securely.</div>
-          </div>
-        </div>
-
-        {/* ══ RIGHT PANEL — form ══ */}
-        <div className="login-right">
-
         {/* ══ HEADER ROW: Logo kiri + Language kanan ══ */}
         <div
           className="flex items-center justify-between"
@@ -434,8 +418,8 @@ export default function Login() {
           </div>
         </div>
 
-        {/* ══ HERO IMAGE — mobile only ══ */}
-        <div className="login-hero-mobile" style={{ width: "100%", lineHeight: 0 }}>
+        {/* ══ HERO IMAGE — di bawah header ══ */}
+        <div style={{ width: "100%", lineHeight: 0 }}>
           <img
             src="/hero-vault-new.png"
             alt="MyPaymentVault"
@@ -545,7 +529,6 @@ export default function Login() {
             </button>
           </p>
         </div>
-        </div> {/* end login-right */}
       </div>
 
       {/* ─── FOOTER ─── */}

