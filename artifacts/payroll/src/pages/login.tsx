@@ -144,15 +144,13 @@ export default function Login() {
             flex-direction: row !important;
             max-width: 900px !important;
             min-height: unset !important;
-            overflow: visible;
+            overflow: hidden;
           }
           .login-right {
             flex: 0 0 420px;
             order: 1;
             display: flex;
             flex-direction: column;
-            position: relative;
-            z-index: 1;
           }
           .login-hero-mobile {
             display: none !important;
@@ -161,31 +159,20 @@ export default function Login() {
             flex: 1;
             order: 2;
             position: relative;
-            min-height: 100%;
-            overflow: visible;
+            overflow: hidden;
             background: #111;
             display: flex !important;
+            align-items: center;
+            justify-content: center;
           }
           .login-left img {
-            position: absolute;
-            top: 50%;
-            left: -50px;
-            transform: translateY(-50%);
-            width: calc(100% + 50px);
+            width: 90%;
             height: auto;
-            max-height: 100%;
-            object-fit: cover;
-            opacity: 0.92;
+            object-fit: contain;
+            opacity: 0.95;
             display: block;
-            pointer-events: none;
-          }
-          .login-left-overlay {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            padding: 28px 24px;
-            color: #fff;
-            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
-            z-index: 3;
+            position: relative;
+            z-index: 1;
           }
         }
         /* DESKTOP: sembunyikan login-left di mobile */
@@ -543,7 +530,7 @@ export default function Login() {
       </div>
 
       {/* ─── FOOTER ─── */}
-      <div className="login-footer" style={{ width: "100%", maxWidth: 480, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
+      <div className="login-footer" style={{ width: "100%", maxWidth: 900, marginTop: 12, textAlign: "center" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
           &copy; {t.copyright} |{" "}
           <button onClick={() => {}} style={{ fontSize: 11, color: "#888", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
