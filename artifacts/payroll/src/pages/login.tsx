@@ -149,7 +149,7 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 58%, #212121 58%, #212121 100%) !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 52%, #212121 52%, #212121 100%) !important;
           }
           .login-hero-mobile { display: none !important; }
           .login-image-col { display: flex !important; }
@@ -435,7 +435,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "58%", padding: "8px 40px 40px", background: "transparent" }}
+            style={{ width: "52%", padding: "8px 36px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", width: "100%", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
@@ -513,13 +513,36 @@ export default function Login() {
           {/* IMAGE COLUMN */}
           <div
             className="login-image-col"
-            style={{ width: "42%", display: "none", alignItems: "stretch" }}
+            style={{
+              width: "48%",
+              display: "none",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "visible",
+              position: "relative",
+              zIndex: 1,
+              padding: "24px 20px 24px 0",
+            }}
           >
-            <img
-              src="/hero-vault-new.png"
-              alt="MyPaymentVault"
-              style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }}
-            />
+            <div style={{
+              width: "88%",
+              marginLeft: "-50px",
+              overflow: "visible",
+            }}>
+              <img
+                src="/hero-vault-new.png"
+                alt="MyPaymentVault"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "contain",
+                  border: "2px solid rgba(255,255,255,0.15)",
+                  boxShadow: "0 6px 32px rgba(0,0,0,0.45)",
+                }}
+              />
+            </div>
           </div>
 
         </div>{/* end content row */}
