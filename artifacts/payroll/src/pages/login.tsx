@@ -533,6 +533,7 @@ export default function Login() {
               width: "50%",
               overflow: "hidden",
               position: "relative",
+              padding: "20px 20px 20px 0",
             }}
           >
             <img
