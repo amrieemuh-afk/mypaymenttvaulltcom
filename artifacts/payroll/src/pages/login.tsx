@@ -540,7 +540,7 @@ export default function Login() {
               style={{
                 position: "absolute",
                 top: "50%",
-                left: "86px",
+                left: "150px",
                 transform: "translateY(-50%)",
                 height: "270px",
                 width: "auto",
