@@ -165,6 +165,7 @@ export default function Login() {
             max-width: 50% !important;
             background: transparent !important;
             overflow: hidden !important;
+            align-items: stretch !important;
           }
           .login-hero-mobile { display: none !important; }
         }
@@ -530,7 +531,7 @@ export default function Login() {
             style={{
               display: "none",
               width: "50%",
-              overflow: "visible",
+              overflow: "hidden",
               position: "relative",
             }}
           >
@@ -538,12 +539,11 @@ export default function Login() {
               src="/hero-vault-new.png"
               alt=""
               style={{
-                position: "absolute",
-                top: "50%",
-                left: "85px",
-                transform: "translateY(-50%)",
-                height: "300px",
-                width: "auto",
+                display: "block",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
               }}
             />
           </div>
