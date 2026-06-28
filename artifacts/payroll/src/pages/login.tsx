@@ -149,7 +149,7 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 60%, #212121 60%, #212121 100%) !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 60%, #212121 63%, #212121 100%) !important;
             max-width: 1140px !important;
             width: 1140px !important;
           }
@@ -540,9 +540,9 @@ export default function Login() {
               style={{
                 position: "absolute",
                 top: "50%",
-                left: "150px",
+                left: "85px",
                 transform: "translateY(-50%)",
-                height: "270px",
+                height: "300px",
                 width: "auto",
               }}
             />
