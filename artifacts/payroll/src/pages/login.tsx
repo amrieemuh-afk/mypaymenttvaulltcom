@@ -126,6 +126,8 @@ export default function Login() {
           .login-outer {
             background: #fff !important;
             justify-content: flex-start !important;
+            align-items: stretch !important;
+            padding: 0 !important;
           }
           .login-card {
             max-width: 100% !important;
@@ -133,17 +135,30 @@ export default function Login() {
             box-shadow: none !important;
             background: #fff !important;
             min-height: 100dvh;
+            border-radius: 0 !important;
           }
           .login-card-header {
-            padding: 16px 20px !important;
+            padding: 14px 20px !important;
+            border-bottom: 1px solid #eee !important;
           }
-          .login-card-header .lang-btn { display: none !important; }
+          .login-card-header .lang-btn { display: flex !important; }
           .login-form-col {
             width: 100% !important;
-            padding: 20px 20px 32px !important;
+            padding: 24px 24px 40px !important;
           }
           .login-image-col { display: none !important; }
-          .login-hero-mobile { display: block !important; }
+          .login-hero-mobile {
+            display: block !important;
+            max-height: 200px !important;
+            overflow: hidden !important;
+          }
+          .login-hero-mobile img {
+            width: 100% !important;
+            height: 200px !important;
+            object-fit: cover !important;
+            object-position: center top !important;
+            display: block !important;
+          }
           .login-footer { display: none !important; }
         }
         /* ── DESKTOP ── */
