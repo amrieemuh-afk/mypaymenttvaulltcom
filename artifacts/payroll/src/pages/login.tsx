@@ -170,25 +170,51 @@ export default function Login() {
         }
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
+          .login-outer {
+            background: #fff !important;
+            justify-content: flex-start !important;
+          }
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
-            max-width: 1140px !important;
-            width: 1140px !important;
+            background: #fff !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            box-shadow: none !important;
+            min-height: 100dvh;
+          }
+          .login-card-header {
+            padding: 28px 40px 16px !important;
+            background: #111 !important;
+          }
+          .login-card-header .select-none,
+          .login-card-header .select-none span {
+            font-size: 17px !important;
+            letter-spacing: 0.14em !important;
+            color: #fff !important;
+          }
+          .login-card-header .lang-btn { display: flex !important; }
+          .login-card-header .lang-btn button {
+            background: none !important;
+            border: none !important;
+            padding: 4px !important;
+            cursor: pointer !important;
+            color: #fff !important;
+          }
+          .login-card-header .lang-btn button svg {
+            color: #fff !important;
+            stroke: #fff !important;
+          }
+          .login-card-header .lang-btn button span,
+          .login-card-header .lang-btn button svg:last-child {
+            display: none !important;
           }
           .login-form-col {
-            flex: 0 0 41.67% !important;
-            width: 41.67% !important;
-            max-width: 41.67% !important;
+            width: 100% !important;
+            max-width: 480px !important;
+            padding: 30px 40px 40px !important;
           }
-          .login-image-col {
-            display: flex !important;
-            flex: 0 0 50% !important;
-            width: 50% !important;
-            max-width: 50% !important;
-            background: transparent !important;
-            overflow: hidden !important;
-          }
-          .login-hero-mobile { display: none !important; }
+          .login-image-col { display: none !important; }
+          .login-hero-mobile { display: block !important; }
+          .login-footer { display: none !important; }
         }
       `}</style>
       {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
