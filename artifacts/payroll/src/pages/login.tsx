@@ -209,11 +209,24 @@ export default function Login() {
           }
           .login-form-col {
             width: 100% !important;
-            max-width: 480px !important;
-            padding: 30px 40px 40px !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+          }
+          .login-hero-mobile {
+            margin: 0 !important;
+            width: 100% !important;
+            display: block !important;
+          }
+          .login-hero-mobile img {
+            max-height: 420px;
+            object-fit: cover;
+            object-position: center;
+          }
+          .login-form-inner {
+            max-width: 480px;
+            padding: 30px 40px 40px;
           }
           .login-image-col { display: none !important; }
-          .login-hero-mobile { display: block !important; }
           .login-footer { display: none !important; }
         }
       `}</style>
@@ -504,6 +517,7 @@ export default function Login() {
               <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
             </div>
 
+            <div className="login-form-inner">
             <h2 style={{ fontSize: 17, fontWeight: 400, color: "#111", marginBottom: 6 }}>
               {t.accessAccount}
             </h2>
@@ -570,6 +584,7 @@ export default function Login() {
                 {t.activateCard}
               </button>
             </p>
+            </div>{/* end login-form-inner */}
           </div>
 
           {/* IMAGE COLUMN */}
