@@ -577,6 +577,8 @@ export default function Login() {
               width: "50%",
               overflow: "hidden",
               position: "relative",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <img
@@ -584,7 +586,7 @@ export default function Login() {
               alt=""
               style={{
                 display: "block",
-                width: "100%",
+                width: "85%",
                 height: "auto",
               }}
             />
