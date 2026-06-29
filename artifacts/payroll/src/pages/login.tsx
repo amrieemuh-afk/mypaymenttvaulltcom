@@ -139,9 +139,18 @@ export default function Login() {
           }
           .login-card-header {
             padding: 14px 20px !important;
-            border-bottom: 1px solid #eee !important;
+            background: #111 !important;
+            border-bottom: none !important;
           }
           .login-card-header .lang-btn { display: flex !important; }
+          .login-card-header .lang-btn button {
+            background: transparent !important;
+            border-color: #555 !important;
+            color: #fff !important;
+          }
+          .login-card-header span.select-none span {
+            color: #fff !important;
+          }
           .login-form-col {
             width: 100% !important;
             padding: 24px 24px 40px !important;
