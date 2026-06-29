@@ -584,10 +584,11 @@ export default function Login() {
               alt=""
               style={{
                 display: "block",
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "right center",
+                width: "75%",
+                height: "75%",
+                objectFit: "contain",
+                objectPosition: "center center",
+                margin: "auto",
               }}
             />
           </div>
