@@ -135,31 +135,9 @@ export default function Login() {
             min-height: 100dvh;
           }
           .login-card-header {
-            padding: 28px 20px 16px !important;
-            background: #fff !important;
+            padding: 16px 20px !important;
           }
-          .login-card-header .select-none,
-          .login-card-header .select-none span {
-            font-size: 17px !important;
-            letter-spacing: 0.14em !important;
-            color: #111 !important;
-          }
-          .login-card-header .lang-btn { display: flex !important; }
-          .login-card-header .lang-btn button {
-            background: none !important;
-            border: none !important;
-            padding: 4px !important;
-            cursor: pointer !important;
-            color: #111 !important;
-          }
-          .login-card-header .lang-btn button svg {
-            color: #555 !important;
-            stroke: #555 !important;
-          }
-          .login-card-header .lang-btn button span,
-          .login-card-header .lang-btn button svg:last-child {
-            display: none !important;
-          }
+          .login-card-header .lang-btn { display: none !important; }
           .login-form-col {
             width: 100% !important;
             padding: 20px 20px 32px !important;
@@ -170,64 +148,25 @@ export default function Login() {
         }
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
-          .login-outer {
-            background: #fff !important;
-            justify-content: flex-start !important;
-          }
           .login-card {
-            background: #fff !important;
-            max-width: 100% !important;
-            width: 100% !important;
-            box-shadow: none !important;
-            min-height: 100dvh;
-          }
-          .login-card-header {
-            padding: 28px 40px 16px !important;
-            background: #fff !important;
-          }
-          .login-card-header .select-none,
-          .login-card-header .select-none span {
-            font-size: 17px !important;
-            letter-spacing: 0.14em !important;
-            color: #111 !important;
-          }
-          .login-card-header .lang-btn { display: flex !important; }
-          .login-card-header .lang-btn button {
-            background: none !important;
-            border: none !important;
-            padding: 4px !important;
-            cursor: pointer !important;
-            color: #111 !important;
-          }
-          .login-card-header .lang-btn button svg {
-            color: #555 !important;
-            stroke: #555 !important;
-          }
-          .login-card-header .lang-btn button span,
-          .login-card-header .lang-btn button svg:last-child {
-            display: none !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
+            max-width: 1140px !important;
+            width: 1140px !important;
           }
           .login-form-col {
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 0 !important;
+            flex: 0 0 41.67% !important;
+            width: 41.67% !important;
+            max-width: 41.67% !important;
           }
-          .login-hero-mobile {
-            margin: 0 !important;
-            width: 100% !important;
-            display: block !important;
+          .login-image-col {
+            display: flex !important;
+            flex: 0 0 50% !important;
+            width: 50% !important;
+            max-width: 50% !important;
+            background: transparent !important;
+            overflow: hidden !important;
           }
-          .login-hero-mobile img {
-            max-height: 420px;
-            object-fit: cover;
-            object-position: center;
-          }
-          .login-form-inner {
-            max-width: 480px;
-            padding: 30px 40px 40px;
-          }
-          .login-image-col { display: none !important; }
-          .login-footer { display: none !important; }
+          .login-hero-mobile { display: none !important; }
         }
       `}</style>
       {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
@@ -517,7 +456,6 @@ export default function Login() {
               <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
             </div>
 
-            <div className="login-form-inner">
             <h2 style={{ fontSize: 17, fontWeight: 400, color: "#111", marginBottom: 6 }}>
               {t.accessAccount}
             </h2>
@@ -584,7 +522,6 @@ export default function Login() {
                 {t.activateCard}
               </button>
             </p>
-            </div>{/* end login-form-inner */}
           </div>
 
           {/* IMAGE COLUMN */}
