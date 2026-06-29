@@ -137,6 +137,10 @@ export default function Login() {
           .login-card-header {
             padding: 16px 20px !important;
           }
+          .login-card-header .select-none {
+            font-size: 17px !important;
+            letter-spacing: 0.14em !important;
+          }
           .login-card-header .lang-btn { display: flex !important; }
           .login-card-header .lang-btn button {
             background: none !important;
