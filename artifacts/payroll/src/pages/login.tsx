@@ -586,7 +586,7 @@ export default function Login() {
               alt=""
               style={{
                 display: "block",
-                width: "85%",
+                width: "65%",
                 height: "auto",
               }}
             />

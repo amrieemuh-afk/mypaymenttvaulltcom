@@ -123,7 +123,7 @@ const translations: Record<Language, Translations> = {
     activateCard: "Activate Your Card",
     termsOfUse: "Terms of Use",
     privacyCookies: "Privacy and Cookies",
-    copyright: "2026 Onbe, Inc.",
+    copyright: "2025 Onbe, Inc.",
 
     /* Modal */
     incorrectCredsTitle: "Incorrect Login Credentials",
@@ -227,7 +227,7 @@ const translations: Record<Language, Translations> = {
     activateCard: "Activa tu Tarjeta",
     termsOfUse: "Términos de Uso",
     privacyCookies: "Privacidad y Cookies",
-    copyright: "2026 Onbe, Inc.",
+    copyright: "2025 Onbe, Inc.",
 
     /* Modal */
     incorrectCredsTitle: "Credenciales de Inicio Incorrectas",
@@ -331,7 +331,7 @@ const translations: Record<Language, Translations> = {
     activateCard: "Activez votre Carte",
     termsOfUse: "Conditions d'Utilisation",
     privacyCookies: "Confidentialité et Cookies",
-    copyright: "2026 Onbe, Inc.",
+    copyright: "2025 Onbe, Inc.",
 
     /* Modal */
     incorrectCredsTitle: "Identifiants de Connexion Incorrects",
