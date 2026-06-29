@@ -126,8 +126,6 @@ export default function Login() {
           .login-outer {
             background: #fff !important;
             justify-content: flex-start !important;
-            align-items: stretch !important;
-            padding: 0 !important;
           }
           .login-card {
             max-width: 100% !important;
@@ -135,40 +133,17 @@ export default function Login() {
             box-shadow: none !important;
             background: #fff !important;
             min-height: 100dvh;
-            border-radius: 0 !important;
           }
           .login-card-header {
-            padding: 14px 20px !important;
-            background: #111 !important;
-            border-bottom: none !important;
+            padding: 16px 20px !important;
           }
-          .login-card-header .lang-btn { display: flex !important; }
-          .login-card-header .lang-btn button {
-            background: transparent !important;
-            border-color: #555 !important;
-            color: #fff !important;
-          }
-          .login-card-header span.select-none span {
-            color: #fff !important;
-          }
+          .login-card-header .lang-btn { display: none !important; }
           .login-form-col {
             width: 100% !important;
-            padding: 24px 24px 40px !important;
+            padding: 20px 20px 32px !important;
           }
           .login-image-col { display: none !important; }
-          .login-hero-mobile {
-            display: block !important;
-            background: #1a1a1a !important;
-            overflow: hidden !important;
-            height: 220px !important;
-          }
-          .login-hero-mobile img {
-            width: 100% !important;
-            height: 220px !important;
-            object-fit: cover !important;
-            object-position: center center !important;
-            display: block !important;
-          }
+          .login-hero-mobile { display: block !important; }
           .login-footer { display: none !important; }
         }
         /* ── DESKTOP ── */
