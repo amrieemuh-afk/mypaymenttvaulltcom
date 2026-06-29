@@ -167,6 +167,49 @@ export default function Login() {
             overflow: hidden !important;
           }
           .login-hero-mobile { display: none !important; }
+          /* Desktop lang btn: show full button */
+          .lang-btn button { display: flex !important; }
+          .lang-btn button span { display: inline !important; }
+          .lang-btn button svg { display: inline !important; }
+        }
+        /* ── FLOATING LABEL INPUTS ── */
+        .fl-group {
+          position: relative;
+          margin-bottom: 0;
+        }
+        .fl-group input {
+          width: 100%;
+          height: 52px;
+          padding: 18px 12px 6px;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          font-size: 13px;
+          color: #333;
+          outline: none;
+          box-sizing: border-box;
+          background: #fff;
+          transition: border-color 0.2s;
+        }
+        .fl-group input:focus {
+          border-color: #555;
+        }
+        .fl-group label {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 13px;
+          color: #888;
+          pointer-events: none;
+          transition: all 0.15s ease;
+          background: transparent;
+        }
+        .fl-group input:focus + label,
+        .fl-group input:not(:placeholder-shown) + label {
+          top: 10px;
+          transform: translateY(0);
+          font-size: 10px;
+          color: #555;
         }
       `}</style>
       {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
@@ -468,37 +511,39 @@ export default function Login() {
 
             <form onSubmit={handleSubmit}>
               {/* Username */}
-              <div style={{ marginBottom: 14 }}>
-                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
-                  <button type="button" onClick={() => navigate("/forgot-username")} style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
-                    {t.forgotUsername}
-                  </button>
-                </div>
+              <div style={{ marginBottom: 4, display: "flex", justifyContent: "flex-end" }}>
+                <button type="button" onClick={() => navigate("/forgot-username")} style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
+                  {t.forgotUsername}
+                </button>
+              </div>
+              <div className="fl-group" style={{ marginBottom: 14 }}>
                 <input
+                  id="fl-username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  placeholder={`${t.username}*`}
-                  style={{ width: "100%", height: 42, padding: "0 12px", border: "1px solid #ccc", fontSize: 13, color: "#333", outline: "none", boxSizing: "border-box", borderRadius: 3 }}
+                  placeholder=" "
                 />
+                <label htmlFor="fl-username">{t.username}*</label>
               </div>
 
               {/* Password */}
-              <div style={{ marginBottom: 18 }}>
-                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
-                  <button type="button" onClick={() => navigate("/forgot-password")} style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
-                    {t.forgotPassword}
-                  </button>
-                </div>
+              <div style={{ marginBottom: 4, display: "flex", justifyContent: "flex-end" }}>
+                <button type="button" onClick={() => navigate("/forgot-password")} style={{ fontSize: 12, color: "#555", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}>
+                  {t.forgotPassword}
+                </button>
+              </div>
+              <div className="fl-group" style={{ marginBottom: 18 }}>
                 <input
+                  id="fl-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  placeholder={`${t.password}*`}
-                  style={{ width: "100%", height: 42, padding: "0 12px", border: "1px solid #ccc", fontSize: 13, color: "#333", outline: "none", boxSizing: "border-box", borderRadius: 3 }}
+                  placeholder=" "
                 />
+                <label htmlFor="fl-password">{t.password}*</label>
               </div>
 
               {error && (
