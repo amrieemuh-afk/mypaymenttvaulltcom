@@ -149,14 +149,15 @@ export default function Login() {
           .login-image-col { display: none !important; }
           .login-hero-mobile {
             display: block !important;
-            max-height: 200px !important;
+            background: #1a1a1a !important;
             overflow: hidden !important;
+            height: 220px !important;
           }
           .login-hero-mobile img {
             width: 100% !important;
-            height: 200px !important;
+            height: 220px !important;
             object-fit: cover !important;
-            object-position: center top !important;
+            object-position: center center !important;
             display: block !important;
           }
           .login-footer { display: none !important; }
