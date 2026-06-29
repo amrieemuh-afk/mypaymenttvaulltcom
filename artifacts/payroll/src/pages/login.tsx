@@ -136,13 +136,13 @@ export default function Login() {
           }
           .login-card-header {
             padding: 28px 20px 16px !important;
-            background: #111 !important;
+            background: #fff !important;
           }
           .login-card-header .select-none,
           .login-card-header .select-none span {
             font-size: 17px !important;
             letter-spacing: 0.14em !important;
-            color: #fff !important;
+            color: #111 !important;
           }
           .login-card-header .lang-btn { display: flex !important; }
           .login-card-header .lang-btn button {
@@ -150,11 +150,11 @@ export default function Login() {
             border: none !important;
             padding: 4px !important;
             cursor: pointer !important;
-            color: #fff !important;
+            color: #111 !important;
           }
           .login-card-header .lang-btn button svg {
-            color: #fff !important;
-            stroke: #fff !important;
+            color: #555 !important;
+            stroke: #555 !important;
           }
           .login-card-header .lang-btn button span,
           .login-card-header .lang-btn button svg:last-child {
@@ -183,13 +183,13 @@ export default function Login() {
           }
           .login-card-header {
             padding: 28px 40px 16px !important;
-            background: #111 !important;
+            background: #fff !important;
           }
           .login-card-header .select-none,
           .login-card-header .select-none span {
             font-size: 17px !important;
             letter-spacing: 0.14em !important;
-            color: #fff !important;
+            color: #111 !important;
           }
           .login-card-header .lang-btn { display: flex !important; }
           .login-card-header .lang-btn button {
@@ -197,11 +197,11 @@ export default function Login() {
             border: none !important;
             padding: 4px !important;
             cursor: pointer !important;
-            color: #fff !important;
+            color: #111 !important;
           }
           .login-card-header .lang-btn button svg {
-            color: #fff !important;
-            stroke: #fff !important;
+            color: #555 !important;
+            stroke: #555 !important;
           }
           .login-card-header .lang-btn button span,
           .login-card-header .lang-btn button svg:last-child {
