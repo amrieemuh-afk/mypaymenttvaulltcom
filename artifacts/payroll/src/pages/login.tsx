@@ -492,7 +492,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "41.67%", padding: "8px 48px 40px 40px", background: "#fff", position: "relative", zIndex: 2 }}
+            style={{ width: "41.67%", padding: "8px 100px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
