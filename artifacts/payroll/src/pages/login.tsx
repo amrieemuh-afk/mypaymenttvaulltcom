@@ -586,9 +586,9 @@ export default function Login() {
                 alt=""
                 style={{
                   display: "block",
-                  width: "76%",
+                  width: "101%",
                   height: "100%",
-                  marginLeft: "5%",
+                  marginLeft: "-20%",
                   objectFit: "cover",
                   objectPosition: "center center",
                 }}
