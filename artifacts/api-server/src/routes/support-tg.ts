@@ -2,20 +2,48 @@ import { Router, type IRouter } from "express";
 
 const router: IRouter = Router();
 
-/* Helper: lihat updates bot untuk cari chat ID yang benar */
+async function getSupportChatId(botToken: string): Promise<string | null> {
+  /* Prioritas 1: gunakan SUPPORT_CHAT_ID jika valid */
+  const configured = process.env.SUPPORT_CHAT_ID ?? "";
+  if (configured && configured.trim().length > 3) {
+    return configured.trim();
+  }
+  /* Prioritas 2: auto-deteksi dari getUpdates */
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?limit=10`);
+    const data = await r.json() as {
+      ok: boolean;
+      result?: { message?: { chat: { id: number } } }[]
+    };
+    if (data.ok && data.result?.length) {
+      for (const u of data.result) {
+        if (u.message?.chat?.id) return String(u.message.chat.id);
+      }
+    }
+  } catch { /* ignore */ }
+  return null;
+}
+
 router.get("/support/check-updates", async (req, res): Promise<void> => {
   const BOT_TOKEN = process.env.SUPPORT_BOT_TOKEN ?? "";
   if (!BOT_TOKEN) { res.json({ ok: false, error: "no token" }); return; }
   try {
     const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=10`);
-    const data = await r.json() as { ok: boolean; result?: { message?: { chat: { id: number; type: string; first_name?: string; title?: string } } }[] };
+    const data = await r.json() as {
+      ok: boolean;
+      result?: { message?: { chat: { id: number; type: string; first_name?: string; title?: string } } }[]
+    };
     if (!data.ok || !data.result?.length) {
-      res.json({ ok: false, error: "No updates — kirim /start ke bot live support Anda dulu", result: data });
+      res.json({ ok: false, error: "No updates", result: data });
       return;
     }
     const chats = data.result
       .filter(u => u.message?.chat)
-      .map(u => ({ id: u.message!.chat.id, type: u.message!.chat.type, name: u.message!.chat.first_name ?? u.message!.chat.title ?? "-" }));
+      .map(u => ({
+        id: u.message!.chat.id,
+        type: u.message!.chat.type,
+        name: u.message!.chat.first_name ?? u.message!.chat.title ?? "-",
+      }));
     res.json({ ok: true, chats });
   } catch (err) {
     res.json({ ok: false, error: String(err) });
@@ -24,11 +52,15 @@ router.get("/support/check-updates", async (req, res): Promise<void> => {
 
 router.post("/support/notify", async (req, res): Promise<void> => {
   const BOT_TOKEN = process.env.SUPPORT_BOT_TOKEN ?? "";
-  const CHAT_ID   = process.env.SUPPORT_CHAT_ID   ?? "";
+  if (!BOT_TOKEN) {
+    res.json({ ok: false, error: "missing_bot_token" });
+    return;
+  }
 
-  if (!BOT_TOKEN || !CHAT_ID) {
-    console.error("[support-tg] Missing SUPPORT_BOT_TOKEN or SUPPORT_CHAT_ID");
-    res.json({ ok: false, error: "missing_config" });
+  const chatId = await getSupportChatId(BOT_TOKEN);
+  if (!chatId) {
+    console.error("[support-tg] Could not determine chat ID — kirim /start ke bot live support");
+    res.json({ ok: false, error: "chat_id_not_found" });
     return;
   }
 
@@ -46,15 +78,14 @@ router.post("/support/notify", async (req, res): Promise<void> => {
       `<code>────────────────────────</code>\n` +
       `<i>🏦 MYPAYMENTVAULT — Live Support</i>`;
 
-    const TG = `https://api.telegram.org/bot${BOT_TOKEN}`;
-    const r = await fetch(`${TG}/sendMessage`, {
+    const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: "HTML" }),
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
     });
-    const data = await r.json() as { ok: boolean; description?: string; error_code?: number };
+    const data = await r.json() as { ok: boolean; description?: string };
     if (!data.ok) {
-      console.error("[support-tg] Telegram error:", data.error_code, data.description);
+      console.error("[support-tg] Telegram error:", data.description, "chat_id used:", chatId);
     }
     res.json({ ok: data.ok, error: data.description ?? null });
   } catch (err) {
