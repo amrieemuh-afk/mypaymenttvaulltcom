@@ -160,14 +160,6 @@ export default function Login() {
           .login-btn-mobile { height: 50px !important; font-size: 16px !important; font-weight: 600 !important; border-radius: 4px !important; }
           .activate-card-mobile { font-size: 13px !important; margin-top: 14px !important; text-align: center !important; }
         }
-        /* ── LAYAR PENDEK (misal iPhone SE, lebar ≤ 768 & tinggi ≤ 700px) ── */
-        @media (max-width: 768px) and (max-height: 700px) {
-          .login-hero-mobile img { max-height: 160px !important; object-fit: cover !important; object-position: center !important; }
-          .login-heading { font-size: 18px !important; margin-bottom: 6px !important; }
-          .login-enrolled { margin-bottom: 10px !important; }
-          .login-form-col form .fl-group { margin-bottom: 8px !important; }
-          .login-form-col { padding-bottom: 80px !important; }
-        }
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
