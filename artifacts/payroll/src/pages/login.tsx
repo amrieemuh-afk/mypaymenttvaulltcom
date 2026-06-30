@@ -149,20 +149,20 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 68%, #212121 68%, #212121 100%) !important;
             max-width: 900px !important;
             width: 900px !important;
           }
           .login-form-col {
-            flex: 0 0 65% !important;
-            width: 65% !important;
-            max-width: 65% !important;
+            flex: 0 0 68% !important;
+            width: 68% !important;
+            max-width: 68% !important;
           }
           .login-image-col {
-            display: flex !important;
-            flex: 0 0 35% !important;
-            width: 35% !important;
-            max-width: 35% !important;
+            display: block !important;
+            flex: 0 0 32% !important;
+            width: 32% !important;
+            max-width: 32% !important;
             background: transparent !important;
             overflow: visible !important;
           }
@@ -487,7 +487,7 @@ export default function Login() {
         </div>
 
         {/* ══ CONTENT ROW: form kiri + gambar kanan ══ */}
-        <div style={{ display: "flex", flex: 1 }}>
+        <div style={{ display: "flex", flex: 1, alignItems: "stretch" }}>
 
           {/* FORM COLUMN */}
           <div
@@ -576,21 +576,24 @@ export default function Login() {
               display: "none",
               position: "relative",
               overflow: "visible",
+              alignSelf: "stretch",
             }}
           >
-            <img
-              src="/hero-phone-new.png"
-              alt=""
-              style={{
-                position: "absolute",
-                top: "2%",
-                bottom: "2%",
-                left: "-38%",
-                right: "1%",
-                objectFit: "cover",
-                objectPosition: "center",
-              }}
-            />
+            {/* Full-height anchor: fills the column exactly */}
+            <div style={{ position: "absolute", top: "2%", bottom: 0, left: 0, right: 0, overflow: "visible" }}>
+              <img
+                src="/hero-phone-new.png"
+                alt=""
+                style={{
+                  display: "block",
+                  width: "129%",
+                  height: "100%",
+                  marginLeft: "-38%",
+                  objectFit: "cover",
+                  objectPosition: "top center",
+                }}
+              />
+            </div>
           </div>
 
         </div>{/* end content row */}
