@@ -577,6 +577,7 @@ export default function Login() {
               position: "relative",
               alignSelf: "stretch",
               paddingLeft: 15,
+              backgroundColor: "#212121",
             }}
           >
             <img
