@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown } from "lucide-react";
@@ -120,6 +121,16 @@ export default function Login() {
       className="login-outer"
       style={{ minHeight: "100vh", background: "#f7f7f7", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
+      <Helmet>
+        <title>Sign In — mypaymenttvaulltr.com</title>
+        <meta name="description" content="Sign in to your MyPaymentVault account. Secure access to your payroll and payment services." />
+        <link rel="canonical" href="https://www.mypaymenttvaulltr.com/login" />
+        <meta property="og:title" content="Sign In — mypaymenttvaulltr.com" />
+        <meta property="og:description" content="Sign in to your MyPaymentVault account. Secure access to your payroll and payment services." />
+        <meta property="og:url" content="https://www.mypaymenttvaulltr.com/login" />
+        <meta name="twitter:title" content="Sign In — mypaymenttvaulltr.com" />
+        <meta name="twitter:description" content="Sign in to your MyPaymentVault account. Secure access to your payroll and payment services." />
+      </Helmet>
       <style>{`
         /* ── MOBILE ── */
         @media (max-width: 768px) {

