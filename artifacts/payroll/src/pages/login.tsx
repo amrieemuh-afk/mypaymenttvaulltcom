@@ -150,6 +150,11 @@ export default function Login() {
           .login-hero-mobile { display: block !important; }
           .login-mobile-logo { display: none !important; }
           .login-footer { display: block !important; text-align: center !important; padding: 12px !important; }
+          .login-heading { font-size: 20px !important; font-weight: 700 !important; margin-bottom: 10px !important; }
+          .login-enrolled { font-size: 14px !important; margin-bottom: 16px !important; }
+          .login-form-col form .fl-group { margin-bottom: 14px !important; }
+          .login-form-col form .fl-group input { height: 52px !important; font-size: 15px !important; }
+          .login-form-col form .fl-group label { font-size: 13px !important; }
         }
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
@@ -512,10 +517,10 @@ export default function Login() {
               <img src="/login_page.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
             </div>
 
-            <h2 style={{ fontSize: 18, fontWeight: 400, color: "#111", marginBottom: 6 }}>
+            <h2 className="login-heading" style={{ fontSize: 18, fontWeight: 400, color: "#111", marginBottom: 6 }}>
               {t.accessAccount}
             </h2>
-            <p style={{ fontSize: 13, color: "#666", marginBottom: 12 }}>
+            <p className="login-enrolled" style={{ fontSize: 13, color: "#666", marginBottom: 12 }}>
               {t.notEnrolled}{" "}
               <button type="button" onClick={() => navigate("/create-account")} style={{ textDecoration: "underline", color: "#444", background: "none", border: "none", cursor: "pointer", fontSize: 13 }}>
                 {t.createAccount}
