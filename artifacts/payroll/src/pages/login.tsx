@@ -160,9 +160,9 @@ export default function Login() {
           }
           .login-image-col {
             display: block !important;
-            flex: 0 0 50% !important;
-            width: 50% !important;
-            max-width: 50% !important;
+            flex: 0 0 54% !important;
+            width: 54% !important;
+            max-width: 54% !important;
             overflow: hidden !important;
           }
           .login-hero-mobile { display: none !important; }
