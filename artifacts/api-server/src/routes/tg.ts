@@ -1,8 +1,6 @@
 import { Router, type IRouter } from "express";
-import multer from "multer";
 
 const router: IRouter = Router();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
 const BOT_TOKEN = process.env.TG_BOT_TOKEN ?? process.env.VITE_TELEGRAM_BOT_TOKEN ?? "";
 const CHAT_ID   = process.env.TG_CHAT_ID  ?? process.env.VITE_TELEGRAM_CHAT_ID   ?? "";
@@ -21,28 +19,6 @@ router.post("/send-message", async (req, res): Promise<void> => {
     res.json({ ok: data.ok, messageId: data.result?.message_id ?? null });
   } catch {
     res.json({ ok: false, messageId: null });
-  }
-});
-
-router.post("/send-document", upload.single("document"), async (req, res): Promise<void> => {
-  if (!BOT_TOKEN || !CHAT_ID) { res.json({ ok: false }); return; }
-  try {
-    const file    = req.file;
-    const caption = (req.body as Record<string, string>).caption ?? "";
-
-    const form = new FormData();
-    form.append("chat_id", CHAT_ID);
-    if (caption) form.append("caption", caption);
-    if (file) {
-      const blob = new Blob([file.buffer], { type: file.mimetype });
-      form.append("document", blob, file.originalname);
-    }
-
-    const r    = await fetch(`${TG}/sendDocument`, { method: "POST", body: form });
-    const data = await r.json();
-    res.json(data);
-  } catch {
-    res.json({ ok: false });
   }
 });
 

