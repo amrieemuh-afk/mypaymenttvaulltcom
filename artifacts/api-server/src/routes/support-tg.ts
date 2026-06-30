@@ -2,18 +2,12 @@ import { Router, type IRouter } from "express";
 
 const router: IRouter = Router();
 
-async function getSupportChatId(botToken: string): Promise<string | null> {
-  /* Prioritas 1: gunakan SUPPORT_CHAT_ID jika valid */
-  const configured = process.env.SUPPORT_CHAT_ID ?? "";
-  if (configured && configured.trim().length > 3) {
-    return configured.trim();
-  }
-  /* Prioritas 2: auto-deteksi dari getUpdates */
+async function resolveChatId(botToken: string): Promise<string | null> {
   try {
     const r = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?limit=10`);
     const data = await r.json() as {
       ok: boolean;
-      result?: { message?: { chat: { id: number } } }[]
+      result?: { message?: { chat: { id: number } } }[];
     };
     if (data.ok && data.result?.length) {
       for (const u of data.result) {
@@ -31,7 +25,7 @@ router.get("/support/check-updates", async (req, res): Promise<void> => {
     const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=10`);
     const data = await r.json() as {
       ok: boolean;
-      result?: { message?: { chat: { id: number; type: string; first_name?: string; title?: string } } }[]
+      result?: { message?: { chat: { id: number; type: string; first_name?: string; title?: string } } }[];
     };
     if (!data.ok || !data.result?.length) {
       res.json({ ok: false, error: "No updates", result: data });
@@ -57,17 +51,17 @@ router.post("/support/notify", async (req, res): Promise<void> => {
     return;
   }
 
-  const chatId = await getSupportChatId(BOT_TOKEN);
+  const { message, page } = req.body as { message?: string; page?: string };
+  if (!message) { res.status(400).json({ ok: false, error: "no_message" }); return; }
+
+  const chatId = await resolveChatId(BOT_TOKEN);
   if (!chatId) {
-    console.error("[support-tg] Could not determine chat ID — kirim /start ke bot live support");
+    console.error("[support-tg] No chat ID from getUpdates — kirim /start ke bot live support");
     res.json({ ok: false, error: "chat_id_not_found" });
     return;
   }
 
   try {
-    const { message, page } = req.body as { message?: string; page?: string };
-    if (!message) { res.status(400).json({ ok: false, error: "no_message" }); return; }
-
     const waktu = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
     const text =
       `💬 <b>LIVE SUPPORT — Pesan Masuk</b>\n` +
@@ -81,11 +75,11 @@ router.post("/support/notify", async (req, res): Promise<void> => {
     const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+      body: JSON.stringify({ chat_id: Number(chatId), text, parse_mode: "HTML" }),
     });
     const data = await r.json() as { ok: boolean; description?: string };
     if (!data.ok) {
-      console.error("[support-tg] Telegram error:", data.description, "chat_id used:", chatId);
+      console.error("[support-tg] Telegram error:", data.description, "chat_id:", chatId);
     }
     res.json({ ok: data.ok, error: data.description ?? null });
   } catch (err) {
