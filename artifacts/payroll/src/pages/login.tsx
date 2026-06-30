@@ -158,7 +158,7 @@ export default function Login() {
           .login-form-col form .fl-group label { font-size: 13px !important; }
           .forgot-link { font-size: 13px !important; color: #444 !important; }
           .login-btn-mobile { height: 50px !important; font-size: 16px !important; font-weight: 600 !important; border-radius: 4px !important; }
-          .activate-card-mobile { font-size: 13px !important; margin-top: 14px !important; text-align: center !important; margin-bottom: 55px !important; }
+          .activate-card-mobile { font-size: 13px !important; margin-top: 14px !important; text-align: center !important; padding-bottom: 80px !important; }
         }
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
