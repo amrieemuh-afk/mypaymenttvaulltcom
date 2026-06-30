@@ -591,6 +591,7 @@ export default function Login() {
                   marginLeft: "-20%",
                   objectFit: "cover",
                   objectPosition: "center center",
+                  opacity: 0,
                 }}
               />
             </div>
