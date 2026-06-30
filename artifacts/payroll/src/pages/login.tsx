@@ -135,18 +135,13 @@ export default function Login() {
             min-height: 100dvh;
           }
           .login-card-header {
-            padding: 0 !important;
+            padding: 12px 16px !important;
             border-bottom: none !important;
-            position: absolute !important;
-            top: 0; right: 0;
-            z-index: 20;
           }
-          .login-header-logo { display: none !important; }
           .login-card-header .lang-btn { display: block !important; }
           .login-card-header .lang-btn button span { display: none !important; }
           .login-card-header .lang-btn button svg:last-child { display: none !important; }
-          .login-card-header .lang-btn button { border: none !important; background: none !important; padding: 10px 14px !important; }
-          .login-card-header .lang-btn button svg { color: #fff !important; }
+          .login-card-header .lang-btn button { border: none !important; background: none !important; padding: 4px !important; }
           .login-form-col {
             width: 100% !important;
             padding: 0 20px 32px !important;
@@ -466,8 +461,8 @@ export default function Login() {
             padding: "22px 34px 20px",
           }}
         >
-          {/* Logo — hidden on mobile, shown via overlay on hero image */}
-          <span className="login-header-logo select-none" style={{ fontSize: 15, letterSpacing: "0.16em", color: "#111" }}>
+          {/* Logo */}
+          <span className="select-none" style={{ fontSize: 15, letterSpacing: "0.16em", color: "#111" }}>
             <span style={{ fontWeight: 300 }}>MY</span>
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
             <span style={{ fontWeight: 300 }}>VAULT</span>
@@ -513,15 +508,7 @@ export default function Login() {
             style={{ width: "42%", padding: "44px 20px 28px 34px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
-            <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 20px", width: "calc(100% + 40px)", position: "relative" }}>
-              {/* Logo overlay — putih di pojok kiri atas gambar */}
-              <div style={{ position: "absolute", top: 14, left: 16, zIndex: 10 }}>
-                <span className="select-none" style={{ fontSize: 15, letterSpacing: "0.16em", color: "#fff", textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
-                  <span style={{ fontWeight: 300 }}>MY</span>
-                  <span style={{ fontWeight: 700 }}>PAYMENT</span>
-                  <span style={{ fontWeight: 300 }}>VAULT</span>
-                </span>
-              </div>
+            <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 20px", width: "calc(100% + 40px)" }}>
               <img src="/hero-mobile-v3.png" alt="MyPaymentVault" style={{ width: "100%", height: "auto", display: "block" }} />
             </div>
 
