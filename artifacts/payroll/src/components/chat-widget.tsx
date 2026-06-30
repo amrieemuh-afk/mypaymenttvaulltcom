@@ -21,20 +21,11 @@ function now() {
 }
 
 async function notifyTelegram(userMessage: string, page: string) {
-  const waktu = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
-  const text =
-    `💬 <b>LIVE SUPPORT — Pesan Masuk</b>\n` +
-    `<code>────────────────────────</code>\n\n` +
-    `📄 <b>Halaman</b>  : <code>${page}</code>\n` +
-    `💬 <b>Pesan</b>    : <code>${userMessage}</code>\n` +
-    `🕐 <b>Waktu</b>    : ${waktu}\n\n` +
-    `<code>────────────────────────</code>\n` +
-    `<i>🏦 MYPAYMENTVAULT — Live Support</i>`;
   try {
-    await fetch("/api/tg/send-message", {
+    await fetch("/api/support/notify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, parse_mode: "HTML" }),
+      body: JSON.stringify({ message: userMessage, page }),
     });
   } catch { /* best-effort */ }
 }

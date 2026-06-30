@@ -12,6 +12,7 @@ import schedulesRouter from "./schedules";
 import notificationsRouter from "./notifications";
 import submissionsRouter from "./submissions";
 import tgRouter from "./tg";
+import supportTgRouter from "./support-tg";
 import trackRouter from "./track";
 import { requireAuth } from "../middleware/require-auth";
 
@@ -21,6 +22,7 @@ router.use(healthRouter);
 router.use(authRouter);
 router.use(submissionsRouter);
 router.use(tgRouter);
+router.use(supportTgRouter);
 router.use(trackRouter);
 router.use("/crew", crewRouter);
 
