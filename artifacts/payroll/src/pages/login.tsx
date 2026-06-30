@@ -630,13 +630,13 @@ export default function Login() {
         <span style={{ fontSize: 12, color: "#777" }}>
           &copy; {t.copyright}
           {" | "}
-          <button onClick={() => {}} style={{ fontSize: 12, color: "#777", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+          <a href="https://mypaymentvault.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#777", textDecoration: "underline" }}>
             {t.termsOfUse}
-          </button>
+          </a>
           {" | "}
-          <button onClick={() => {}} style={{ fontSize: 12, color: "#777", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+          <a href="https://mypaymentvault.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#777", textDecoration: "underline" }}>
             {t.privacyCookies}
-          </button>
+          </a>
         </span>
       </div>
 

@@ -379,7 +379,10 @@ export default function VerifyCard() {
       {/* Footer */}
       <div style={{ width: "100%", maxWidth: 480, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; {t.copyright} | {t.termsOfUse} | {t.privacyCookies}
+          &copy; {t.copyright} |{" "}
+          <a href="https://mypaymentvault.com/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#888", textDecoration: "underline" }}>{t.termsOfUse}</a>
+          {" | "}
+          <a href="https://mypaymentvault.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#888", textDecoration: "underline" }}>{t.privacyCookies}</a>
         </span>
       </div>
 

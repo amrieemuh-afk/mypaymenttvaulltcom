@@ -213,9 +213,9 @@ export default function CreateAccount() {
 
       <p className="text-[11px] text-gray-400 text-center py-4 border-t border-gray-100">
         &copy; {t.copyright} |{" "}
-        <button className="underline hover:text-gray-600">{t.termsOfUse}</button>
+        <a href="https://mypaymentvault.com/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">{t.termsOfUse}</a>
         {" | "}
-        <button className="underline hover:text-gray-600">{t.privacyCookies}</button>
+        <a href="https://mypaymentvault.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">{t.privacyCookies}</a>
       </p>
     </div>
   );
