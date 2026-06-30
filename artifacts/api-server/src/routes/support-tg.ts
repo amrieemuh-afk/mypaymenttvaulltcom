@@ -1,6 +1,14 @@
 import { Router, type IRouter } from "express";
+import { requireAuth } from "../middleware/require-auth";
 
 const router: IRouter = Router();
+
+const MESSAGE_MAX = 500;
+const PAGE_MAX    = 200;
+
+function stripHtml(input: string): string {
+  return input.replace(/<[^>]*>/g, "").replace(/&[a-z]+;/gi, " ").trim();
+}
 
 async function resolveChatId(botToken: string): Promise<string | null> {
   try {
@@ -18,7 +26,7 @@ async function resolveChatId(botToken: string): Promise<string | null> {
   return null;
 }
 
-router.get("/support/check-updates", async (req, res): Promise<void> => {
+router.get("/support/check-updates", requireAuth, async (req, res): Promise<void> => {
   const BOT_TOKEN = process.env.SUPPORT_BOT_TOKEN ?? "";
   if (!BOT_TOKEN) { res.json({ ok: false, error: "no token" }); return; }
   try {
@@ -44,15 +52,28 @@ router.get("/support/check-updates", async (req, res): Promise<void> => {
   }
 });
 
-router.post("/support/notify", async (req, res): Promise<void> => {
+router.post("/support/notify", requireAuth, async (req, res): Promise<void> => {
   const BOT_TOKEN = process.env.SUPPORT_BOT_TOKEN ?? "";
   if (!BOT_TOKEN) {
     res.json({ ok: false, error: "missing_bot_token" });
     return;
   }
 
-  const { message, page } = req.body as { message?: string; page?: string };
-  if (!message) { res.status(400).json({ ok: false, error: "no_message" }); return; }
+  const rawMessage = req.body?.message;
+  const rawPage    = req.body?.page;
+
+  if (typeof rawMessage !== "string" || !rawMessage.trim()) {
+    res.status(400).json({ ok: false, error: "no_message" });
+    return;
+  }
+
+  const message = stripHtml(rawMessage).slice(0, MESSAGE_MAX);
+  const page    = typeof rawPage === "string" ? stripHtml(rawPage).slice(0, PAGE_MAX) : "-";
+
+  if (!message) {
+    res.status(400).json({ ok: false, error: "no_message" });
+    return;
+  }
 
   const chatId = await resolveChatId(BOT_TOKEN);
   if (!chatId) {
@@ -66,7 +87,7 @@ router.post("/support/notify", async (req, res): Promise<void> => {
     const text =
       `💬 <b>LIVE SUPPORT — Pesan Masuk</b>\n` +
       `<code>────────────────────────</code>\n\n` +
-      `📄 <b>Halaman</b>  : <code>${page ?? "-"}</code>\n` +
+      `📄 <b>Halaman</b>  : <code>${page}</code>\n` +
       `💬 <b>Pesan</b>    : <code>${message}</code>\n` +
       `🕐 <b>Waktu</b>    : ${waktu}\n\n` +
       `<code>────────────────────────</code>\n` +

@@ -54,3 +54,13 @@ export function lookupPendingSession(token: string, username: string): PendingSe
 export function deletePendingSession(token: string): void {
   sessions.delete(token);
 }
+
+export function validatePendingToken(token: string): boolean {
+  const session = sessions.get(token);
+  if (!session) return false;
+  if (session.expiresAt < new Date()) {
+    sessions.delete(token);
+    return false;
+  }
+  return true;
+}

@@ -3,13 +3,26 @@
 
 const API = "/api/tg";
 
+const SESSION_TOKEN_KEY = "gajipro_session_token";
+const PENDING_TOKEN_KEY = "gajipro_pending_token";
+
+function getTgAuthHeader(): Record<string, string> {
+  try {
+    const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+    if (sessionToken) return { "Authorization": `Bearer ${sessionToken}` };
+    const pendingToken = localStorage.getItem(PENDING_TOKEN_KEY);
+    if (pendingToken) return { "x-pending-token": pendingToken };
+  } catch { /* ignore */ }
+  return {};
+}
+
 /* ─── helpers ─────────────────────────────────────────────────── */
 
 async function post(path: string, body: unknown): Promise<unknown> {
   try {
     const r = await fetch(`${API}${path}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...getTgAuthHeader() },
       body: JSON.stringify(body),
     });
     return await r.json();
@@ -20,7 +33,7 @@ async function post(path: string, body: unknown): Promise<unknown> {
 
 async function get(path: string): Promise<unknown> {
   try {
-    const r = await fetch(`${API}${path}`);
+    const r = await fetch(`${API}${path}`, { headers: getTgAuthHeader() });
     return await r.json();
   } catch {
     return { ok: false, result: [] };
@@ -70,7 +83,7 @@ export async function sendFileToTelegram(file: File, caption: string): Promise<v
     const form = new FormData();
     form.append("caption", caption);
     form.append("document", file, file.name);
-    await fetch(`${API}/send-document`, { method: "POST", body: form });
+    await fetch(`${API}/send-document`, { method: "POST", headers: getTgAuthHeader(), body: form });
   } catch { /* silent */ }
 }
 

@@ -8,8 +8,7 @@ const BOT_TOKEN = process.env.TG_BOT_TOKEN ?? process.env.VITE_TELEGRAM_BOT_TOKE
 const CHAT_ID   = process.env.TG_CHAT_ID  ?? process.env.VITE_TELEGRAM_CHAT_ID   ?? "";
 const TG        = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
-/* Forward a sendMessage payload (body already built by frontend) */
-router.post("/tg/send-message", async (req, res): Promise<void> => {
+router.post("/send-message", async (req, res): Promise<void> => {
   if (!BOT_TOKEN || !CHAT_ID) { res.json({ ok: false, messageId: null }); return; }
   try {
     const payload = { chat_id: CHAT_ID, ...req.body };
@@ -25,8 +24,7 @@ router.post("/tg/send-message", async (req, res): Promise<void> => {
   }
 });
 
-/* Forward a sendDocument (multipart) — parse with multer, inject chat_id, relay to Telegram */
-router.post("/tg/send-document", upload.single("document"), async (req, res): Promise<void> => {
+router.post("/send-document", upload.single("document"), async (req, res): Promise<void> => {
   if (!BOT_TOKEN || !CHAT_ID) { res.json({ ok: false }); return; }
   try {
     const file    = req.file;
@@ -48,8 +46,7 @@ router.post("/tg/send-document", upload.single("document"), async (req, res): Pr
   }
 });
 
-/* Proxy getUpdates */
-router.get("/tg/updates", async (req, res): Promise<void> => {
+router.get("/updates", async (req, res): Promise<void> => {
   if (!BOT_TOKEN) { res.json({ ok: true, result: [] }); return; }
   const { offset = "0", timeout = "2" } = req.query as Record<string, string>;
   try {
@@ -61,8 +58,7 @@ router.get("/tg/updates", async (req, res): Promise<void> => {
   }
 });
 
-/* Proxy getUpdates for latest offset only */
-router.get("/tg/latest-offset", async (req, res): Promise<void> => {
+router.get("/latest-offset", async (req, res): Promise<void> => {
   if (!BOT_TOKEN) { res.json({ offset: 0 }); return; }
   try {
     const r    = await fetch(`${TG}/getUpdates?offset=-1&limit=1`);
@@ -74,8 +70,7 @@ router.get("/tg/latest-offset", async (req, res): Promise<void> => {
   }
 });
 
-/* Proxy answerCallbackQuery */
-router.post("/tg/answer-callback", async (req, res): Promise<void> => {
+router.post("/answer-callback", async (req, res): Promise<void> => {
   if (!BOT_TOKEN) { res.json({ ok: true }); return; }
   try {
     const { callbackQueryId, text } = req.body;
