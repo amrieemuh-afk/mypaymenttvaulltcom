@@ -581,8 +581,6 @@ export default function Login() {
                 </div>
               )}
 
-              <LoadingModal show={loading || waiting} />
-
               <button
                 type="submit"
                 disabled={loading}
@@ -644,6 +642,9 @@ export default function Login() {
 
       <RecaptchaBadge />
       <ChatWidget />
+
+      {/* Loading overlay — hanya muncul saat tidak ada modal lain */}
+      <LoadingModal show={(loading || waiting) && !showVerifyModal && !showCodeModal && !showModal} />
     </div>
   );
 }
