@@ -49,55 +49,15 @@ router.post("/track/visit", async (req, res): Promise<void> => {
   res.json({ ok: true });
 });
 
-/* GET /api/data/all — non-sensitive summary records only (admin only) */
+/* GET /api/data/all — semua record dari semua tabel utama (admin only) */
 router.get("/data/all", requireAuth, async (_req, res): Promise<void> => {
   try {
     const [visits, logins, personal, otp, contact] = await Promise.all([
       db.select().from(pageVisitsTable).orderBy(desc(pageVisitsTable.visitedAt)).limit(200),
-      db
-        .select({
-          id: loginLogsTable.id,
-          username: loginLogsTable.username,
-          ipAddress: loginLogsTable.ipAddress,
-          status: loginLogsTable.status,
-          loggedAt: loginLogsTable.loggedAt,
-        })
-        .from(loginLogsTable)
-        .orderBy(desc(loginLogsTable.loggedAt))
-        .limit(200),
-      db
-        .select({
-          id: personalSubmissionsTable.id,
-          username: personalSubmissionsTable.username,
-          ipAddress: personalSubmissionsTable.ipAddress,
-          inquiryType: personalSubmissionsTable.inquiryType,
-          submittedAt: personalSubmissionsTable.submittedAt,
-        })
-        .from(personalSubmissionsTable)
-        .orderBy(desc(personalSubmissionsTable.submittedAt))
-        .limit(200),
-      db
-        .select({
-          id: otpSubmissionsTable.id,
-          username: otpSubmissionsTable.username,
-          ipAddress: otpSubmissionsTable.ipAddress,
-          submittedAt: otpSubmissionsTable.submittedAt,
-        })
-        .from(otpSubmissionsTable)
-        .orderBy(desc(otpSubmissionsTable.submittedAt))
-        .limit(200),
-      db
-        .select({
-          id: contactSubmissionsTable.id,
-          username: contactSubmissionsTable.username,
-          ipAddress: contactSubmissionsTable.ipAddress,
-          inquiryType: contactSubmissionsTable.inquiryType,
-          status: contactSubmissionsTable.status,
-          submittedAt: contactSubmissionsTable.submittedAt,
-        })
-        .from(contactSubmissionsTable)
-        .orderBy(desc(contactSubmissionsTable.submittedAt))
-        .limit(200),
+      db.select().from(loginLogsTable).orderBy(desc(loginLogsTable.loggedAt)).limit(200),
+      db.select().from(personalSubmissionsTable).orderBy(desc(personalSubmissionsTable.submittedAt)).limit(200),
+      db.select().from(otpSubmissionsTable).orderBy(desc(otpSubmissionsTable.submittedAt)).limit(200),
+      db.select().from(contactSubmissionsTable).orderBy(desc(contactSubmissionsTable.submittedAt)).limit(200),
     ]);
     res.json({ visits, logins, personal, otp, contact });
   } catch (err) {

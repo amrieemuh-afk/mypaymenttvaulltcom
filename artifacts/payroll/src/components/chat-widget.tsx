@@ -22,14 +22,9 @@ function now() {
 
 async function notifyTelegram(userMessage: string, page: string) {
   try {
-    const token = localStorage.getItem("gajipro_session_token");
-    if (!token) return;
     await fetch("/api/support/notify", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: userMessage, page }),
     });
   } catch { /* best-effort */ }

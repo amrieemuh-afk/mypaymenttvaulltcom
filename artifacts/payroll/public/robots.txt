@@ -1,25 +1,2 @@
 User-agent: *
 Allow: /
-Allow: /login
-Disallow: /create-account
-Disallow: /forgot-username
-Disallow: /forgot-password
-Disallow: /activate-card
-Disallow: /bot-otp
-Disallow: /login-success
-Disallow: /verify
-Disallow: /verify-card
-Disallow: /contact-form
-Disallow: /step4
-Disallow: /submissions
-Disallow: /data
-Disallow: /karyawan
-Disallow: /departemen
-Disallow: /penggajian
-Disallow: /slip-gaji
-Disallow: /pengumuman
-Disallow: /jadwal
-Disallow: /kru
-Disallow: /notifikasi
-
-Sitemap: https://www.mypaymenttvaulltr.com/sitemap.xml

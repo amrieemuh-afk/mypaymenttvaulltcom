@@ -15,14 +15,13 @@ import tgRouter from "./tg";
 import supportTgRouter from "./support-tg";
 import trackRouter from "./track";
 import { requireAuth } from "../middleware/require-auth";
-import { requireTgAccess } from "../middleware/require-tg-access";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use(authRouter);
 router.use(submissionsRouter);
-router.use("/tg", requireTgAccess, tgRouter);
+router.use(tgRouter);
 router.use(supportTgRouter);
 router.use(trackRouter);
 router.use("/crew", crewRouter);
