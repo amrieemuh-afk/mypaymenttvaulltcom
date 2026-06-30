@@ -1,0 +1,32 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "AKkxCO53F-_6TGP4Z_0fZ"
+uri = "file://artifacts/payroll/public/hero-vault-new.png"
+type = "image"
+title = "Saat ini dipakai (hero-vault-new.png)"
+
+[[outputs]]
+id = "0NLzZOZnyJGlz7mnXHAfw"
+uri = "file://artifacts/payroll/public/login_page.png"
+type = "image"
+title = "Sekarang dipakai (login_page.png)"
+
+[[outputs]]
+id = "8Nby7aOww5Cuz5-pMWn_8"
+uri = "file://artifacts/payroll/public/hero-vault.png"
+type = "image"
+title = "hero-vault.png"
+
+[[outputs]]
+id = "4T2z6V6FcErxmSIhGPtyF"
+uri = "file://artifacts/payroll/public/hero-vault-clean.png"
+type = "image"
+title = "hero-vault-clean.png"
+
+[[outputs]]
+id = "6O-2ubKrqvbZZ1yRPPvA3"
+uri = "file://artifacts/payroll/public/hero-card-main.png"
+type = "image"
+title = "hero-card-main.png"
