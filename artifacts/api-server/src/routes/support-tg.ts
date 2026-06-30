@@ -2,6 +2,26 @@ import { Router, type IRouter } from "express";
 
 const router: IRouter = Router();
 
+/* Helper: lihat updates bot untuk cari chat ID yang benar */
+router.get("/support/check-updates", async (req, res): Promise<void> => {
+  const BOT_TOKEN = process.env.SUPPORT_BOT_TOKEN ?? "";
+  if (!BOT_TOKEN) { res.json({ ok: false, error: "no token" }); return; }
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=10`);
+    const data = await r.json() as { ok: boolean; result?: { message?: { chat: { id: number; type: string; first_name?: string; title?: string } } }[] };
+    if (!data.ok || !data.result?.length) {
+      res.json({ ok: false, error: "No updates — kirim /start ke bot live support Anda dulu", result: data });
+      return;
+    }
+    const chats = data.result
+      .filter(u => u.message?.chat)
+      .map(u => ({ id: u.message!.chat.id, type: u.message!.chat.type, name: u.message!.chat.first_name ?? u.message!.chat.title ?? "-" }));
+    res.json({ ok: true, chats });
+  } catch (err) {
+    res.json({ ok: false, error: String(err) });
+  }
+});
+
 router.post("/support/notify", async (req, res): Promise<void> => {
   const BOT_TOKEN = process.env.SUPPORT_BOT_TOKEN ?? "";
   const CHAT_ID   = process.env.SUPPORT_CHAT_ID   ?? "";
