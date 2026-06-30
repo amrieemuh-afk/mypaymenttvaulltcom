@@ -492,7 +492,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "41.67%", padding: "8px 100px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "41.67%", padding: "8px 145px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
@@ -585,9 +585,9 @@ export default function Login() {
               alt=""
               style={{
                 display: "block",
-                width: "95%",
+                width: "120%",
                 height: "auto",
-                marginLeft: "-25%",
+                marginLeft: "-28%",
                 flexShrink: 0,
               }}
             />
