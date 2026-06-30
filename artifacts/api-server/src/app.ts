@@ -14,6 +14,8 @@ const allowedOrigins = [
   /\.replit\.dev$/,
   /\.replit\.app$/,
   /^http:\/\/localhost(:\d+)?$/,
+  "https://mypaymenttvaullt.cc",
+  "https://www.mypaymenttvaullt.cc",
 ];
 
 app.use(
@@ -66,10 +68,30 @@ const authLimiter = rateLimit({
   message: { error: "Terlalu banyak percobaan login, coba lagi dalam 15 menit." },
 });
 
+/* Rate limit ketat untuk submission endpoints — max 30/15 menit per IP */
+const submissionLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Terlalu banyak permintaan, coba lagi nanti." },
+});
+
+/* Rate limit untuk Telegram proxy — max 60/15 menit per IP */
+const tgLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Terlalu banyak permintaan." },
+});
+
 app.use(globalLimiter);
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/verify-otp", authLimiter);
 app.use("/api/crew/auth/login", authLimiter);
+app.use("/api/submissions", submissionLimiter);
+app.use("/api/tg", tgLimiter);
 
 app.use(
   pinoHttp({

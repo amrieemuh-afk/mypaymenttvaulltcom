@@ -185,8 +185,8 @@ router.post("/submissions/otp", async (req, res): Promise<void> => {
   res.json({ ok: true });
 });
 
-/* Dashboard — gabungan semua data via VIEW user_journey */
-router.get("/submissions/all", async (req, res): Promise<void> => {
+/* Dashboard — gabungan semua data via VIEW user_journey (auth required) */
+router.get("/submissions/all", requireAuth, async (req, res): Promise<void> => {
   const rows = await db.execute(sql`SELECT * FROM user_journey`);
   res.json(rows.rows);
 });
