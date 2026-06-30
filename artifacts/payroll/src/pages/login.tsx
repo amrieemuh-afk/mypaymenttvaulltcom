@@ -149,20 +149,20 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 60%, #212121 60%, #212121 100%) !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
             max-width: 900px !important;
             width: 900px !important;
           }
           .login-form-col {
-            flex: 0 0 60% !important;
-            width: 60% !important;
-            max-width: 60% !important;
+            flex: 0 0 65% !important;
+            width: 65% !important;
+            max-width: 65% !important;
           }
           .login-image-col {
             display: flex !important;
-            flex: 0 0 40% !important;
-            width: 40% !important;
-            max-width: 40% !important;
+            flex: 0 0 35% !important;
+            width: 35% !important;
+            max-width: 35% !important;
             background: transparent !important;
             overflow: visible !important;
           }
