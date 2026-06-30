@@ -552,12 +552,24 @@ export default function Login() {
                 </div>
               )}
 
+              <style>{`
+                @keyframes _mpv_spin { to { transform: rotate(360deg); } }
+                ._mpv_spinner {
+                  display: inline-block;
+                  width: 18px; height: 18px;
+                  border: 2px solid rgba(255,255,255,0.3);
+                  border-top-color: #fff;
+                  border-radius: 50%;
+                  animation: _mpv_spin 0.75s linear infinite;
+                  vertical-align: middle;
+                }
+              `}</style>
               <button
                 type="submit"
                 disabled={loading}
-                style={{ width: "100%", height: 44, background: "#111", color: "#fff", fontSize: 14, fontWeight: 500, border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1, letterSpacing: "0.04em", borderRadius: 3 }}
+                style={{ width: "100%", height: 44, background: "#111", color: "#fff", fontSize: 14, fontWeight: 500, border: "none", cursor: loading ? "not-allowed" : "pointer", letterSpacing: "0.04em", borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
               >
-                {loading ? t.loggingIn : t.login}
+                {loading ? <span className="_mpv_spinner" /> : t.login}
               </button>
             </form>
 
