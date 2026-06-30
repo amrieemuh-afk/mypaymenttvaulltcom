@@ -178,8 +178,8 @@ export default function Login() {
         }
         .fl-group input {
           width: 100%;
-          height: 52px;
-          padding: 18px 12px 6px;
+          height: 46px;
+          padding: 16px 12px 4px;
           border: 1px solid #ccc;
           border-radius: 3px;
           font-size: 13px;
@@ -205,7 +205,7 @@ export default function Login() {
         }
         .fl-group input:focus + label,
         .fl-group input:not(:placeholder-shown) + label {
-          top: 10px;
+          top: 7px;
           transform: translateY(0);
           font-size: 10px;
           color: #555;
@@ -460,7 +460,7 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setShowLangDropdown(!showLangDropdown)}
-              style={{ display: "flex", alignItems: "center", gap: 5, color: "#111", fontSize: 13, background: "#fff", border: "1px solid #ccc", borderRadius: 4, padding: "5px 10px", cursor: "pointer" }}
+              style={{ display: "flex", alignItems: "center", gap: 5, color: "#111", fontSize: 13, background: "#fff", border: "1px solid #ccc", borderRadius: 4, padding: "3px 8px", cursor: "pointer" }}
             >
               <Globe size={15} color="#555" />
               <span>{languageOptions.find(o => o.code === lang)?.label ?? "English"}</span>
@@ -492,7 +492,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "42%", padding: "50px 20px 40px 90px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "42%", padding: "44px 20px 28px 90px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
@@ -502,7 +502,7 @@ export default function Login() {
             <h2 style={{ fontSize: 18, fontWeight: 400, color: "#111", marginBottom: 6 }}>
               {t.accessAccount}
             </h2>
-            <p style={{ fontSize: 13, color: "#666", marginBottom: 22 }}>
+            <p style={{ fontSize: 13, color: "#666", marginBottom: 12 }}>
               {t.notEnrolled}{" "}
               <button type="button" onClick={() => navigate("/create-account")} style={{ textDecoration: "underline", color: "#444", background: "none", border: "none", cursor: "pointer", fontSize: 13 }}>
                 {t.createAccount}
@@ -516,7 +516,7 @@ export default function Login() {
                   {t.forgotUsername}
                 </button>
               </div>
-              <div className="fl-group" style={{ marginBottom: 14 }}>
+              <div className="fl-group" style={{ marginBottom: 10 }}>
                 <input
                   id="fl-username"
                   type="text"
@@ -534,7 +534,7 @@ export default function Login() {
                   {t.forgotPassword}
                 </button>
               </div>
-              <div className="fl-group" style={{ marginBottom: 18 }}>
+              <div className="fl-group" style={{ marginBottom: 12 }}>
                 <input
                   id="fl-password"
                   type="password"
@@ -576,6 +576,7 @@ export default function Login() {
               display: "none",
               position: "relative",
               alignSelf: "stretch",
+              paddingLeft: 15,
             }}
           >
             <img
@@ -586,7 +587,7 @@ export default function Login() {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                objectPosition: "center center",
+                objectPosition: "52% center",
               }}
             />
           </div>
