@@ -590,7 +590,7 @@ export default function Login() {
                   height: "100%",
                   marginLeft: "-38%",
                   objectFit: "cover",
-                  objectPosition: "top center",
+                  objectPosition: "center center",
                 }}
               />
             </div>
