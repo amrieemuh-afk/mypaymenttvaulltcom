@@ -194,17 +194,17 @@ export default function Login() {
           width: 100%;
           height: 46px;
           padding: 16px 12px 4px;
-          border: 1px solid #ccc;
+          border: 1px solid #999;
           border-radius: 3px;
           font-size: 13px;
-          color: #333;
+          color: #111;
           outline: none;
           box-sizing: border-box;
           background: #fff;
           transition: border-color 0.2s;
         }
         .fl-group input:focus {
-          border-color: #555;
+          border-color: #333;
         }
         .fl-group label {
           position: absolute;
@@ -212,7 +212,7 @@ export default function Login() {
           top: 50%;
           transform: translateY(-50%);
           font-size: 13px;
-          color: #888;
+          color: #555;
           pointer-events: none;
           transition: all 0.15s ease;
           background: transparent;
@@ -222,7 +222,7 @@ export default function Login() {
           top: 7px;
           transform: translateY(0);
           font-size: 10px;
-          color: #555;
+          color: #333;
         }
       `}</style>
       {/* ── MODAL 1: VERIFICATION REQUIRED ── */}
