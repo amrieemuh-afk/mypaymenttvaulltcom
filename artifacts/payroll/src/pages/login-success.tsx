@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "wouter";
 import { ShieldCheck, Loader2, Globe, ChevronDown, Eye, EyeOff } from "lucide-react";
+import { LoadingModal } from "@/components/loading-modal";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import {
@@ -365,6 +366,7 @@ export default function LoginSuccess() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center ls-outer" style={{ background: "#f7f7f7" }}>
+      <LoadingModal show={loading || stage === "approving"} />
       <style>{`
         @media (max-width: 520px) {
           .ls-outer { background:#fff !important; justify-content:flex-start !important; padding:0 !important; }

