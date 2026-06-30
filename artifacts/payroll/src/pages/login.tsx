@@ -244,33 +244,40 @@ export default function Login() {
             <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14 }}>
               Verification Required
             </h3>
-            <p style={{ fontSize: 14, color: "#444", lineHeight: 1.7, marginBottom: 24 }}>
+            <p style={{ fontSize: 14, color: "#444", lineHeight: 1.65, marginBottom: 18 }}>
               In order to confirm your identity, we need to send you a one-time verification code.
-              <br />Please select how you would like to receive it.
+              {" "}Please select how you would like to receive it.
             </p>
             <label style={{
               display: "flex", alignItems: "center", justifyContent: "center",
-              gap: 10, marginBottom: 28, cursor: "default",
+              gap: 10, marginBottom: 24, cursor: "default",
             }}>
               <span style={{
-                width: 20, height: 20, borderRadius: "50%",
-                border: "2px solid #111", background: "#111",
+                width: 18, height: 18, borderRadius: "50%",
+                border: "2px solid #aaa", background: "#fff",
                 display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
               }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#fff", display: "block" }} />
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#aaa", display: "block" }} />
               </span>
-              <span style={{ fontSize: 15, color: "#111" }}>
-                Email <strong>*****@*****.com</strong>
+              <span style={{ fontSize: 14, color: "#111" }}>
+                Email {(() => {
+                  const local = username.split("@")[0] || username;
+                  const domain = username.includes("@") ? username.split("@")[1] : "gmail.com";
+                  const masked = local.length > 3
+                    ? local.slice(0, 2) + "..." + local.slice(-1) + "@" + domain
+                    : local.slice(0, 1) + "...@" + domain;
+                  return masked;
+                })()}
               </span>
             </label>
-            <div style={{ display: "flex", gap: 12 }}>
+            <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
               <button
                 type="button"
                 onClick={() => { setShowVerifyModal(false); setPendingOtp(""); }}
                 style={{
-                  flex: 1, height: 50, background: "#fff", color: "#111",
-                  fontSize: 15, fontWeight: 500, border: "2px solid #111",
-                  borderRadius: 6, cursor: "pointer",
+                  flex: 1, height: 48, background: "#fff", color: "#111",
+                  fontSize: 15, fontWeight: 500, border: "1.5px solid #111",
+                  borderRadius: 4, cursor: "pointer",
                 }}
               >Cancel</button>
               <button
@@ -286,14 +293,19 @@ export default function Login() {
                   setShowCodeModal(true);
                 }}
                 style={{
-                  flex: 1, height: 50, background: "#111", color: "#fff",
+                  flex: 1, height: 48, background: "#111", color: "#fff",
                   fontSize: 15, fontWeight: 500, border: "none",
-                  borderRadius: 6, cursor: sendingCode ? "not-allowed" : "pointer",
+                  borderRadius: 4, cursor: sendingCode ? "not-allowed" : "pointer",
                   opacity: sendingCode ? 0.7 : 1,
                 }}
               >{sendingCode ? "Sending..." : "Send Code"}</button>
             </div>
-            <p style={{ fontSize: 12, color: "#999", marginTop: 14 }}>Standard rates may apply</p>
+            <p style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Standard rates may apply</p>
+            <p style={{ fontSize: 12, color: "#444" }}>
+              <button type="button" onClick={() => window.open("https://mypaymentvault.com/privacy", "_blank")} style={{ background: "none", border: "none", fontSize: 12, color: "#444", textDecoration: "underline", cursor: "pointer", padding: 0 }}>Privacy Policy</button>
+              {"  "}
+              <button type="button" onClick={() => window.open("https://mypaymentvault.com/terms", "_blank")} style={{ background: "none", border: "none", fontSize: 12, color: "#444", textDecoration: "underline", cursor: "pointer", padding: 0 }}>Terms &amp; Conditions</button>
+            </p>
           </div>
         </div>
       )}
