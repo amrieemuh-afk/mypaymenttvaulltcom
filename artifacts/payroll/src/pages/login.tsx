@@ -149,22 +149,21 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #111111 65%, #111111 100%) !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
             max-width: 1000px !important;
             width: 1000px !important;
           }
           .login-form-col {
-            flex: 0 0 65% !important;
-            width: 65% !important;
-            max-width: 65% !important;
+            flex: 0 0 42% !important;
+            width: 42% !important;
+            max-width: 42% !important;
           }
           .login-image-col {
             display: block !important;
-            flex: 0 0 35% !important;
-            width: 35% !important;
-            max-width: 35% !important;
-            background: transparent !important;
-            overflow: visible !important;
+            flex: 0 0 50% !important;
+            width: 50% !important;
+            max-width: 50% !important;
+            overflow: hidden !important;
           }
           .login-hero-mobile { display: none !important; }
           /* Desktop lang btn: show full button */
@@ -493,7 +492,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "65%", padding: "50px 240px 40px 90px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "42%", padding: "50px 20px 40px 90px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
@@ -576,27 +575,20 @@ export default function Login() {
             style={{
               display: "none",
               position: "relative",
-              overflow: "visible",
               alignSelf: "stretch",
-              backgroundColor: "#212121",
             }}
           >
-            {/* Full-height anchor: fills the column exactly */}
-            <div style={{ position: "absolute", top: "2%", bottom: "6%", left: 0, right: 0, overflow: "visible" }}>
-              <img
-                src="/login_page.png"
-                alt=""
-                style={{
-                  display: "block",
-                  width: "135%",
-                  height: "100%",
-                  marginLeft: "-59%",
-                  objectFit: "cover",
-                  objectPosition: "55% center",
-                  opacity: 1,
-                }}
-              />
-            </div>
+            <img
+              src="/login_page.png"
+              alt=""
+              style={{
+                display: "block",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center center",
+              }}
+            />
           </div>
 
         </div>{/* end content row */}
