@@ -514,7 +514,7 @@ export default function Login() {
                   <span style={{ fontWeight: 300 }}>VAULT</span>
                 </span>
               </div>
-              <img src="/login_page.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
+              <img src="/hero-mobile-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
             </div>
 
             <h2 className="login-heading" style={{ fontSize: 18, fontWeight: 400, color: "#111", marginBottom: 6 }}>
