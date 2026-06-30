@@ -167,7 +167,6 @@ export default function Login() {
             overflow: hidden !important;
           }
           .login-hero-mobile { display: none !important; }
-          .login-phone-white { display: flex !important; }
           /* Desktop lang btn: show full button */
           .lang-btn button { display: flex !important; }
           .lang-btn button span { display: inline !important; }
@@ -493,10 +492,8 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "41.67%", padding: "8px 0px 40px 40px", background: "transparent", position: "relative", zIndex: 2, display: "flex", flexDirection: "row", alignItems: "stretch", gap: 0 }}
+            style={{ width: "41.67%", padding: "8px 40px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
-            {/* FORM CONTENT */}
-            <div style={{ flex: "1 1 auto", paddingRight: 24 }}>
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
               <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
@@ -570,19 +567,10 @@ export default function Login() {
                 {t.activateCard}
               </button>
             </p>
-            </div>{/* end form content */}
-
-            {/* PHONE IMAGE on white side — desktop only */}
-            <div className="login-phone-white" style={{ display: "none", flex: "0 0 200px", alignSelf: "stretch", overflow: "hidden" }}>
-              <img src="/hero-vault-nobg.png" alt="" style={{ display: "block", width: "200px", height: "auto", marginTop: "auto" }} />
-            </div>
           </div>
 
-          {/* IMAGE COLUMN — dark, no image */}
-          <div
-            className="login-image-col"
-            style={{ display: "none", width: "50%", overflow: "hidden", position: "relative" }}
-          />
+          {/* IMAGE COLUMN — dark, empty */}
+          <div className="login-image-col" style={{ display: "none" }} />
 
         </div>{/* end content row */}
       </div>
