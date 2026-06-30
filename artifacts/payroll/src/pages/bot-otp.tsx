@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Globe, ChevronDown } from "lucide-react";
-import { RecaptchaBadge } from "@/components/recaptcha-badge";
 import { useI18n, type Language } from "@/lib/i18n";
 import {
   getIPInfo,
@@ -287,13 +286,6 @@ export default function BotOtp() {
         </div>
       </div>
 
-      <div style={{ width: "100%", maxWidth: 480, marginTop: 12, paddingRight: 2, textAlign: "right" }}>
-        <span style={{ fontSize: 11, color: "#888" }}>
-          &copy; 2026 Onbe, Inc | Terms of Use | Privacy &amp; Cookies
-        </span>
-      </div>
-
-      <RecaptchaBadge />
     </div>
   );
 }
