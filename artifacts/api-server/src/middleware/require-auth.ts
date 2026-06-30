@@ -20,5 +20,10 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
     return;
   }
 
+  if (session.userId <= 0) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+
   next();
 }
