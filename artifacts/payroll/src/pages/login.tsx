@@ -135,7 +135,7 @@ export default function Login() {
             min-height: 100dvh;
           }
           .login-card-header {
-            padding: 16px 16px 36px !important;
+            padding: 10px 16px 8px !important;
             border-bottom: none !important;
           }
           .login-card-header .lang-btn { display: block !important; }
