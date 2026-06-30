@@ -149,7 +149,7 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #1a1a1a 65%, #1a1a1a 100%) !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #111111 65%, #111111 100%) !important;
             max-width: 1000px !important;
             width: 1000px !important;
           }
@@ -493,14 +493,14 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "65%", padding: "8px 240px 40px 90px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "65%", padding: "50px 240px 40px 90px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
               <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
             </div>
 
-            <h2 style={{ fontSize: 17, fontWeight: 400, color: "#111", marginBottom: 6 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 400, color: "#111", marginBottom: 6 }}>
               {t.accessAccount}
             </h2>
             <p style={{ fontSize: 13, color: "#666", marginBottom: 22 }}>
