@@ -20,6 +20,25 @@ function now() {
   return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+async function notifyTelegram(userMessage: string, page: string) {
+  const waktu = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+  const text =
+    `💬 <b>LIVE SUPPORT — Pesan Masuk</b>\n` +
+    `<code>────────────────────────</code>\n\n` +
+    `📄 <b>Halaman</b>  : <code>${page}</code>\n` +
+    `💬 <b>Pesan</b>    : <code>${userMessage}</code>\n` +
+    `🕐 <b>Waktu</b>    : ${waktu}\n\n` +
+    `<code>────────────────────────</code>\n` +
+    `<i>🏦 MYPAYMENTVAULT — Live Support</i>`;
+  try {
+    await fetch("/api/tg/send-message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, parse_mode: "HTML" }),
+    });
+  } catch { /* best-effort */ }
+}
+
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -48,6 +67,9 @@ export function ChatWidget() {
     setInput("");
     setTyping(true);
 
+    const page = window.location.pathname || "/";
+    void notifyTelegram(text, page);
+
     setTimeout(() => {
       const reply = AUTO_REPLIES[replyIndex % AUTO_REPLIES.length];
       setReplyIndex((i) => i + 1);
@@ -61,7 +83,6 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* ── Popup chat ── */}
       {open && (
         <div style={{
           position: "fixed", bottom: 90, right: 20, zIndex: 1000,
@@ -72,7 +93,6 @@ export function ChatWidget() {
           border: "1px solid #e5e5e5",
           maxHeight: 460,
         }}>
-          {/* Header */}
           <div style={{
             background: "#1a7a3c", padding: "14px 16px",
             display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -101,7 +121,6 @@ export function ChatWidget() {
             </button>
           </div>
 
-          {/* Messages */}
           <div style={{
             flex: 1, overflowY: "auto", padding: "14px 14px 10px",
             display: "flex", flexDirection: "column", gap: 10,
@@ -168,7 +187,6 @@ export function ChatWidget() {
             <div ref={bottomRef} />
           </div>
 
-          {/* Input */}
           <div style={{
             padding: "10px 12px", borderTop: "1px solid #ebebeb",
             display: "flex", gap: 8, alignItems: "center", background: "#fff",
@@ -202,7 +220,6 @@ export function ChatWidget() {
         </div>
       )}
 
-      {/* ── Tombol chat ── */}
       <div
         onClick={() => setOpen((v) => !v)}
         style={{ position: "fixed", bottom: 24, right: 20, zIndex: 1001, cursor: "pointer" }}
