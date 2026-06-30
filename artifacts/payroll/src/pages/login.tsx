@@ -149,9 +149,9 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
-            max-width: 900px !important;
-            width: 900px !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #1a1a1a 65%, #1a1a1a 100%) !important;
+            max-width: 1000px !important;
+            width: 1000px !important;
           }
           .login-form-col {
             flex: 0 0 65% !important;
@@ -432,10 +432,11 @@ export default function Login() {
         className="login-card"
         style={{
           width: "100%",
-          maxWidth: 960,
+          maxWidth: 1000,
           boxShadow: "0 2px 32px rgba(0,0,0,0.13)",
           display: "flex",
           flexDirection: "column",
+          overflow: "hidden",
         }}
       >
         {/* ══ HEADER: logo kiri + bahasa kanan ══ */}
@@ -445,11 +446,11 @@ export default function Login() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "32px 28px 16px",
+            padding: "32px 34px 16px",
           }}
         >
           {/* Logo */}
-          <span className="select-none" style={{ fontSize: 14, letterSpacing: "0.18em", color: "#111" }}>
+          <span className="select-none" style={{ fontSize: 16, letterSpacing: "0.18em", color: "#111" }}>
             <span style={{ fontWeight: 300 }}>MY</span>
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
             <span style={{ fontWeight: 300 }}>VAULT</span>
@@ -492,7 +493,7 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "65%", padding: "8px 216px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "65%", padding: "8px 240px 40px 90px", background: "transparent", position: "relative", zIndex: 2 }}
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
@@ -577,6 +578,7 @@ export default function Login() {
               position: "relative",
               overflow: "visible",
               alignSelf: "stretch",
+              backgroundColor: "#212121",
             }}
           >
             {/* Full-height anchor: fills the column exactly */}
@@ -590,7 +592,7 @@ export default function Login() {
                   height: "100%",
                   marginLeft: "-59%",
                   objectFit: "cover",
-                  objectPosition: "center center",
+                  objectPosition: "55% center",
                   opacity: 1,
                 }}
               />
