@@ -509,7 +509,7 @@ export default function Login() {
           >
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 20px", width: "calc(100% + 40px)", position: "relative", background: "#1a1a1a", overflow: "hidden", height: 260 }}>
-              <img src="/hero-mobile-new.png" alt="MyPaymentVault" style={{ width: "100%", height: "120%", objectFit: "cover", objectPosition: "60% 15%", display: "block" }} />
+              <img src="/hero-mobile-v2.png" alt="MyPaymentVault" style={{ width: "100%", height: "120%", objectFit: "cover", objectPosition: "60% 15%", display: "block" }} />
             </div>
 
             <h2 className="login-heading" style={{ fontSize: 18, fontWeight: 400, color: "#111", marginBottom: 6 }}>
