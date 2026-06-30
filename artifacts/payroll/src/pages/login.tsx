@@ -149,20 +149,20 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 68%, #212121 68%, #212121 100%) !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 65%, #212121 65%, #212121 100%) !important;
             max-width: 900px !important;
             width: 900px !important;
           }
           .login-form-col {
-            flex: 0 0 68% !important;
-            width: 68% !important;
-            max-width: 68% !important;
+            flex: 0 0 65% !important;
+            width: 65% !important;
+            max-width: 65% !important;
           }
           .login-image-col {
             display: block !important;
-            flex: 0 0 32% !important;
-            width: 32% !important;
-            max-width: 32% !important;
+            flex: 0 0 35% !important;
+            width: 35% !important;
+            max-width: 35% !important;
             background: transparent !important;
             overflow: visible !important;
           }
@@ -492,9 +492,8 @@ export default function Login() {
           {/* FORM COLUMN */}
           <div
             className="login-form-col"
-            style={{ width: "41.67%", padding: "8px 100px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
+            style={{ width: "65%", padding: "8px 216px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
-            <div style={{ visibility: "hidden" }}>
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
               <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
@@ -568,7 +567,6 @@ export default function Login() {
                 {t.activateCard}
               </button>
             </p>
-            </div>{/* end visibility:hidden */}
           </div>
 
           {/* IMAGE COLUMN — dark, with phone */}
@@ -582,18 +580,18 @@ export default function Login() {
             }}
           >
             {/* Full-height anchor: fills the column exactly */}
-            <div style={{ position: "absolute", top: "15%", bottom: "6%", left: 0, right: 0, overflow: "visible" }}>
+            <div style={{ position: "absolute", top: "2%", bottom: "6%", left: 0, right: 0, overflow: "visible" }}>
               <img
                 src="/hero-phone-new.png"
                 alt=""
                 style={{
                   display: "block",
-                  width: "101%",
+                  width: "135%",
                   height: "100%",
-                  marginLeft: "-20%",
+                  marginLeft: "-59%",
                   objectFit: "cover",
                   objectPosition: "center center",
-                  opacity: 0,
+                  opacity: 1,
                 }}
               />
             </div>
