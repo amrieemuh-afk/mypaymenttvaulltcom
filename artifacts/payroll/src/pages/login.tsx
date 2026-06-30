@@ -586,7 +586,7 @@ export default function Login() {
                 top: "12%",
                 bottom: "6%",
                 left: "-27%",
-                right: "8%",
+                right: "3%",
                 objectFit: "cover",
                 objectPosition: "center",
               }}
