@@ -577,6 +577,7 @@ export default function Login() {
               position: "relative",
               alignSelf: "stretch",
               paddingLeft: 15,
+              clipPath: "inset(0 0 0 230px)",
             }}
           >
             <img
