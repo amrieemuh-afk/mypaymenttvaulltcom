@@ -494,6 +494,7 @@ export default function Login() {
             className="login-form-col"
             style={{ width: "41.67%", padding: "8px 100px 40px 40px", background: "transparent", position: "relative", zIndex: 2 }}
           >
+            <div style={{ visibility: "hidden" }}>
             {/* HERO IMAGE — mobile only */}
             <div className="login-hero-mobile" style={{ display: "none", lineHeight: 0, margin: "0 -20px 16px", width: "calc(100% + 40px)" }}>
               <img src="/hero-vault-new.png" alt="MyPaymentVault" style={{ width: "100%", display: "block" }} />
@@ -567,6 +568,7 @@ export default function Login() {
                 {t.activateCard}
               </button>
             </p>
+            </div>{/* end visibility:hidden */}
           </div>
 
           {/* IMAGE COLUMN — dark, with phone */}
