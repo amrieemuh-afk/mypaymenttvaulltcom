@@ -574,21 +574,21 @@ export default function Login() {
             className="login-image-col"
             style={{
               display: "none",
-              alignItems: "center",
-              justifyContent: "flex-start",
+              position: "relative",
               overflow: "visible",
-              padding: "40px 0 20px",
             }}
           >
             <img
               src="/hero-phone-new.png"
               alt=""
               style={{
-                display: "block",
-                width: "113%",
-                height: "auto",
-                marginLeft: "-28%",
-                flexShrink: 0,
+                position: "absolute",
+                top: "12%",
+                bottom: "6%",
+                left: "-27%",
+                right: "8%",
+                objectFit: "cover",
+                objectPosition: "center",
               }}
             />
           </div>
