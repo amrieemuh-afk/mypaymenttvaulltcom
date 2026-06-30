@@ -583,7 +583,7 @@ export default function Login() {
               alt=""
               style={{
                 position: "absolute",
-                top: "12%",
+                top: "5%",
                 bottom: "6%",
                 left: "-27%",
                 right: "3%",
