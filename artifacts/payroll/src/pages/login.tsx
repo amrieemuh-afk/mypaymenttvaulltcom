@@ -445,7 +445,7 @@ export default function Login() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "16px 28px",
+            padding: "32px 28px 16px",
           }}
         >
           {/* Logo */}
