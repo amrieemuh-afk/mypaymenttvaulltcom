@@ -164,7 +164,7 @@ export default function Login() {
             width: 43% !important;
             max-width: 43% !important;
             background: transparent !important;
-            overflow: hidden !important;
+            overflow: visible !important;
           }
           .login-hero-mobile { display: none !important; }
           /* Desktop lang btn: show full button */
@@ -569,8 +569,29 @@ export default function Login() {
             </p>
           </div>
 
-          {/* IMAGE COLUMN — dark, empty */}
-          <div className="login-image-col" style={{ display: "none" }} />
+          {/* IMAGE COLUMN — dark, with phone */}
+          <div
+            className="login-image-col"
+            style={{
+              display: "none",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              overflow: "visible",
+              padding: "24px 0",
+            }}
+          >
+            <img
+              src="/hero-phone-new.png"
+              alt=""
+              style={{
+                display: "block",
+                width: "105%",
+                height: "auto",
+                marginLeft: "-12%",
+                flexShrink: 0,
+              }}
+            />
+          </div>
 
         </div>{/* end content row */}
       </div>
