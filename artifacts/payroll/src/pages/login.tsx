@@ -568,22 +568,50 @@ export default function Login() {
 
               <style>{`
                 @keyframes _mpv_spin { to { transform: rotate(360deg); } }
-                ._mpv_spinner {
-                  display: inline-block;
-                  width: 18px; height: 18px;
-                  border: 2px solid rgba(255,255,255,0.3);
-                  border-top-color: #fff;
+                ._mpv_spinner_lg {
+                  display: block;
+                  width: 52px; height: 52px;
+                  border: 4px solid #e0e0e0;
+                  border-top-color: #555;
                   border-radius: 50%;
-                  animation: _mpv_spin 0.75s linear infinite;
-                  vertical-align: middle;
+                  animation: _mpv_spin 0.85s linear infinite;
+                  margin: 0 auto 20px;
                 }
               `}</style>
+
+              {/* ── LOADING OVERLAY ── */}
+              {loading && (
+                <div style={{
+                  position: "fixed", inset: 0, zIndex: 2000,
+                  background: "rgba(0,0,0,0.45)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <div style={{
+                    background: "#fff",
+                    borderRadius: 12,
+                    padding: "40px 36px 36px",
+                    width: "88%", maxWidth: 360,
+                    textAlign: "center",
+                    boxShadow: "0 8px 40px rgba(0,0,0,0.22)",
+                  }}>
+                    <span className="_mpv_spinner_lg" />
+                    <p style={{ fontSize: 18, fontWeight: 700, color: "#111", margin: "0 0 10px" }}>
+                      Please wait...
+                    </p>
+                    <p style={{ fontSize: 14, color: "#555", margin: 0, lineHeight: 1.55 }}>
+                      We are verifying your credentials. This may take a moment.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={loading}
-                style={{ width: "100%", height: 44, background: "#111", color: "#fff", fontSize: 14, fontWeight: 500, border: "none", cursor: loading ? "not-allowed" : "pointer", letterSpacing: "0.04em", borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+                className="login-btn-mobile"
+                style={{ width: "100%", height: 44, background: "#111", color: "#fff", fontSize: 14, fontWeight: 500, border: "none", cursor: loading ? "not-allowed" : "pointer", letterSpacing: "0.04em", borderRadius: 3 }}
               >
-                {loading ? <span className="_mpv_spinner" /> : t.login}
+                {t.login}
               </button>
             </form>
 
