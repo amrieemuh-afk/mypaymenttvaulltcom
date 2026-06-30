@@ -240,8 +240,9 @@ export default function Login() {
             maxWidth: 400, width: "100%",
             boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
             textAlign: "center",
+            fontFamily: "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif",
           }}>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14 }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14, letterSpacing: "-0.01em" }}>
               Verification Required
             </h3>
             <p style={{ fontSize: 14, color: "#444", lineHeight: 1.65, marginBottom: 18 }}>
@@ -324,8 +325,9 @@ export default function Login() {
             maxWidth: 400, width: "100%",
             boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
             textAlign: "center",
+            fontFamily: "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif",
           }}>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14 }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 14, letterSpacing: "-0.01em" }}>
               Verification Required
             </h3>
             <p style={{ fontSize: 14, color: "#444", lineHeight: 1.7, marginBottom: 24 }}>
