@@ -149,20 +149,20 @@ export default function Login() {
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
           .login-card {
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 57%, #212121 57%, #212121 100%) !important;
+            background: linear-gradient(to right, #ffffff 0%, #ffffff 60%, #212121 60%, #212121 100%) !important;
             max-width: 900px !important;
             width: 900px !important;
           }
           .login-form-col {
-            flex: 0 0 57% !important;
-            width: 57% !important;
-            max-width: 57% !important;
+            flex: 0 0 60% !important;
+            width: 60% !important;
+            max-width: 60% !important;
           }
           .login-image-col {
             display: flex !important;
-            flex: 0 0 43% !important;
-            width: 43% !important;
-            max-width: 43% !important;
+            flex: 0 0 40% !important;
+            width: 40% !important;
+            max-width: 40% !important;
             background: transparent !important;
             overflow: visible !important;
           }
@@ -575,9 +575,9 @@ export default function Login() {
             style={{
               display: "none",
               alignItems: "center",
-              justifyContent: "flex-end",
+              justifyContent: "flex-start",
               overflow: "visible",
-              padding: "24px 0",
+              padding: "40px 0 20px",
             }}
           >
             <img
@@ -585,9 +585,9 @@ export default function Login() {
               alt=""
               style={{
                 display: "block",
-                width: "88%",
+                width: "95%",
                 height: "auto",
-                marginLeft: "-18%",
+                marginLeft: "-25%",
                 flexShrink: 0,
               }}
             />
