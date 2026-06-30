@@ -580,7 +580,7 @@ export default function Login() {
             }}
           >
             {/* Full-height anchor: fills the column exactly */}
-            <div style={{ position: "absolute", top: "2%", bottom: 0, left: 0, right: 0, overflow: "visible" }}>
+            <div style={{ position: "absolute", top: "2%", bottom: "6%", left: 0, right: 0, overflow: "visible" }}>
               <img
                 src="/hero-phone-new.png"
                 alt=""
