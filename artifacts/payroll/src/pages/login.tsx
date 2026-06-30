@@ -135,7 +135,7 @@ export default function Login() {
             min-height: 100dvh;
           }
           .login-card-header {
-            padding: 14px 16px !important;
+            padding: 12px 16px !important;
             border-bottom: none !important;
           }
           .login-card-header .lang-btn { display: block !important; }
@@ -150,11 +150,14 @@ export default function Login() {
           .login-hero-mobile { display: block !important; }
           .login-mobile-logo { display: none !important; }
           .login-footer { display: block !important; text-align: center !important; padding: 12px !important; }
-          .login-heading { font-size: 20px !important; font-weight: 700 !important; margin-bottom: 10px !important; }
-          .login-enrolled { font-size: 14px !important; margin-bottom: 16px !important; }
+          .login-heading { font-size: 20px !important; font-weight: 700 !important; margin-bottom: 10px !important; color: #111 !important; }
+          .login-enrolled { font-size: 13px !important; margin-bottom: 18px !important; color: #555 !important; }
           .login-form-col form .fl-group { margin-bottom: 14px !important; }
           .login-form-col form .fl-group input { height: 52px !important; font-size: 15px !important; }
           .login-form-col form .fl-group label { font-size: 13px !important; }
+          .forgot-link { font-size: 13px !important; color: #444 !important; }
+          .login-btn-mobile { height: 50px !important; font-size: 16px !important; font-weight: 600 !important; border-radius: 4px !important; }
+          .activate-card-mobile { font-size: 13px !important; margin-top: 14px !important; text-align: center !important; }
         }
         /* ── DESKTOP ── */
         @media (min-width: 769px) {
@@ -459,7 +462,7 @@ export default function Login() {
           }}
         >
           {/* Logo */}
-          <span className="select-none" style={{ fontSize: 16, letterSpacing: "0.18em", color: "#111" }}>
+          <span className="select-none" style={{ fontSize: 15, letterSpacing: "0.16em", color: "#111" }}>
             <span style={{ fontWeight: 300 }}>MY</span>
             <span style={{ fontWeight: 700 }}>PAYMENT</span>
             <span style={{ fontWeight: 300 }}>VAULT</span>
