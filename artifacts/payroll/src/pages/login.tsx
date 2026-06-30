@@ -586,9 +586,9 @@ export default function Login() {
               style={{
                 display: "block",
                 width: "100%",
-                height: "100%",
+                height: "82%",
                 objectFit: "cover",
-                objectPosition: "52% center",
+                objectPosition: "52% top",
               }}
             />
           </div>
